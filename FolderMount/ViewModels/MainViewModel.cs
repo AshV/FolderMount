@@ -58,13 +58,13 @@ namespace FolderMount.ViewModels
         public MainViewModel()
         {
             AddCommand          = new RelayCommand(DoAdd);
-            EditCommand         = new RelayCommand(DoEdit,   () => SelectedMapping != null);
-            RemoveCommand       = new RelayCommand(DoRemove, () => SelectedMapping != null);
-            MountCommand        = new RelayCommand(DoMount,      () => SelectedMapping != null && !SelectedMapping.IsActive);
-            UnmountCommand      = new RelayCommand(DoUnmount,    () => SelectedMapping != null && SelectedMapping.IsActive);
+            EditCommand         = new RelayCommand(DoEdit);
+            RemoveCommand       = new RelayCommand(DoRemove);
+            MountCommand        = new RelayCommand(DoMount);
+            UnmountCommand      = new RelayCommand(DoUnmount);
             MountAllCommand     = new RelayCommand(DoMountAll,   () => Mappings.Any(m => !m.IsActive));
             UnmountAllCommand   = new RelayCommand(DoUnmountAll, () => Mappings.Any(m => m.IsActive));
-            OpenExplorerCommand = new RelayCommand(DoOpenExplorer, () => SelectedMapping != null && SelectedMapping.IsActive);
+            OpenExplorerCommand = new RelayCommand(DoOpenExplorer);
             ExportCommand       = new RelayCommand(DoExport, () => Mappings.Count > 0);
             ImportCommand       = new RelayCommand(DoImport);
             RefreshCommand      = new RelayCommand(DoRefresh);
@@ -116,85 +116,85 @@ namespace FolderMount.ViewModels
             }
         }
 
-        private void DoEdit()
+        private void DoEdit(object param)
         {
-            if (SelectedMapping == null) return;
+            var mapping = param as Models.DriveMapping ?? SelectedMapping;
+            if (mapping == null) return;
+            
             // Exclude other mappings' letters (but keep the one being edited available)
             var usedLetters = Mappings
-                .Where(m => m != SelectedMapping)
+                .Where(m => m != mapping)
                 .Select(m => m.DriveLetter);
-            var dlg = new AddEditDialog(SelectedMapping.Clone(), usedLetters);
+            var dlg = new AddEditDialog(mapping.Clone(), usedLetters);
             dlg.Owner = Application.Current.MainWindow;
             if (dlg.ShowDialog() == true)
             {
-                var edited = dlg.Result;
-                // If drive letter changed, check for conflicts
-                if (!edited.DriveLetter.Equals(SelectedMapping.DriveLetter, StringComparison.OrdinalIgnoreCase)
-                    && Mappings.Any(x => x != SelectedMapping && x.DriveLetter.Equals(edited.DriveLetter, StringComparison.OrdinalIgnoreCase)))
+                var newM = dlg.Result;
+                var idx  = Mappings.IndexOf(mapping);
+                if (idx >= 0)
                 {
-                    MessageBox.Show($"Drive {edited.DisplayLetter} is already in the list.", "Duplicate Letter",
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
+                    Mappings[idx] = newM;
+                    if (mapping.IsActive)
+                        SubstService.Unmount(mapping.DriveLetter);
+                    SaveAll();
+                    RefreshStatus();
+                    StatusMessage = $"Updated {newM.DisplayLetter}";
                 }
-                // If currently active and something changed, unmount first
-                if (SelectedMapping.IsActive)
-                    SubstService.Unmount(SelectedMapping.DriveLetter);
-
-                SelectedMapping.DriveLetter = edited.DriveLetter;
-                SelectedMapping.FolderPath  = edited.FolderPath;
-                SelectedMapping.Label       = edited.Label;
-                SaveAll();
-                RefreshStatus();
-                StatusMessage = $"Updated {SelectedMapping.DisplayLetter}";
             }
         }
 
-        private void DoRemove()
+        private void DoRemove(object param)
         {
-            if (SelectedMapping == null) return;
+            var mapping = param as Models.DriveMapping ?? SelectedMapping;
+            if (mapping == null) return;
+            
             var ans = MessageBox.Show(
-                $"Remove mapping for {SelectedMapping.DisplayLetter}?\n\nThe virtual drive will be disconnected if currently active.",
+                $"Remove mapping for {mapping.DisplayLetter}?\n\nThe virtual drive will be disconnected if currently active.",
                 "Confirm Remove", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (ans != MessageBoxResult.Yes) return;
 
-            if (SelectedMapping.IsActive)
-                SubstService.Unmount(SelectedMapping.DriveLetter);
+            if (mapping.IsActive)
+                SubstService.Unmount(mapping.DriveLetter);
 
-            Mappings.Remove(SelectedMapping);
+            Mappings.Remove(mapping);
             SaveAll();
             RefreshStatus();
             StatusMessage = "Mapping removed.";
         }
 
-        private void DoMount()
+        private void DoMount(object param)
         {
-            if (SelectedMapping == null) return;
-            var (ok, err) = SubstService.Mount(SelectedMapping.DriveLetter, SelectedMapping.FolderPath);
+            var mapping = param as Models.DriveMapping ?? SelectedMapping;
+            if (mapping == null) return;
+            
+            var (ok, err) = SubstService.Mount(mapping.DriveLetter, mapping.FolderPath);
             if (ok)
             {
-                SelectedMapping.IsActive = true;
+                mapping.IsActive = true;
                 NotifyCounts();
-                StatusMessage = $"{SelectedMapping.DisplayLetter} mounted.";
+                StatusMessage = $"{mapping.DisplayLetter} mounted.";
             }
             else
             {
-                ShowError($"Could not mount {SelectedMapping.DisplayLetter}:\n{err}");
+                ShowError($"Could not mount {mapping.DisplayLetter}:\n{err}");
             }
         }
 
-        private void DoUnmount()
+        private void DoUnmount(object param)
         {
-            if (SelectedMapping == null) return;
-            var (ok, err) = SubstService.Unmount(SelectedMapping.DriveLetter);
+            var mapping = param as Models.DriveMapping ?? SelectedMapping;
+            if (mapping == null) return;
+            
+            var (ok, err) = SubstService.Unmount(mapping.DriveLetter);
             if (ok)
             {
-                SelectedMapping.IsActive = false;
+                mapping.IsActive = false;
                 NotifyCounts();
-                StatusMessage = $"{SelectedMapping.DisplayLetter} disconnected.";
+                StatusMessage = $"{mapping.DisplayLetter} disconnected.";
             }
             else
             {
-                ShowError($"Could not disconnect {SelectedMapping.DisplayLetter}:\n{err}");
+                ShowError($"Could not disconnect {mapping.DisplayLetter}:\n{err}");
             }
         }
 

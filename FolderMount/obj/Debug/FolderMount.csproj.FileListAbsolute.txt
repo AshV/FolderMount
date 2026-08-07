@@ -1,0 +1,13 @@
+a:\GitHub\FolderMount\FolderMount\obj\Debug\FolderMount.csproj.AssemblyReference.cache
+a:\GitHub\FolderMount\FolderMount\obj\Debug\AddEditDialog.baml
+a:\GitHub\FolderMount\FolderMount\obj\Debug\SettingsWindow.baml
+a:\GitHub\FolderMount\FolderMount\obj\Debug\App.baml
+a:\GitHub\FolderMount\FolderMount\obj\Debug\MainWindow.g.cs
+a:\GitHub\FolderMount\FolderMount\obj\Debug\AddEditDialog.g.cs
+a:\GitHub\FolderMount\FolderMount\obj\Debug\SettingsWindow.g.cs
+a:\GitHub\FolderMount\FolderMount\obj\Debug\App.g.cs
+a:\GitHub\FolderMount\FolderMount\obj\Debug\GeneratedInternalTypeHelper.g.cs
+a:\GitHub\FolderMount\FolderMount\obj\Debug\FolderMount_MarkupCompile.cache
+a:\GitHub\FolderMount\FolderMount\obj\Debug\FolderMount_MarkupCompile.lref
+a:\GitHub\FolderMount\FolderMount\obj\Debug\FolderMount.exe
+a:\GitHub\FolderMount\FolderMount\obj\Debug\FolderMount.pdb

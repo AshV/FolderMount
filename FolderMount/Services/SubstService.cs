@@ -115,7 +115,7 @@ namespace FolderMount.Services
                 foreach (var l in excludeLetters)
                     inUse.Add(l.TrimEnd(':').ToUpper());
 
-            return Enumerable.Range('D', 'Z' - 'D' + 1)
+            return Enumerable.Range('A', 26)
                 .Select(c => ((char)c).ToString())
                 .Where(l => !inUse.Contains(l))
                 .ToList();

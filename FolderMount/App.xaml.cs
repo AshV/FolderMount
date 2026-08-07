@@ -1,14 +1,12 @@
 using System;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows;
 
 namespace FolderMount
 {
     /// <summary>
-    /// App entry point — handles startup args, creates the tray icon, manages window lifecycle.
-    /// System.Drawing and System.Windows.Forms usage is in TrayManager.cs (not the XAML partial).
+    /// App entry point — handles startup args, enforces single instance,
+    /// creates the tray icon, and manages window lifecycle.
     /// </summary>
     public partial class App : Application
     {
@@ -18,6 +16,15 @@ namespace FolderMount
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            // ── Single-instance guard ─────────────────────────────────────────
+            if (!SingleInstance.TryClaimInstance())
+            {
+                // Another instance is already running — it has been signalled
+                // to show its window. Exit this second instance immediately.
+                Shutdown();
+                return;
+            }
 
             bool isStartupRun = e.Args.Contains("/startup", StringComparer.OrdinalIgnoreCase);
 
@@ -34,6 +41,8 @@ namespace FolderMount
             else
                 ShowMainWindow();
         }
+
+        // ── Window management ─────────────────────────────────────────────────
 
         internal void ShowMainWindow()
         {
@@ -59,11 +68,13 @@ namespace FolderMount
         private void ExitApp()
         {
             _tray?.Dispose();
+            SingleInstance.Release();
             Shutdown();
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
+            SingleInstance.Release();
             _tray?.Dispose();
             base.OnExit(e);
         }

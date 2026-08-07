@@ -71,6 +71,15 @@
                 <Setter Property="FontFamily"        Value="{StaticResource FontMain}"    />
                 <Setter Property="FontSize"          Value="{StaticResource FontSizeBase}"/>
                 <Setter Property="UseLayoutRounding" Value="True"                         />
+                <Setter Property="WindowChrome.WindowChrome">
+                    <Setter.Value>
+                        <WindowChrome CaptionHeight="40"
+                                      ResizeBorderThickness="6"
+                                      CornerRadius="0"
+                                      GlassFrameThickness="0"
+                                      UseAeroCaptionButtons="False" />
+                    </Setter.Value>
+                </Setter>
             </Style>
 
             <!-- ═══════════════════════════════════════════════════
@@ -212,6 +221,55 @@
                 </Setter>
             </Style>
 
+            <!-- Title Bar Buttons -->
+            <Style x:Key="BtnWindowControl" TargetType="Button">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="{StaticResource BrTextSec}" />
+                <Setter Property="Width" Value="46" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Root" Background="{TemplateBinding Background}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Root" Property="Background" Value="{StaticResource BrBgElevated}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource BrText}"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="Root" Property="Background" Value="{StaticResource BrBgRowSelect}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="BtnWindowClose" TargetType="Button" BasedOn="{StaticResource BtnWindowControl}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Root" Background="{TemplateBinding Background}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Root" Property="Background" Value="#E81123"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="Root" Property="Background" Value="#F1707A"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
             <!-- ═══════════════════════════════════════════════════
                  TEXTBOX
             ═══════════════════════════════════════════════════ -->
@@ -221,8 +279,9 @@
                 <Setter Property="CaretBrush"      Value="{StaticResource BrAccent}"     />
                 <Setter Property="BorderBrush"     Value="{StaticResource BrBorder}"     />
                 <Setter Property="BorderThickness"  Value="1"                            />
-                <Setter Property="Padding"         Value="10,6"                          />
+                <Setter Property="Padding"         Value="10,0"                          />
                 <Setter Property="FontSize"        Value="{StaticResource FontSizeBase}"  />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="TextBox">
@@ -231,7 +290,7 @@
                                     BorderThickness="{TemplateBinding BorderThickness}"
                                     CornerRadius="6" SnapsToDevicePixels="True">
                                 <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"
-                                              VerticalAlignment="Center"/>
+                                              VerticalAlignment="Stretch"/>
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsFocused" Value="True">
@@ -248,7 +307,7 @@
             ═══════════════════════════════════════════════════ -->
             <Style x:Key="InputCombo" TargetType="ComboBox">
                 <Setter Property="Background"      Value="{StaticResource BrBgElevated}"  />
-                <Setter Property="Foreground"      Value="{StaticResource BrText}"        />
+                <Setter Property="Foreground"      Value="Black"                          />
                 <Setter Property="BorderBrush"     Value="{StaticResource BrBorder}"      />
                 <Setter Property="BorderThickness"  Value="1"                             />
                 <Setter Property="Padding"         Value="10,6"                           />

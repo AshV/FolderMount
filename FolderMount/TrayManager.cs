@@ -1,7 +1,5 @@
 using System;
 using System.Drawing;
-using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 
 namespace FolderMount
@@ -55,15 +53,30 @@ namespace FolderMount
             return item;
         }
 
-        private static Icon LoadAppIcon()
+        private static System.Drawing.Icon LoadAppIcon()
         {
             try
             {
-                string dir     = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                string icoPath = Path.Combine(dir, "Assets", "icon.ico");
-                if (File.Exists(icoPath)) return new Icon(icoPath);
+                // Load from the embedded WPF resource (pack:// URI)
+                // This works whether the app is run from bin\Debug, bin\Release, or installed anywhere.
+                var uri = new Uri("pack://application:,,,/Assets/icon.ico", UriKind.Absolute);
+                var sri = System.Windows.Application.GetResourceStream(uri);
+                if (sri != null)
+                    return new System.Drawing.Icon(sri.Stream);
             }
             catch { }
+
+            // Fallback: try loading from disk (same directory as the exe)
+            try
+            {
+                string dir     = System.IO.Path.GetDirectoryName(
+                                    System.Reflection.Assembly.GetExecutingAssembly().Location);
+                string icoPath = System.IO.Path.Combine(dir, "Assets", "icon.ico");
+                if (System.IO.File.Exists(icoPath))
+                    return new System.Drawing.Icon(icoPath);
+            }
+            catch { }
+
             return SystemIcons.Application;
         }
 

@@ -38,12 +38,10 @@
 
                 <!-- Logo + Title -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <!-- Accent square icon -->
-                    <Border Width="38" Height="38" CornerRadius="10"
-                            Background="{StaticResource BrAccent}" Margin="0,0,14,0">
-                        <TextBlock Text="⊞" FontSize="20" Foreground="White"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
+                    <!-- Application Logo -->
+                    <Image Source="pack://application:,,,/Assets/icon.ico" 
+                           Width="38" Height="38" Margin="0,0,14,0" 
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock Text="FolderMount" FontSize="20" FontWeight="Bold"
                                    Foreground="{StaticResource BrText}"/>
@@ -52,24 +50,40 @@
                     </StackPanel>
                 </StackPanel>
 
-                <!-- Header stats -->
-                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,4,0">
-                    <Border Background="{StaticResource BrBgElevated}" CornerRadius="8"
-                            Padding="12,6" Margin="0,0,10,0">
-                        <StackPanel Orientation="Horizontal">
-                            <Ellipse Width="8" Height="8" Fill="{StaticResource BrSuccess}"
-                                     VerticalAlignment="Center" Margin="0,0,6,0"/>
-                            <TextBlock x:Name="TxtActiveCount"
-                                       Text="{Binding ActiveCount, StringFormat='{}{0} Active'}"
+                <!-- Header stats & Controls -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top" Margin="0,-18,-24,0">
+                    
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,18,10,0">
+                        <Border Background="{StaticResource BrBgElevated}" CornerRadius="8"
+                                Padding="12,6" Margin="0,0,10,0">
+                            <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="8" Height="8" Fill="{StaticResource BrSuccess}"
+                                         VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                <TextBlock x:Name="TxtActiveCount"
+                                           Text="{Binding ActiveCount, StringFormat='{}{0} Active'}"
+                                           FontSize="12" Foreground="{StaticResource BrTextSec}"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Background="{StaticResource BrBgElevated}" CornerRadius="8" Padding="12,6">
+                            <TextBlock Text="{Binding TotalCount, StringFormat='{}{0} Total'}"
                                        FontSize="12" Foreground="{StaticResource BrTextSec}"
                                        VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Border>
-                    <Border Background="{StaticResource BrBgElevated}" CornerRadius="8" Padding="12,6">
-                        <TextBlock Text="{Binding TotalCount, StringFormat='{}{0} Total'}"
-                                   FontSize="12" Foreground="{StaticResource BrTextSec}"
-                                   VerticalAlignment="Center"/>
-                    </Border>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Window Controls -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Height="40">
+                        <Button Content="—" Style="{StaticResource BtnWindowControl}" FontSize="12"
+                                Command="{x:Static SystemCommands.MinimizeWindowCommand}"
+                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <Button Content="☐" Style="{StaticResource BtnWindowControl}" FontSize="14" Margin="0,0,0,2"
+                                Command="{x:Static SystemCommands.MaximizeWindowCommand}"
+                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <Button Content="✕" Style="{StaticResource BtnWindowClose}" FontSize="12"
+                                Command="{x:Static SystemCommands.CloseWindowCommand}"
+                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
+                    </StackPanel>
                 </StackPanel>
             </Grid>
         </Border>
@@ -89,26 +103,10 @@
                 <!-- Left: Primary actions -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal">
                     <Button Content="＋  Add Mapping" Style="{StaticResource BtnPrimary}"
-                            Command="{Binding AddCommand}" Margin="0,0,8,0"
+                            Command="{Binding AddCommand}" Margin="0,0,16,0"
                             ToolTip="Add a new folder → drive mapping"/>
 
-                    <Button Content="✎  Edit" Style="{StaticResource BtnGhost}"
-                            Command="{Binding EditCommand}" Margin="0,0,6,0"
-                            ToolTip="Edit selected mapping"/>
-
-                    <Button Content="🗑  Remove" Style="{StaticResource BtnDanger}"
-                            Command="{Binding RemoveCommand}" Margin="0,0,16,0"
-                            ToolTip="Remove selected mapping"/>
-
-                    <Rectangle Width="1" Fill="{StaticResource BrBorder}" Margin="0,4,16,4"/>
-
-                    <Button Content="⚡ Mount" Style="{StaticResource BtnGhost}"
-                            Command="{Binding MountCommand}" Margin="0,0,6,0"
-                            ToolTip="Mount selected drive"/>
-
-                    <Button Content="⏏ Disconnect" Style="{StaticResource BtnGhost}"
-                            Command="{Binding UnmountCommand}" Margin="0,0,6,0"
-                            ToolTip="Disconnect selected drive (keeps mapping saved)"/>
+                    <Rectangle Width="1" Fill="{StaticResource BrBorderSubtle}" Margin="0,4,16,4"/>
 
                     <Button Content="⚡ Mount All" Style="{StaticResource BtnGhost}"
                             Command="{Binding MountAllCommand}" Margin="0,0,6,0"
@@ -117,21 +115,13 @@
                     <Button Content="⏏ Disconnect All" Style="{StaticResource BtnGhost}"
                             Command="{Binding UnmountAllCommand}" Margin="0,0,6,0"
                             ToolTip="Disconnect all active drives"/>
-
-                    <Button Content="📂 Open in Explorer" Style="{StaticResource BtnGhost}"
-                            Command="{Binding OpenExplorerCommand}" Margin="0,0,0,0"
-                            ToolTip="Open selected drive in Windows Explorer"/>
                 </StackPanel>
 
-                <!-- Right: Import / Export / Refresh -->
+                <!-- Right: Settings & Refresh -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button Content="⬆ Export" Style="{StaticResource BtnGhost}"
-                            Command="{Binding ExportCommand}" Margin="0,0,6,0"
-                            ToolTip="Export mappings to XML file"/>
-
-                    <Button Content="⬇ Import" Style="{StaticResource BtnGhost}"
-                            Command="{Binding ImportCommand}" Margin="0,0,6,0"
-                            ToolTip="Import mappings from XML file"/>
+                    <Button Content="⚙ Settings" Style="{StaticResource BtnGhost}"
+                            Click="BtnSettings_Click" Margin="0,0,6,0"
+                            ToolTip="Open settings and storage options"/>
 
                     <Button Content="↻" Style="{StaticResource BtnIcon}"
                             Command="{Binding RefreshCommand}"
@@ -210,27 +200,39 @@
                 </DataGridTextColumn>
 
                 <!-- ACTIONS (inline buttons) -->
-                <DataGridTemplateColumn Header="ACTIONS" Width="200" IsReadOnly="True">
+                <DataGridTemplateColumn Header="ACTIONS" Width="260" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <!-- Mount (shown when inactive) -->
-                                <Button Style="{StaticResource BtnGhost}" Padding="8,4" FontSize="11"
-                                        Margin="0,0,4,0"
+                                <!-- Mount/Eject (Primary contextual action) -->
+                                <Button Style="{StaticResource BtnGhost}" Padding="8,4" FontSize="11" Margin="0,0,4,0"
                                         Command="{Binding DataContext.MountCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}"
                                         Visibility="{Binding IsActive, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}"
                                         Content="⚡ Mount" ToolTip="Mount this drive"/>
-                                <!-- Eject (shown when active) -->
-                                <Button Style="{StaticResource BtnGhost}" Padding="8,4" FontSize="11"
-                                        Margin="0,0,4,0"
+                                <Button Style="{StaticResource BtnGhost}" Padding="8,4" FontSize="11" Margin="0,0,4,0"
                                         Command="{Binding DataContext.UnmountCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}"
                                         Visibility="{Binding IsActive, Converter={StaticResource BoolToVisibility}}"
                                         Content="⏏ Eject" ToolTip="Disconnect this drive"/>
-                                <!-- Open Explorer -->
-                                <Button Style="{StaticResource BtnGhost}" Padding="8,4" FontSize="11"
+                                
+                                <Rectangle Width="1" Fill="{StaticResource BrBorderSubtle}" Margin="4,2,8,2"/>
+
+                                <!-- Secondary Actions -->
+                                <Button Style="{StaticResource BtnGhost}" Padding="8,4" FontSize="11" Margin="0,0,4,0"
                                         Command="{Binding DataContext.OpenExplorerCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}"
                                         IsEnabled="{Binding IsActive}"
                                         Content="📂" ToolTip="Open in Explorer"/>
+                                <Button Style="{StaticResource BtnGhost}" Padding="8,4" FontSize="11" Margin="0,0,4,0"
+                                        Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}"
+                                        Content="✎" ToolTip="Edit this mapping"/>
+                                <Button Style="{StaticResource BtnGhost}" Padding="8,4" FontSize="11" Margin="0,0,0,0"
+                                        Foreground="{StaticResource BrDanger}"
+                                        Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}"
+                                        Content="🗑" ToolTip="Remove this mapping"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -240,18 +242,25 @@
         </DataGrid>
 
         <!-- Empty state message -->
-        <StackPanel Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center"
-                    Visibility="{Binding TotalCount, Converter={StaticResource BoolToVisibility}, ConverterParameter=zeroIsVisible}">
-            <TextBlock Text="⊞" FontSize="48" Foreground="{StaticResource BrBorderSubtle}"
-                       HorizontalAlignment="Center" Margin="0,0,0,12"/>
-            <TextBlock Text="No drive mappings yet" FontSize="16" FontWeight="SemiBold"
-                       Foreground="{StaticResource BrTextMuted}" HorizontalAlignment="Center"/>
-            <TextBlock Text="Click ＋ Add Mapping to map a folder to a drive letter"
-                       FontSize="12" Foreground="{StaticResource BrTextMuted}"
-                       HorizontalAlignment="Center" Margin="0,6,0,20"/>
-            <Button Content="＋  Add Your First Mapping" Style="{StaticResource BtnPrimary}"
-                    Command="{Binding AddCommand}" HorizontalAlignment="Center" Padding="20,10"/>
-        </StackPanel>
+        <Border Grid.Row="2" Background="{StaticResource BrBgSurface}" CornerRadius="12"
+                Margin="32" Padding="40" VerticalAlignment="Center" HorizontalAlignment="Center"
+                BorderBrush="{StaticResource BrBorderSubtle}" BorderThickness="1"
+                Visibility="{Binding TotalCount, Converter={StaticResource BoolToVisibility}, ConverterParameter=zeroIsVisible}">
+            <StackPanel>
+                <Border Width="64" Height="64" CornerRadius="32" Background="{StaticResource BrBgElevated}"
+                        HorizontalAlignment="Center" Margin="0,0,0,16">
+                    <TextBlock Text="⊞" FontSize="32" Foreground="{StaticResource BrAccent}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <TextBlock Text="No mappings yet" FontSize="20" FontWeight="SemiBold"
+                           Foreground="{StaticResource BrText}" HorizontalAlignment="Center"/>
+                <TextBlock Text="Map any local folder to a virtual drive letter for quick access."
+                           FontSize="13" Foreground="{StaticResource BrTextSec}"
+                           HorizontalAlignment="Center" Margin="0,8,0,24"/>
+                <Button Content="＋  Add Your First Mapping" Style="{StaticResource BtnPrimary}"
+                        Command="{Binding AddCommand}" HorizontalAlignment="Center" Padding="24,12" FontSize="14"/>
+            </StackPanel>
+        </Border>
 
         <!-- ═══════════════════════════════════════════════
              STATUS BAR

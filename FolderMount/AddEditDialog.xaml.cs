@@ -20,11 +20,12 @@ namespace FolderMount
         public AddEditDialog(DriveMapping existing, System.Collections.Generic.IEnumerable<string> usedLetters = null)
         {
             InitializeComponent();
+            CommandBindings.Add(new System.Windows.Input.CommandBinding(SystemCommands.CloseWindowCommand, (s, e) => SystemCommands.CloseWindow((Window)e.Parameter)));
             _isEdit = existing != null;
 
             if (_isEdit)
             {
-                TxtDialogTitle.Text = "Edit Drive Mapping";
+                Title = "Edit Mapping";
                 BtnOk.Content       = "Save Changes";
             }
 
@@ -52,15 +53,36 @@ namespace FolderMount
 
         private void BrowseFolder_Click(object sender, RoutedEventArgs e)
         {
-            using (var dlg = new FolderBrowserDialog
+            var dlg = new Microsoft.Win32.OpenFileDialog
             {
-                Description         = "Select the folder to map as a virtual drive",
-                ShowNewFolderButton = false,
-                SelectedPath        = TxtFolderPath.Text
-            })
+                Title = "Select a file inside the folder you want to map, or paste a folder path",
+                CheckFileExists = false,
+                ValidateNames = false,
+                FileName = "Folder Selection"
+            };
+
+            if (dlg.ShowDialog() == true)
             {
-                if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                    TxtFolderPath.Text = dlg.SelectedPath;
+                string path = dlg.FileName;
+                // If they picked an actual file, extract the directory
+                if (File.Exists(path))
+                {
+                    path = Path.GetDirectoryName(path);
+                }
+                else if (Path.GetFileName(path) == "Folder Selection")
+                {
+                    path = Path.GetDirectoryName(path);
+                }
+                
+                if (!string.IsNullOrWhiteSpace(path) && Directory.Exists(path))
+                {
+                    TxtFolderPath.Text = path;
+                }
+                else if (!string.IsNullOrWhiteSpace(path))
+                {
+                    // Fallback to just whatever they pasted if it doesn't match above logic
+                    TxtFolderPath.Text = path;
+                }
             }
         }
 

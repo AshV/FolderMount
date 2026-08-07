@@ -84,6 +84,7 @@
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SingleInstance.cs" />
     <Compile Include="TrayManager.cs" />
     <Compile Include="Models\DriveMapping.cs" />
     <Compile Include="Services\SubstService.cs" />
@@ -97,7 +98,9 @@
     <Compile Include="Converters\BoolToStatusConverter.cs" />
   </ItemGroup>
   <ItemGroup>
+    <!-- Embedded WPF resource loaded via pack://application:,,,/Assets/icon.ico -->
     <Resource Include="Assets\icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

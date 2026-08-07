@@ -55,6 +55,14 @@ namespace FolderMount.Services
         // ── Import ─────────────────────────────────────────────────────────────
 
         /// <summary>
+        /// Imports mappings from an XML file without merging.
+        /// </summary>
+        public static List<DriveMapping> Import(string sourcePath)
+        {
+            return Parse(XDocument.Load(sourcePath));
+        }
+
+        /// <summary>
         /// Imports mappings from an XML file and merges with existing.
         /// Imported entries override existing entries with the same drive letter.
         /// Returns the merged list.
