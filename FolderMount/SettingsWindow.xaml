@@ -1,0 +1,117 @@
+<Window x:Class="FolderMount.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Settings — FolderMount" Height="380" Width="460"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="{StaticResource BrBgBase}"
+        Foreground="{StaticResource BrText}"
+        FontFamily="{StaticResource FontMain}"
+        Style="{StaticResource WindowStyle}">
+
+    <Grid Margin="28,24,28,24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- Title -->
+            <RowDefinition Height="24"/>
+            <RowDefinition Height="Auto"/>  <!-- Section: Startup -->
+            <RowDefinition Height="16"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="24"/>
+            <RowDefinition Height="Auto"/>  <!-- Section: Storage -->
+            <RowDefinition Height="16"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>  <!-- Close -->
+        </Grid.RowDefinitions>
+
+        <!-- Title -->
+        <TextBlock Grid.Row="0" Text="Settings"
+                   FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource BrText}"/>
+
+        <!-- SECTION: Startup -->
+        <TextBlock Grid.Row="2" Text="STARTUP"
+                   FontSize="10" FontWeight="SemiBold"
+                   Foreground="{StaticResource BrTextMuted}"/>
+
+        <Border Grid.Row="4" Background="{StaticResource BrBgCard}"
+                BorderBrush="{StaticResource BrBorder}" BorderThickness="1"
+                CornerRadius="8" Padding="16,14">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Run at Windows startup"
+                               FontWeight="SemiBold" Foreground="{StaticResource BrText}"/>
+                    <TextBlock Text="FolderMount will start silently and re-mount all drives on login."
+                               FontSize="11" Foreground="{StaticResource BrTextSec}"
+                               Margin="0,3,0,0" TextWrapping="Wrap"/>
+                </StackPanel>
+                <CheckBox Grid.Column="1" x:Name="ChkStartup"
+                          Style="{StaticResource ModernCheck}"
+                          VerticalAlignment="Center" Margin="16,0,0,0"
+                          Checked="ChkStartup_Checked"
+                          Unchecked="ChkStartup_Unchecked"/>
+            </Grid>
+        </Border>
+
+        <!-- SECTION: Storage -->
+        <TextBlock Grid.Row="6" Text="STORAGE"
+                   FontSize="10" FontWeight="SemiBold"
+                   Foreground="{StaticResource BrTextMuted}"/>
+
+        <Border Grid.Row="8" Background="{StaticResource BrBgCard}"
+                BorderBrush="{StaticResource BrBorder}" BorderThickness="1"
+                CornerRadius="8" Padding="16,14">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Mappings file location"
+                                   FontWeight="SemiBold" Foreground="{StaticResource BrText}"/>
+                        <TextBlock x:Name="TxtMappingPath" FontSize="11"
+                                   Foreground="{StaticResource BrTextSec}"
+                                   FontFamily="Consolas"
+                                   Margin="0,3,0,0" TextWrapping="Wrap"/>
+                    </StackPanel>
+                    <Button Grid.Column="1" Content="Open Folder"
+                            Style="{StaticResource BtnGhost}" Padding="12,6"
+                            VerticalAlignment="Center" Margin="12,0,0,0"
+                            Click="OpenDataFolder_Click"/>
+                </Grid>
+                <Separator Grid.Row="1" Background="{StaticResource BrBorderSubtle}"/>
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Quick export"
+                                   FontWeight="SemiBold" Foreground="{StaticResource BrText}"/>
+                        <TextBlock Text="Download a copy of mappings.xml to your Desktop."
+                                   FontSize="11" Foreground="{StaticResource BrTextSec}"
+                                   Margin="0,3,0,0"/>
+                    </StackPanel>
+                    <Button Grid.Column="1" Content="⬆ Export"
+                            Style="{StaticResource BtnGhost}" Padding="12,6"
+                            VerticalAlignment="Center" Margin="12,0,0,0"
+                            Click="QuickExport_Click"/>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- Close -->
+        <Button Grid.Row="10" Content="Close" Style="{StaticResource BtnPrimary}"
+                Padding="24,9" HorizontalAlignment="Right"
+                IsCancel="True" Click="Close_Click"/>
+    </Grid>
+</Window>
