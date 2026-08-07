@@ -15,8 +15,9 @@ namespace FolderMount
 
         /// <summary>
         /// Pass null for Add mode, or an existing mapping clone for Edit mode.
+        /// Pass <paramref name="usedLetters"/> to exclude letters already in the saved list.
         /// </summary>
-        public AddEditDialog(DriveMapping existing)
+        public AddEditDialog(DriveMapping existing, System.Collections.Generic.IEnumerable<string> usedLetters = null)
         {
             InitializeComponent();
             _isEdit = existing != null;
@@ -27,11 +28,11 @@ namespace FolderMount
                 BtnOk.Content       = "Save Changes";
             }
 
-            // Populate available drive letters
-            var letters = SubstService.GetAvailableLetters();
+            // Get letters that are free on the system AND not already in our saved list
+            var letters = SubstService.GetAvailableLetters(usedLetters);
 
             if (_isEdit && !letters.Contains(existing.DriveLetter))
-                letters.Insert(0, existing.DriveLetter); // keep current letter selectable
+                letters.Insert(0, existing.DriveLetter); // always keep the current letter selectable
 
             foreach (var l in letters)
                 CmbDriveLetter.Items.Add(l + ":");

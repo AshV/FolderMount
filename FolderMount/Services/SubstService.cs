@@ -28,6 +28,28 @@ namespace FolderMount.Services
                 return (false, $"Folder not found: {folderPath}");
 
             string letter = driveLetter.TrimEnd(':').ToUpper();
+
+            // Pre-check: is this letter already occupied by a real drive or an existing SUBST?
+            // DriveInfo covers both physical drives AND already-active SUBST drives.
+            bool letterInUse = DriveInfo.GetDrives()
+                .Any(d => d.Name.StartsWith(letter + ":", StringComparison.OrdinalIgnoreCase));
+
+            if (letterInUse)
+            {
+                // Check if it's already our own SUBST pointing at the same path (idempotent re-mount is fine)
+                var active = GetActiveMappings();
+                if (active.TryGetValue(letter, out string existingPath)
+                    && string.Equals(existingPath, folderPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    // Already mounted correctly — treat as success
+                    return (true, null);
+                }
+
+                return (false,
+                    $"Drive {letter}: is already in use by another drive or SUBST mapping.\n" +
+                    $"Disconnect the existing drive first, or choose a different letter.");
+            }
+
             return RunSubst($"{letter}: \"{folderPath}\"");
         }
 
@@ -78,14 +100,20 @@ namespace FolderMount.Services
         }
 
         /// <summary>
-        /// Returns drive letters D–Z that are not currently in use
-        /// (not present in DriveInfo.GetDrives() nor in active SUBST mappings).
+        /// Returns drive letters D–Z that are not currently in use by any drive
+        /// (physical, network, or existing SUBST).
+        /// Optionally pass <paramref name="excludeLetters"/> to also exclude letters
+        /// already used in the saved mapping list (prevents duplicate assignments).
         /// </summary>
-        public static List<string> GetAvailableLetters()
+        public static List<string> GetAvailableLetters(IEnumerable<string> excludeLetters = null)
         {
             var inUse = DriveInfo.GetDrives()
                 .Select(d => d.Name.Substring(0, 1).ToUpper())
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            if (excludeLetters != null)
+                foreach (var l in excludeLetters)
+                    inUse.Add(l.TrimEnd(':').ToUpper());
 
             return Enumerable.Range('D', 'Z' - 'D' + 1)
                 .Select(c => ((char)c).ToString())
@@ -107,11 +135,23 @@ namespace FolderMount.Services
             }
         }
 
-        /// <summary>Mounts all mappings in a collection silently (ignores individual failures).</summary>
-        public static void MountAll(System.Collections.Generic.IEnumerable<DriveMapping> mappings)
+        /// <summary>
+        /// Mounts all mappings silently. Returns a summary tuple:
+        /// (mounted count, list of (letter, error) for failures).
+        /// Callers can use this to surface failures in the UI if desired.
+        /// </summary>
+        public static (int Mounted, List<(string Letter, string Error)> Failures)
+            MountAll(System.Collections.Generic.IEnumerable<DriveMapping> mappings)
         {
+            int mounted = 0;
+            var failures = new List<(string, string)>();
             foreach (var m in mappings)
-                Mount(m.DriveLetter, m.FolderPath);
+            {
+                var (ok, err) = Mount(m.DriveLetter, m.FolderPath);
+                if (ok) mounted++;
+                else     failures.Add((m.DisplayLetter, err));
+            }
+            return (mounted, failures);
         }
 
         /// <summary>Unmounts all currently-active mappings in a collection silently.</summary>

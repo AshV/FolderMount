@@ -95,12 +95,14 @@ namespace FolderMount.ViewModels
 
         private void DoAdd()
         {
-            var dlg = new AddEditDialog(null);
+            // Pass all currently-saved letters so they won't show in the picker
+            var usedLetters = Mappings.Select(m => m.DriveLetter);
+            var dlg = new AddEditDialog(null, usedLetters);
             dlg.Owner = Application.Current.MainWindow;
             if (dlg.ShowDialog() == true)
             {
                 var m = dlg.Result;
-                // Conflict check
+                // Fallback conflict check (defence-in-depth)
                 if (Mappings.Any(x => x.DriveLetter.Equals(m.DriveLetter, StringComparison.OrdinalIgnoreCase)))
                 {
                     MessageBox.Show($"Drive {m.DisplayLetter} is already in the list.", "Duplicate Letter",
@@ -117,7 +119,11 @@ namespace FolderMount.ViewModels
         private void DoEdit()
         {
             if (SelectedMapping == null) return;
-            var dlg = new AddEditDialog(SelectedMapping.Clone());
+            // Exclude other mappings' letters (but keep the one being edited available)
+            var usedLetters = Mappings
+                .Where(m => m != SelectedMapping)
+                .Select(m => m.DriveLetter);
+            var dlg = new AddEditDialog(SelectedMapping.Clone(), usedLetters);
             dlg.Owner = Application.Current.MainWindow;
             if (dlg.ShowDialog() == true)
             {
@@ -194,17 +200,43 @@ namespace FolderMount.ViewModels
 
         private void DoMountAll()
         {
-            int mounted = 0, failed = 0;
-            foreach (var m in Mappings.Where(x => !x.IsActive))
+            var inactive = Mappings.Where(x => !x.IsActive).ToList();
+            if (inactive.Count == 0)
             {
-                var (ok, _) = SubstService.Mount(m.DriveLetter, m.FolderPath);
-                if (ok) { m.IsActive = true; mounted++; }
-                else failed++;
+                StatusMessage = "All drives are already mounted.";
+                return;
             }
+
+            int mounted = 0;
+            var failures = new System.Text.StringBuilder();
+
+            foreach (var m in inactive)
+            {
+                var (ok, err) = SubstService.Mount(m.DriveLetter, m.FolderPath);
+                if (ok)
+                {
+                    m.IsActive = true;
+                    mounted++;
+                }
+                else
+                {
+                    failures.AppendLine($"  {m.DisplayLetter}  →  {err}");
+                }
+            }
+
             NotifyCounts();
-            StatusMessage = failed > 0
-                ? $"Mounted {mounted}, {failed} failed — check folder paths."
-                : $"All {mounted} drive(s) mounted.";
+
+            if (failures.Length > 0)
+            {
+                StatusMessage = $"Mounted {mounted} drive(s). {inactive.Count - mounted} failed.";
+                ShowError(
+                    $"Mounted {mounted} of {inactive.Count} drive(s).\n\n" +
+                    $"The following could not be mounted:\n{failures}");
+            }
+            else
+            {
+                StatusMessage = $"All {mounted} drive(s) mounted successfully.";
+            }
         }
 
         private void DoUnmountAll()
