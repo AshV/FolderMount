@@ -12,6 +12,7 @@
 #define AppId        "{{8F2A3B4C-D5E6-7890-ABCD-EF1234567890}"
 
 [Setup]
+SourceDir=..
 AppId={#AppId}
 AppName={#AppName}
 AppVersion={#AppVersion}
@@ -55,7 +56,7 @@ Name: "startupentry"; Description: "Start FolderMount automatically when I log i
 
 [Files]
 Source: "FolderMount\bin\Release\{#AppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "FolderMount\bin\Release\*.dll";          DestDir: "{app}"; Flags: ignoreversion recursesubdirs
+Source: "FolderMount\bin\Release\*.dll";          DestDir: "{app}"; Flags: ignoreversion recursesubdirs skipifsourcedoesntexist
 Source: "FolderMount\Assets\icon.ico";             DestDir: "{app}\Assets"; Flags: ignoreversion
 
 [Icons]
