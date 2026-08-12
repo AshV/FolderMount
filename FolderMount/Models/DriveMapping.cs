@@ -13,6 +13,7 @@ namespace FolderMount.Models
         private string _folderPath;
         private string _label;
         private bool _isActive;
+        private bool _mountOnLoad = true;
 
         /// <summary>Single drive letter, e.g. "P"</summary>
         public string DriveLetter
@@ -42,6 +43,13 @@ namespace FolderMount.Models
             set { _isActive = value; OnPropertyChanged(); OnPropertyChanged(nameof(StatusGlyph)); OnPropertyChanged(nameof(StatusText)); }
         }
 
+        /// <summary>Whether this drive should be automatically mounted on application load.</summary>
+        public bool MountOnLoad
+        {
+            get => _mountOnLoad;
+            set { _mountOnLoad = value; OnPropertyChanged(); }
+        }
+
         /// <summary>Formatted drive letter for display, e.g. "P:"</summary>
         public string DisplayLetter => string.IsNullOrEmpty(DriveLetter) ? "" : DriveLetter + ":";
 
@@ -56,6 +64,6 @@ namespace FolderMount.Models
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
         public DriveMapping Clone() =>
-            new DriveMapping { DriveLetter = DriveLetter, FolderPath = FolderPath, Label = Label, IsActive = IsActive };
+            new DriveMapping { DriveLetter = DriveLetter, FolderPath = FolderPath, Label = Label, IsActive = IsActive, MountOnLoad = MountOnLoad };
     }
 }

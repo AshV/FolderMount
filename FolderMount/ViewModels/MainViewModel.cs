@@ -171,6 +171,8 @@ namespace FolderMount.ViewModels
             if (ok)
             {
                 mapping.IsActive = true;
+                mapping.MountOnLoad = true;
+                SaveAll();
                 NotifyCounts();
                 StatusMessage = $"{mapping.DisplayLetter} mounted.";
             }
@@ -189,6 +191,8 @@ namespace FolderMount.ViewModels
             if (ok)
             {
                 mapping.IsActive = false;
+                mapping.MountOnLoad = false;
+                SaveAll();
                 NotifyCounts();
                 StatusMessage = $"{mapping.DisplayLetter} disconnected.";
             }
@@ -216,6 +220,7 @@ namespace FolderMount.ViewModels
                 if (ok)
                 {
                     m.IsActive = true;
+                    m.MountOnLoad = true;
                     mounted++;
                 }
                 else
@@ -225,6 +230,9 @@ namespace FolderMount.ViewModels
             }
 
             NotifyCounts();
+
+            if (mounted > 0)
+                SaveAll();
 
             if (failures.Length > 0)
             {
@@ -245,7 +253,9 @@ namespace FolderMount.ViewModels
             {
                 SubstService.Unmount(m.DriveLetter);
                 m.IsActive = false;
+                m.MountOnLoad = false;
             }
+            SaveAll();
             NotifyCounts();
             StatusMessage = "All drives disconnected.";
         }

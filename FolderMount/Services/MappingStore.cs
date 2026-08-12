@@ -92,7 +92,8 @@ namespace FolderMount.Services
                 {
                     DriveLetter = (string)e.Attribute("letter"),
                     FolderPath  = (string)e.Attribute("path"),
-                    Label       = (string)e.Attribute("label") ?? string.Empty
+                    Label       = (string)e.Attribute("label") ?? string.Empty,
+                    MountOnLoad = e.Attribute("mountOnLoad") != null ? (bool)e.Attribute("mountOnLoad") : true
                 })
                 .Where(m => !string.IsNullOrWhiteSpace(m.DriveLetter) && !string.IsNullOrWhiteSpace(m.FolderPath))
                 .ToList()
@@ -109,7 +110,8 @@ namespace FolderMount.Services
                         new XElement("Mapping",
                             new XAttribute("letter", m.DriveLetter),
                             new XAttribute("path",   m.FolderPath),
-                            new XAttribute("label",  m.Label ?? string.Empty)
+                            new XAttribute("label",  m.Label ?? string.Empty),
+                            new XAttribute("mountOnLoad", m.MountOnLoad)
                         )
                     )
                 )

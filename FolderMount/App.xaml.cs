@@ -30,15 +30,29 @@ namespace FolderMount
 
             _tray = new TrayManager(
                 onOpen:       ShowMainWindow,
-                onMountAll:   () => { Services.SubstService.MountAll(Services.MappingStore.Load()); RefreshMainIfOpen(); },
-                onUnmountAll: () => { Services.SubstService.UnmountAll(Services.MappingStore.Load()); RefreshMainIfOpen(); },
+                onMountAll:   () => { 
+                    var mappings = Services.MappingStore.Load();
+                    Services.SubstService.MountAll(mappings);
+                    foreach(var m in mappings) m.MountOnLoad = true;
+                    Services.MappingStore.Save(mappings);
+                    RefreshMainIfOpen(); 
+                },
+                onUnmountAll: () => { 
+                    var mappings = Services.MappingStore.Load();
+                    Services.SubstService.UnmountAll(mappings);
+                    foreach(var m in mappings) m.MountOnLoad = false;
+                    Services.MappingStore.Save(mappings);
+                    RefreshMainIfOpen(); 
+                },
                 onSettings:   ShowSettings,
                 onExit:       ExitApp
             );
 
-            if (isStartupRun)
-                Services.SubstService.MountAll(Services.MappingStore.Load());
-            else
+            var loadedMappings = Services.MappingStore.Load();
+            Services.SubstService.MountAll(loadedMappings.Where(m => m.MountOnLoad));
+            Services.SubstService.UnmountAll(loadedMappings.Where(m => !m.MountOnLoad));
+
+            if (!isStartupRun)
                 ShowMainWindow();
         }
 
