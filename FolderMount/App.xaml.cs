@@ -48,9 +48,14 @@ namespace FolderMount
                 onExit:       ExitApp
             );
 
-            var loadedMappings = Services.MappingStore.Load();
-            Services.SubstService.MountAll(loadedMappings.Where(m => m.MountOnLoad));
-            Services.SubstService.UnmountAll(loadedMappings.Where(m => !m.MountOnLoad));
+            System.Threading.Tasks.Task.Run(() => 
+            {
+                var loadedMappings = Services.MappingStore.Load();
+                Services.SubstService.MountAll(loadedMappings.Where(m => m.MountOnLoad));
+                Services.SubstService.UnmountAll(loadedMappings.Where(m => !m.MountOnLoad));
+                
+                Application.Current.Dispatcher.Invoke(() => RefreshMainIfOpen());
+            });
 
             if (!isStartupRun)
                 ShowMainWindow();

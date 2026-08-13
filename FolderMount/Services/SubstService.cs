@@ -1,22 +1,29 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 using FolderMount.Models;
 
 namespace FolderMount.Services
 {
     /// <summary>
-    /// Wraps the Windows SUBST command to mount/unmount virtual drives
-    /// and query currently active SUBST mappings.
-    /// SUBST does NOT require elevated (admin) privileges.
+    /// Uses native Windows Win32 APIs to mount/unmount virtual drives.
+    /// This is significantly faster than launching subst.exe processes.
     /// </summary>
     public static class SubstService
     {
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern bool DefineDosDevice(uint dwFlags, string lpDeviceName, string lpTargetPath);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern uint QueryDosDevice(string lpDeviceName, [Out] char[] lpTargetPath, uint ucchMax);
+
+        private const uint DDD_RAW_TARGET_PATH = 0x00000001;
+        private const uint DDD_REMOVE_DEFINITION = 0x00000002;
+
         /// <summary>
-        /// Mounts a folder as a virtual drive letter using SUBST.
+        /// Mounts a folder as a virtual drive letter using DefineDosDevice.
         /// Returns (success, errorMessage).
         /// </summary>
         public static (bool Success, string Error) Mount(string driveLetter, string folderPath)
@@ -29,82 +36,81 @@ namespace FolderMount.Services
 
             string letter = driveLetter.TrimEnd(':').ToUpper();
 
-            // Pre-check: is this letter already occupied by a real drive or an existing SUBST?
-            // DriveInfo covers both physical drives AND already-active SUBST drives.
+            // Check if it's already mounted correctly
+            var active = GetActiveMappings();
+            if (active.TryGetValue(letter, out string existingPath)
+                && string.Equals(existingPath, folderPath, StringComparison.OrdinalIgnoreCase))
+            {
+                return (true, null);
+            }
+
+            // Check if letter is in use by a real drive or another mapping
             bool letterInUse = DriveInfo.GetDrives()
                 .Any(d => d.Name.StartsWith(letter + ":", StringComparison.OrdinalIgnoreCase));
 
-            if (letterInUse)
+            if (letterInUse && !active.ContainsKey(letter))
             {
-                // Check if it's already our own SUBST pointing at the same path (idempotent re-mount is fine)
-                var active = GetActiveMappings();
-                if (active.TryGetValue(letter, out string existingPath)
-                    && string.Equals(existingPath, folderPath, StringComparison.OrdinalIgnoreCase))
-                {
-                    // Already mounted correctly — treat as success
-                    return (true, null);
-                }
-
                 return (false,
-                    $"Drive {letter}: is already in use by another drive or SUBST mapping.\n" +
+                    $"Drive {letter}: is already in use by another drive or mapping.\n" +
                     $"Disconnect the existing drive first, or choose a different letter.");
             }
 
-            return RunSubst($"{letter}: \"{folderPath}\"");
+            string targetPath = @"\??\" + folderPath;
+            bool result = DefineDosDevice(DDD_RAW_TARGET_PATH, letter + ":", targetPath);
+
+            if (!result)
+            {
+                int error = Marshal.GetLastWin32Error();
+                return (false, $"Failed to mount. Error code: {error}");
+            }
+
+            return (true, null);
         }
 
         /// <summary>
-        /// Removes the SUBST mapping for the given drive letter.
-        /// Does not delete the saved mapping from the XML store.
+        /// Removes the mapping for the given drive letter.
         /// </summary>
         public static (bool Success, string Error) Unmount(string driveLetter)
         {
             string letter = driveLetter.TrimEnd(':').ToUpper();
-            return RunSubst($"{letter}: /D");
+            
+            bool result = DefineDosDevice(DDD_REMOVE_DEFINITION, letter + ":", null);
+            
+            if (!result)
+            {
+                int error = Marshal.GetLastWin32Error();
+                return (false, $"Failed to unmount. Error code: {error}");
+            }
+            return (true, null);
         }
 
         /// <summary>
-        /// Parses the output of the bare SUBST command to return all
-        /// currently active virtual drive mappings as a Dictionary of letter → path.
+        /// Retrieves all currently active virtual drive mappings.
         /// </summary>
         public static Dictionary<string, string> GetActiveMappings()
         {
             var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            try
-            {
-                var psi = new ProcessStartInfo("subst")
-                {
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    CreateNoWindow = true
-                };
-                using (var proc = Process.Start(psi))
-                {
-                    string output = proc.StandardOutput.ReadToEnd();
-                    proc.WaitForExit();
 
-                    // Output format: "P:\: => D:\Projects"
-                    foreach (string line in output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            for (char c = 'A'; c <= 'Z'; c++)
+            {
+                string deviceName = c + ":";
+                char[] targetPath = new char[1024];
+                uint ret = QueryDosDevice(deviceName, targetPath, (uint)targetPath.Length);
+
+                if (ret != 0)
+                {
+                    string path = new string(targetPath, 0, (int)ret - 2); // Remove trailing \0\0
+                    
+                    if (path.StartsWith(@"\??\"))
                     {
-                        var match = Regex.Match(line, @"^([A-Za-z]):\\:\s*=>\s*(.+)$");
-                        if (match.Success)
-                            result[match.Groups[1].Value.ToUpper()] = match.Groups[2].Value.Trim();
+                        result[c.ToString()] = path.Substring(4);
                     }
                 }
             }
-            catch
-            {
-                // If SUBST is unavailable (rare), return empty
-            }
+
             return result;
         }
 
-        /// <summary>
-        /// Returns drive letters D–Z that are not currently in use by any drive
-        /// (physical, network, or existing SUBST).
-        /// Optionally pass <paramref name="excludeLetters"/> to also exclude letters
-        /// already used in the saved mapping list (prevents duplicate assignments).
-        /// </summary>
         public static List<string> GetAvailableLetters(IEnumerable<string> excludeLetters = null)
         {
             var inUse = DriveInfo.GetDrives()
@@ -121,10 +127,6 @@ namespace FolderMount.Services
                 .ToList();
         }
 
-        /// <summary>
-        /// Refreshes the IsActive flag on a collection of mappings
-        /// by comparing them against the currently active SUBST output.
-        /// </summary>
         public static void RefreshStatus(IEnumerable<DriveMapping> mappings)
         {
             var active = GetActiveMappings();
@@ -135,11 +137,6 @@ namespace FolderMount.Services
             }
         }
 
-        /// <summary>
-        /// Mounts all mappings silently. Returns a summary tuple:
-        /// (mounted count, list of (letter, error) for failures).
-        /// Callers can use this to surface failures in the UI if desired.
-        /// </summary>
         public static (int Mounted, List<(string Letter, string Error)> Failures)
             MountAll(System.Collections.Generic.IEnumerable<DriveMapping> mappings)
         {
@@ -149,12 +146,11 @@ namespace FolderMount.Services
             {
                 var (ok, err) = Mount(m.DriveLetter, m.FolderPath);
                 if (ok) mounted++;
-                else     failures.Add((m.DisplayLetter, err));
+                else    failures.Add((m.DisplayLetter, err));
             }
             return (mounted, failures);
         }
 
-        /// <summary>Unmounts all currently-active mappings in a collection silently.</summary>
         public static void UnmountAll(System.Collections.Generic.IEnumerable<DriveMapping> mappings)
         {
             var active = GetActiveMappings();
@@ -162,33 +158,6 @@ namespace FolderMount.Services
             {
                 if (active.ContainsKey(m.DriveLetter))
                     Unmount(m.DriveLetter);
-            }
-        }
-
-
-
-        private static (bool Success, string Error) RunSubst(string arguments)
-        {
-            try
-            {
-                var psi = new ProcessStartInfo("subst", arguments)
-                {
-                    UseShellExecute = false,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true
-                };
-                using (var proc = Process.Start(psi))
-                {
-                    string err = proc.StandardError.ReadToEnd();
-                    proc.WaitForExit();
-                    return proc.ExitCode == 0
-                        ? (true, null)
-                        : (false, string.IsNullOrWhiteSpace(err) ? $"SUBST exited with code {proc.ExitCode}" : err.Trim());
-                }
-            }
-            catch (Exception ex)
-            {
-                return (false, ex.Message);
             }
         }
     }
