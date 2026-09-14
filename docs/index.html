@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Primary SEO Meta Tags -->
-  <title>FolderMount — Free Virtual Drive Manager for Windows | Map Folders to Drive Letters</title>
-  <meta name="title" content="FolderMount — Free Virtual Drive Manager for Windows | Map Folders to Drive Letters">
-  <meta name="description" content="Map local folders to virtual drive letters in Windows 10 & 11 using native SUBST. No admin or UAC required. All mappings persist across reboots and mount silently at login. Free & open-source.">
-  <meta name="keywords" content="windows virtual drive, subst gui, mount folder as drive letter, map folder to drive windows 11, bypass windows max path 260, windows drive mapper, subst persistent reboot, free open source windows utility, foldermount">
+  <title>FolderMount for Windows — Free Virtual Drive Manager | Map Folders to Drive Letters</title>
+  <meta name="title" content="FolderMount for Windows — Free Virtual Drive Manager | Map Folders to Drive Letters">
+  <meta name="description" content="FolderMount for Windows: Free utility to map any local folder to a virtual drive letter (P:, M:). Eliminate long path errors, organize project workspaces, and mount folders with zero admin required. Persists across reboots.">
+  <meta name="keywords" content="foldermount, subst, foldermount for windows, foldermount pc, foldermount windows 11, foldermount windows 10, foldermount alternative, map folder to drive letter, windows virtual drive manager, subst gui, bypass windows max path 260, persistent subst reboot, folder mounting windows">
   <meta name="author" content="AshV">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <meta name="theme-color" content="#1e1e28">
@@ -25,17 +25,18 @@
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://ashv.github.io/FolderMount/">
-  <meta property="og:title" content="FolderMount — Free Virtual Drive Manager for Windows">
-  <meta property="og:description" content="Map any local folder to a virtual drive letter (P:, M:, Z:) using native Windows SUBST. No admin required, zero kernel drivers, and persists across reboots.">
+  <meta property="og:title" content="FolderMount for Windows — Free Virtual Drive Manager">
+  <meta property="og:description" content="Map any local folder to a dedicated virtual drive letter (P:, M:, Z:). Eliminate nested path limits, organize project workspaces, and mount folders with zero admin required. Persists across reboots.">
   <meta property="og:image" content="https://ashv.github.io/FolderMount/assets/images/og-image.jpg">
-  <meta property="og:site_name" content="FolderMount">
+  <meta property="og:image:alt" content="FolderMount for Windows application preview">
+  <meta property="og:site_name" content="FolderMount for Windows">
   <meta property="og:locale" content="en_US">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://ashv.github.io/FolderMount/">
-  <meta name="twitter:title" content="FolderMount — Free Virtual Drive Manager for Windows">
-  <meta name="twitter:description" content="Map local folders to virtual drive letters using Windows SUBST — no admin required, persists across reboots.">
+  <meta name="twitter:title" content="FolderMount for Windows — Free Virtual Drive Manager">
+  <meta name="twitter:description" content="Map local folders to virtual drive letters in Windows 10 & 11 — zero admin required, persists across reboots.">
   <meta name="twitter:image" content="https://ashv.github.io/FolderMount/assets/images/og-image.jpg">
 
   <!-- Stylesheet (Relative Path for GitHub Pages Subpage Hosting) -->
@@ -49,11 +50,12 @@
       {
         "@type": "SoftwareApplication",
         "@id": "https://ashv.github.io/FolderMount/#software",
-        "name": "FolderMount",
+        "name": "FolderMount for Windows",
+        "alternateName": ["FolderMount", "FolderMount Windows", "FolderMount PC"],
         "operatingSystem": "Windows 10, Windows 11",
         "applicationCategory": "UtilitiesApplication",
         "applicationSubCategory": "File Management",
-        "description": "FolderMount is a Windows system tray utility that maps local folders to virtual drive letters using native Windows SUBST command without requiring administrator rights, persisting across reboots.",
+        "description": "FolderMount for Windows is a desktop system tray utility that maps local folders to virtual drive letters using native Windows SUBST command without requiring administrator rights, persisting across reboots.",
         "offers": {
           "@type": "Offer",
           "price": "0",
@@ -62,7 +64,6 @@
         "softwareVersion": "1.0.0",
         "fileSize": "1.2MB",
         "downloadUrl": "https://github.com/AshV/FolderMount/releases/latest",
-        "license": "https://opensource.org/licenses/MIT",
         "author": {
           "@type": "Person",
           "name": "AshV"
@@ -137,6 +138,22 @@
               "@type": "Answer",
               "text": "Yes. All mappings are saved in human-readable XML at %APPDATA%\\FolderMount\\mappings.xml. You can export and import this XML file with one click to clone your workspace drives across multiple machines."
             }
+          },
+          {
+            "@type": "Question",
+            "name": "Is FolderMount for Windows related to the Android FolderMount app?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "While inspired by the same foundational concept of folder mounting and directory redirection that power users appreciated on mobile, FolderMount for Windows is an independent, native desktop utility built specifically for Windows 10 and 11. Instead of mobile bind-mounts requiring device root, FolderMount for Windows leverages native Windows SUBST architecture to assign virtual drive letters to local PC directories in user space without administrator rights."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is FolderMount completely free to use?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, FolderMount is 100% free to use. There are no ads, no telemetry, no tracking, and no subscriptions. You get full access to all virtual drive management features without hidden limits."
+            }
           }
         ]
       },
@@ -184,6 +201,7 @@
       <nav aria-label="Main Navigation">
         <ul class="nav-menu">
           <li><a href="#demo" class="nav-link">Live Demo</a></li>
+          <li><a href="#applications" class="nav-link">Applications</a></li>
           <li><a href="#path-solver" class="nav-link">MAX_PATH Solver</a></li>
           <li><a href="#features" class="nav-link">Features</a></li>
           <li><a href="#comparison" class="nav-link">Comparison</a></li>
@@ -216,11 +234,11 @@
           </div>
 
           <h1 class="hero-title">
-            Map Local Folders to <span class="gradient-text">Virtual Drive Letters</span> Instantly
+            FolderMount for Windows — Map Folders to <span class="gradient-text">Virtual Drive Letters</span>
           </h1>
 
           <p class="hero-lead">
-            Assign fast, clean drive letters (like <code>P:</code>, <code>M:</code>, <code>Z:</code>) to any directory on your PC using native Windows <code>SUBST</code>. <strong>Zero UAC elevation</strong>, zero third-party drivers, and <strong>mappings automatically re-mount on login</strong>.
+            Assign fast, clean drive letters (like <code>P:</code>, <code>M:</code>, <code>Z:</code>) to any directory on your PC. Eliminate nested path limits, organize project workspaces, and mount folders with <strong>zero UAC elevation</strong> and <strong>automatic re-mount on login</strong> — powered by native Windows <code>SUBST</code>.
           </p>
 
           <div class="hero-cta">
@@ -237,7 +255,7 @@
           <div class="hero-meta">
             <div class="meta-item">
               <span class="meta-icon">✓</span>
-              <span>100% Free &amp; Open Source (MIT)</span>
+              <span>100% Free to Use</span>
             </div>
             <div class="meta-item">
               <span class="meta-icon">✓</span>
@@ -374,6 +392,123 @@
         </form>
       </div>
     </div>
+
+    <!-- ==========================================================================
+         Real-World Applications & Use Cases
+         ========================================================================== -->
+    <section id="applications" class="section" style="background: rgba(22, 26, 41, 0.45); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Real-World Workflows</span>
+          <h2 class="section-title">Built for Real Productivity. Designed for Real Workflows.</h2>
+          <p class="section-subtitle">
+            Whether you are building complex software, editing multi-gigabyte 4K timelines, or organizing scattered projects across multiple drives, FolderMount turns complex directories into immediate, clean drive letters.
+          </p>
+        </div>
+
+        <div class="apps-grid">
+          <!-- Card 1: Developers & DevOps -->
+          <div class="app-card">
+            <div class="app-card-header">
+              <div class="app-icon-badge">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              </div>
+              <span class="app-badge">Software &amp; DevOps</span>
+            </div>
+            <h3>Developers &amp; Engineering Teams</h3>
+            <p>
+              Deeply nested dependencies like <code>node_modules</code>, Python virtualenvs, and Git submodules easily trigger Windows 260-char path limits. Mounting your project root as <code>P:\</code> instantly slashes path depths by 80% and eliminates build crashes.
+            </p>
+            <ul class="app-feature-list">
+              <li>Standardizes absolute paths (e.g. <code>P:\config</code>) across team members' computers.</li>
+              <li>Eliminates <code>PathTooLongException</code> in VS Code, npm, and compiler toolchains.</li>
+              <li>Lightning-fast terminal jumps with <code>cd P:</code> without navigating deep folder trees.</li>
+            </ul>
+          </div>
+
+          <!-- Card 2: Video Editors & 3D Creators -->
+          <div class="app-card">
+            <div class="app-card-header">
+              <div class="app-icon-badge cyan">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+              </div>
+              <span class="app-badge">Creative &amp; Studio</span>
+            </div>
+            <h3>Video Editors &amp; 3D Artists</h3>
+            <p>
+              Creative suites like Adobe Premiere Pro, DaVinci Resolve, and Blender rely heavily on linked media files. When assets are scattered across secondary hard drives or external storage, project links break when drive paths change.
+            </p>
+            <ul class="app-feature-list">
+              <li>Map high-speed SSD cache or HDD archives directly to <code>V:\Footage</code> or <code>A:\Assets</code>.</li>
+              <li>Keeps timeline references intact across workstations without "Offline Media" errors.</li>
+              <li>Direct 1-click access in native file dialogs and media bins.</li>
+            </ul>
+          </div>
+
+          <!-- Card 3: Gamers & Modders -->
+          <div class="app-card">
+            <div class="app-card-header">
+              <div class="app-icon-badge purple">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4m-2-2v4m8-2h.01m3.99 0h.01"/></svg>
+              </div>
+              <span class="app-badge">Gaming &amp; Modding</span>
+            </div>
+            <h3>Gamers &amp; Modding Enthusiasts</h3>
+            <p>
+              Managing massive mod packs, texture overhauls, and custom assets for games often strains system drives or requires digging into hidden <code>AppData</code> directories.
+            </p>
+            <ul class="app-feature-list">
+              <li>Mount custom mod staging libraries and texture caches from separate SSD drives.</li>
+              <li>Avoid modifying or duplicating game installation roots on your primary drive.</li>
+              <li>Easily toggle or isolate different mod loadouts with clean drive assignments.</li>
+            </ul>
+          </div>
+
+          <!-- Card 4: Business, Remote & Power Users -->
+          <div class="app-card">
+            <div class="app-card-header">
+              <div class="app-icon-badge green">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              </div>
+              <span class="app-badge">Office &amp; Enterprise</span>
+            </div>
+            <h3>Business &amp; Power Users</h3>
+            <p>
+              Buried corporate folders, synced OneDrive / SharePoint directories, and nested client files waste valuable time every day when opening or saving documents in Office and browser windows.
+            </p>
+            <ul class="app-feature-list">
+              <li>Turn deeply nested client paths into immediate top-level drives like <code>W:\Clients</code>.</li>
+              <li>Runs strictly in user space with <strong>zero administrator or UAC elevation required</strong>.</li>
+              <li>Perfect for locked-down corporate laptops, university lab PCs, and remote desktops.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Spotlight: The PC Solution for Folder Mounting -->
+        <div class="apps-spotlight">
+          <div class="spotlight-content">
+            <div class="spotlight-pill">
+              <span>FolderMount for Windows</span>
+            </div>
+            <h3>The Dedicated Folder Mounting Solution for PC</h3>
+            <p>
+              Power users have long understood the immense value of folder mounting to organize scattered files, redirect heavy directories, and bypass rigid storage limitations. <strong>FolderMount for Windows</strong> brings this essential folder mounting capability to Windows 10 &amp; 11 as a polished, native desktop application.
+            </p>
+            <p>
+              Instead of needing device root or complex terminal scripts, FolderMount for Windows harnesses the standard Microsoft <code>SUBST</code> architecture. It turns any directory into an instant, native virtual drive letter that is immediately recognized by Windows Explorer, command prompts, and every desktop application—persisting seamlessly across reboots.
+            </p>
+          </div>
+          <div class="spotlight-actions">
+            <a href="#download" class="btn btn-primary">
+              <span>Download FolderMount for Windows</span>
+            </a>
+            <a href="#comparison" class="btn btn-ghost">
+              <span>See Comparison Matrix &rarr;</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- ==========================================================================
          MAX_PATH / Path Shortener Interactive Tool
@@ -660,7 +795,7 @@
           <span class="section-tag">Get FolderMount Free</span>
           <h2 class="section-title">Download for Windows 10 &amp; 11</h2>
           <p class="section-subtitle">
-            Clean, lightweight, and completely open source under the MIT License. Choose your preferred package below.
+            Clean, lightweight, and completely free to use. Choose your preferred package below.
           </p>
         </div>
 
@@ -824,11 +959,21 @@
 
           <details class="faq-item">
             <summary class="faq-question">
-              <span>Is FolderMount completely free and open source?</span>
+              <span>Is FolderMount for Windows related to the legacy Android FolderMount app?</span>
               <span class="faq-icon">+</span>
             </summary>
             <div class="faq-answer">
-              Yes, 100% free and open-source under the permissive MIT License. There are no ads, no telemetry, no tracking, and no subscriptions. You are free to view, modify, and build the source code directly from GitHub.
+              While inspired by the same foundational concept of folder mounting and directory redirection that power users appreciated on mobile, <strong>FolderMount for Windows</strong> is an independent, native desktop utility built specifically for Windows 10 and 11. Instead of mobile bind-mounts requiring device root, FolderMount for Windows leverages native Windows <code>SUBST</code> architecture to assign virtual drive letters to local PC directories in user space with zero administrator privileges.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">
+              <span>Is FolderMount completely free to use?</span>
+              <span class="faq-icon">+</span>
+            </summary>
+            <div class="faq-answer">
+              Yes, FolderMount is 100% free to use. There are no ads, no telemetry, no tracking, and no subscriptions. You get full access to all virtual drive management features without hidden limits.
             </div>
           </details>
         </div>
@@ -855,9 +1000,11 @@
           <ul class="footer-links">
             <li><a href="#hero">Overview</a></li>
             <li><a href="#demo">Live Simulator</a></li>
+            <li><a href="#applications">Applications</a></li>
             <li><a href="#path-solver">MAX_PATH Solver</a></li>
             <li><a href="#features">Features</a></li>
             <li><a href="#comparison">Comparison</a></li>
+            <li><a href="#faq">FAQ</a></li>
           </ul>
         </div>
 
@@ -870,21 +1017,11 @@
             <li><a href="https://github.com/AshV/FolderMount/releases">Release Notes</a></li>
           </ul>
         </div>
-
-        <div class="footer-col">
-          <h4>Open Source</h4>
-          <ul class="footer-links">
-            <li><a href="https://github.com/AshV/FolderMount" target="_blank" rel="noopener noreferrer">GitHub Repository</a></li>
-            <li><a href="https://github.com/AshV/FolderMount/issues" target="_blank" rel="noopener noreferrer">Issue Tracker</a></li>
-            <li><a href="https://github.com/AshV/FolderMount/blob/main/FolderMount.sln" target="_blank" rel="noopener noreferrer">Visual Studio Solution</a></li>
-            <li><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener noreferrer">MIT License</a></li>
-          </ul>
-        </div>
       </div>
 
       <div class="footer-bottom">
         <div>
-          &copy; 2026 FolderMount. Released under the <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener noreferrer" style="color: var(--text-secondary);">MIT License</a>.
+          &copy; 2026 FolderMount. Free Windows Virtual Drive &amp; Folder Manager.
         </div>
         <div>
           Designed for seamless GitHub Pages subpage hosting with zero external dependencies.
