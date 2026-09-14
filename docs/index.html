@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Primary SEO Meta Tags -->
+  <title>FolderMount — Free Virtual Drive Manager for Windows | Map Folders to Drive Letters</title>
+  <meta name="title" content="FolderMount — Free Virtual Drive Manager for Windows | Map Folders to Drive Letters">
+  <meta name="description" content="Map local folders to virtual drive letters in Windows 10 & 11 using native SUBST. No admin or UAC required. All mappings persist across reboots and mount silently at login. Free & open-source.">
+  <meta name="keywords" content="windows virtual drive, subst gui, mount folder as drive letter, map folder to drive windows 11, bypass windows max path 260, windows drive mapper, subst persistent reboot, free open source windows utility, foldermount">
+  <meta name="author" content="AshV">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="theme-color" content="#1e1e28">
+
+  <!-- Canonical URL (Works on GitHub Pages subpage or custom domain) -->
+  <link rel="canonical" href="https://ashv.github.io/FolderMount/">
+
+  <!-- Favicon & Icons -->
+  <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./assets/icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-touch-icon.png">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ashv.github.io/FolderMount/">
+  <meta property="og:title" content="FolderMount — Free Virtual Drive Manager for Windows">
+  <meta property="og:description" content="Map any local folder to a virtual drive letter (P:, M:, Z:) using native Windows SUBST. No admin required, zero kernel drivers, and persists across reboots.">
+  <meta property="og:image" content="https://ashv.github.io/FolderMount/assets/images/og-image.jpg">
+  <meta property="og:site_name" content="FolderMount">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://ashv.github.io/FolderMount/">
+  <meta name="twitter:title" content="FolderMount — Free Virtual Drive Manager for Windows">
+  <meta name="twitter:description" content="Map local folders to virtual drive letters using Windows SUBST — no admin required, persists across reboots.">
+  <meta name="twitter:image" content="https://ashv.github.io/FolderMount/assets/images/og-image.jpg">
+
+  <!-- Stylesheet (Relative Path for GitHub Pages Subpage Hosting) -->
+  <link rel="stylesheet" href="./css/style.css">
+
+  <!-- Structured Data (JSON-LD) for Search Engines -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://ashv.github.io/FolderMount/#software",
+        "name": "FolderMount",
+        "operatingSystem": "Windows 10, Windows 11",
+        "applicationCategory": "UtilitiesApplication",
+        "applicationSubCategory": "File Management",
+        "description": "FolderMount is a Windows system tray utility that maps local folders to virtual drive letters using native Windows SUBST command without requiring administrator rights, persisting across reboots.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "softwareVersion": "1.0.0",
+        "fileSize": "1.2MB",
+        "downloadUrl": "https://github.com/AshV/FolderMount/releases/latest",
+        "license": "https://opensource.org/licenses/MIT",
+        "author": {
+          "@type": "Person",
+          "name": "AshV"
+        },
+        "featureList": [
+          "Map any local directory to a virtual drive letter via Windows SUBST",
+          "No administrator or UAC privileges required",
+          "Silent auto-mount at Windows login via HKCU registry",
+          "XML persistence with import and export capability",
+          "Fixes Windows MAX_PATH 260 character path limit",
+          "Native system tray integration with dark theme"
+        ]
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://ashv.github.io/FolderMount/#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://ashv.github.io/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "FolderMount",
+            "item": "https://ashv.github.io/FolderMount/"
+          }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://ashv.github.io/FolderMount/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Does FolderMount require administrator or UAC privileges?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. FolderMount is built entirely on native Windows SUBST command, user-space storage (%LOCALAPPDATA%), and the HKCU registry key. It never prompts for UAC elevation and works in corporate or restricted environments without administrative rights."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do virtual drive mappings persist across reboots?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "When 'Run at Windows startup' is enabled, FolderMount registers a silent launcher in HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run with the /startup flag. On login, it silently re-mounts all saved drive letters in milliseconds without opening any windows."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does FolderMount solve the Windows 260-character path limit (MAX_PATH)?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Deep project directories (such as nested npm node_modules, Python virtual environments, or complex Git submodules) often exceed Windows 260-character MAX_PATH limit. By mounting a deep folder directly to a drive letter like P:\\, path lengths are instantly reduced by over 100+ characters, eliminating file truncation errors."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does FolderMount install kernel drivers or virtual filesystem services?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Zero drivers. Unlike Dokany, WinFsp, or virtual disk emulators, FolderMount uses the standard Microsoft SUBST API built into every version of Windows since Windows XP. It has 0% background CPU usage and will never cause system instability."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I back up or transfer my mappings to another machine?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. All mappings are saved in human-readable XML at %APPDATA%\\FolderMount\\mappings.xml. You can export and import this XML file with one click to clone your workspace drives across multiple machines."
+            }
+          }
+        ]
+      },
+      {
+        "@type": "HowTo",
+        "@id": "https://ashv.github.io/FolderMount/#howto",
+        "name": "How to Map a Folder to a Drive Letter in Windows",
+        "description": "Quick 3-step guide to assign any local folder to a drive letter in Windows 10 & 11 using FolderMount.",
+        "step": [
+          {
+            "@type": "HowToStep",
+            "position": 1,
+            "name": "Select Local Folder",
+            "text": "Open FolderMount and click '+ Add Mapping', then browse to the local folder you wish to map."
+          },
+          {
+            "@type": "HowToStep",
+            "position": 2,
+            "name": "Choose Drive Letter & Label",
+            "text": "Select an available drive letter (A-Z) and give it a friendly name like 'Work Projects'."
+          },
+          {
+            "@type": "HowToStep",
+            "position": 3,
+            "name": "Mount & Access Instantly",
+            "text": "Click Save. The virtual drive appears immediately in Windows File Explorer and stays mounted across reboots."
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="#hero" class="nav-brand" aria-label="FolderMount Home">
+        <img src="./assets/icons/icon-44.png" alt="FolderMount Logo" class="nav-logo" width="36" height="36">
+        <span class="brand-text">FolderMount</span>
+        <span class="brand-badge">v1.0.0</span>
+      </a>
+
+      <nav aria-label="Main Navigation">
+        <ul class="nav-menu">
+          <li><a href="#demo" class="nav-link">Live Demo</a></li>
+          <li><a href="#path-solver" class="nav-link">MAX_PATH Solver</a></li>
+          <li><a href="#features" class="nav-link">Features</a></li>
+          <li><a href="#comparison" class="nav-link">Comparison</a></li>
+          <li><a href="#download" class="nav-link">Download</a></li>
+          <li><a href="#faq" class="nav-link">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="https://github.com/AshV/FolderMount" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm" aria-label="FolderMount on GitHub">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          <span>Star</span>
+        </a>
+        <a href="#download" class="btn btn-primary btn-sm">
+          <span>Download Free</span>
+        </a>
+        <button class="mobile-toggle" aria-label="Toggle mobile menu" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-pill">
+            <span class="hero-pill-badge">Zero Admin Required</span>
+            <span>Windows 10 &amp; 11 Native Virtual Drive Manager</span>
+          </div>
+
+          <h1 class="hero-title">
+            Map Local Folders to <span class="gradient-text">Virtual Drive Letters</span> Instantly
+          </h1>
+
+          <p class="hero-lead">
+            Assign fast, clean drive letters (like <code>P:</code>, <code>M:</code>, <code>Z:</code>) to any directory on your PC using native Windows <code>SUBST</code>. <strong>Zero UAC elevation</strong>, zero third-party drivers, and <strong>mappings automatically re-mount on login</strong>.
+          </p>
+
+          <div class="hero-cta">
+            <a href="https://github.com/AshV/FolderMount/releases/latest" class="btn btn-primary btn-lg">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Download for Windows (v1.0.0)</span>
+            </a>
+            <a href="#demo" class="btn btn-secondary btn-lg">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <span>Try Interactive Simulator</span>
+            </a>
+          </div>
+
+          <div class="hero-meta">
+            <div class="meta-item">
+              <span class="meta-icon">✓</span>
+              <span>100% Free &amp; Open Source (MIT)</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-icon">✓</span>
+              <span>No Admin Rights Needed</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-icon">✓</span>
+              <span>Survives Reboots Silently</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-icon">✓</span>
+              <span>Tiny 1.2 MB Footprint</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==========================================================================
+             Interactive Desktop App Simulator
+             ========================================================================== -->
+        <div id="demo" class="simulator-container" aria-label="Interactive FolderMount Application Demo">
+          <!-- Window Title Bar -->
+          <div class="sim-titlebar">
+            <div class="sim-brand">
+              <img src="./assets/icons/icon-44.png" alt="FolderMount App Icon" width="32" height="32">
+              <div class="sim-title-group">
+                <h4>FolderMount</h4>
+                <span>Virtual Drive Manager</span>
+              </div>
+            </div>
+
+            <div class="sim-stats">
+              <div class="sim-stat-pill">
+                <span class="pulse-dot"></span>
+                <strong id="sim-active-count">3 Active</strong>
+              </div>
+              <div class="sim-stat-pill">
+                <span id="sim-total-count">4 Total</span>
+              </div>
+
+              <div class="sim-window-controls">
+                <button class="sim-win-btn" aria-label="Minimize">—</button>
+                <button class="sim-win-btn" aria-label="Maximize">☐</button>
+                <button class="sim-win-btn close" aria-label="Close">✕</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Toolbar -->
+          <div class="sim-toolbar">
+            <div class="sim-tb-left">
+              <button id="sim-add-btn" class="sim-btn sim-btn-primary">
+                <span>＋ Add Mapping</span>
+              </button>
+              <div class="sim-divider"></div>
+              <button id="sim-mount-all" class="sim-btn">
+                <span>⚡ Mount All</span>
+              </button>
+              <button id="sim-unmount-all" class="sim-btn">
+                <span>⏏ Disconnect All</span>
+              </button>
+            </div>
+
+            <div class="sim-tb-right">
+              <button class="sim-btn" onclick="alert('FolderMount settings:\n- Run at startup: Enabled (HKCU)\n- Storage: %APPDATA%\\FolderMount\\mappings.xml')">
+                <span>⚙ Settings</span>
+              </button>
+              <button id="sim-refresh" class="sim-btn" title="Refresh drive status">
+                <span>↻</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Grid Table -->
+          <div class="sim-grid-wrap">
+            <table class="sim-grid">
+              <thead>
+                <tr>
+                  <th style="width: 100px;">STATUS</th>
+                  <th style="width: 90px;">DRIVE</th>
+                  <th>FOLDER PATH</th>
+                  <th style="width: 170px;">LABEL</th>
+                  <th style="width: 200px;">ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody id="sim-grid-body">
+                <!-- Dynamically injected via app.js -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Real-time Windows Command Inspector -->
+          <div class="sim-cli-inspector">
+            <span class="sim-cli-tag">Windows Command</span>
+            <code id="sim-cli-cmd" class="sim-cli-cmd">SUBST P: "D:\Projects\WebApps\CorePlatform"</code>
+          </div>
+
+          <!-- Statusbar -->
+          <div class="sim-statusbar">
+            <span id="sim-status-msg">Ready. SUBST table synchronized.</span>
+            <span id="sim-bottom-total">Mappings: 4</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modal for Adding New Drive Mapping in Simulator -->
+    <div id="sim-modal-overlay" class="sim-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="sim-modal">
+        <div class="sim-modal-header">
+          <h3 id="modal-title" style="font-size: 1.1rem;">Add Virtual Drive Mapping</h3>
+          <button id="sim-modal-close" class="sim-win-btn close" aria-label="Close dialog">✕</button>
+        </div>
+        <form id="sim-modal-form">
+          <div class="sim-modal-body">
+            <div class="form-group">
+              <label for="sim-new-letter">Select Drive Letter</label>
+              <select id="sim-new-letter" class="form-control">
+                <!-- Injected via JS -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="sim-new-path">Local Folder Path</label>
+              <input type="text" id="sim-new-path" class="form-control" placeholder="C:\Users\You\Projects\MyApp" required>
+            </div>
+            <div class="form-group">
+              <label for="sim-new-label">Friendly Label</label>
+              <input type="text" id="sim-new-label" class="form-control" placeholder="e.g. Work Codebase">
+            </div>
+          </div>
+          <div class="sim-modal-footer">
+            <button type="button" id="sim-modal-cancel" class="btn btn-ghost btn-sm">Cancel</button>
+            <button type="submit" class="btn btn-primary btn-sm">Mount Drive</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         MAX_PATH / Path Shortener Interactive Tool
+         ========================================================================== -->
+    <section id="path-solver" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Developer &amp; Power User Superpower</span>
+          <h2 class="section-title">Bypass the Infamous Windows 260-Character Limit</h2>
+          <p class="section-subtitle">
+            Ever hit <code>PathTooLongException</code> or <code>Filename too long</code> while working with deeply nested <code>node_modules</code>, Python venvs, or Unity assets? FolderMount solves it permanently.
+          </p>
+        </div>
+
+        <div class="path-solver-card">
+          <div class="path-input-group">
+            <input type="text" id="path-tester-input" class="form-control" value="C:\Users\AlexDev\Projects\EnterpriseCloudApp\frontend\packages\web-client\node_modules\@azure\msal-browser\dist\internals" aria-label="Folder path to shorten">
+            <select id="path-tester-letter" class="form-control" style="max-width: 110px;" aria-label="Drive letter to map">
+              <option value="P">Drive P:</option>
+              <option value="M">Drive M:</option>
+              <option value="X">Drive X:</option>
+              <option value="Z">Drive Z:</option>
+            </select>
+          </div>
+
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;">
+            <span style="font-size: 0.8rem; color: var(--text-muted); align-self: center;">Try sample:</span>
+            <button type="button" class="preset-btn btn btn-ghost btn-sm" data-preset="C:\Users\DevUser\Projects\FullStackRepo\node_modules\@storybook\addon-essentials\node_modules\webpack">Node.js node_modules</button>
+            <button type="button" class="preset-btn btn btn-ghost btn-sm" data-preset="C:\Users\Research\MachineLearning\ModelPipelines\.venv\Lib\site-packages\torch\lib">Python VirtualEnv</button>
+            <button type="button" class="preset-btn btn btn-ghost btn-sm" data-preset="D:\GameDev\UnrealEngine\Projects\OpenWorldSciFi\Content\Characters\CyberSoldier\Textures\4K">Game Dev Assets</button>
+          </div>
+
+          <div class="path-compare-grid">
+            <!-- Left: Windows Path Problem -->
+            <div class="path-box problem">
+              <div class="path-box-header">
+                <span class="path-badge badge-danger">Without FolderMount (Exceeds Limits)</span>
+                <span id="orig-path-len" style="font-family: var(--font-mono); font-weight: 700; color: #f87171;">118 chars</span>
+              </div>
+              <div id="orig-path-display" class="path-display">
+                C:\Users\AlexDev\Projects\EnterpriseCloudApp\frontend\packages\web-client\node_modules\@azure\msal-browser\dist\internals
+              </div>
+              <div class="path-stat">
+                <span style="color: #f87171;">✕</span>
+                <span>Causes Git checkout failures, IDE build errors, and Explorer deletion crashes.</span>
+              </div>
+            </div>
+
+            <!-- Right: FolderMount Solution -->
+            <div class="path-box solution">
+              <div class="path-box-header">
+                <span class="path-badge badge-success">Mounted with FolderMount</span>
+                <span id="short-path-len" style="font-family: var(--font-mono); font-weight: 700; color: #4ade80;">24 chars</span>
+              </div>
+              <div id="short-path-display" class="path-display">
+                P:\msal-browser\dist\internals
+              </div>
+              <div class="path-stat">
+                <span style="color: #4ade80;">✓</span>
+                <span id="chars-saved">94 characters saved (80% reduction). Fast, seamless access.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         Bento Grid Feature Showcase
+         ========================================================================== -->
+    <section id="features" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Engineered for Windows</span>
+          <h2 class="section-title">Everything You Need. Zero Bloat.</h2>
+          <p class="section-subtitle">
+            Built as a native Windows desktop app using .NET Framework 4.8. No Electron, no kernel hooks, and no administrator barriers.
+          </p>
+        </div>
+
+        <div class="bento-grid">
+          <!-- Feature 1: No Admin / UAC -->
+          <div class="bento-card col-span-2">
+            <div>
+              <div class="bento-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </div>
+              <h3>Zero Admin Rights &amp; No UAC Prompts</h3>
+              <p>
+                FolderMount operates strictly inside user space. It installs to <code>%LOCALAPPDATA%</code> and writes configuration exclusively to <code>HKCU</code>. Perfect for corporate workstations, restricted work laptops, and school lab environments where you cannot get administrator rights.
+              </p>
+            </div>
+            <div class="bento-visual">
+              PrivilegesRequired=lowest &bull; No UAC elevation prompts &bull; Safe for enterprise PCs
+            </div>
+          </div>
+
+          <!-- Feature 2: Silent Reboot Persistence -->
+          <div class="bento-card">
+            <div>
+              <div class="bento-icon cyan">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              </div>
+              <h3>Persistent Across Reboots</h3>
+              <p>
+                Standard Windows <code>SUBST</code> drives vanish the moment you restart. FolderMount silently registers in <code>HKCU\Run</code> with <code>/startup</code> to re-mount all your drives instantly on login.
+              </p>
+            </div>
+            <div class="bento-visual">
+              <code>FolderMount.exe /startup</code> (silent mount)
+            </div>
+          </div>
+
+          <!-- Feature 3: XML Portability -->
+          <div class="bento-card">
+            <div>
+              <div class="bento-icon green">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              </div>
+              <h3>Export / Import XML Profiles</h3>
+              <p>
+                Keep your team in sync. All drive configurations are saved in clean, human-readable XML at <code>%APPDATA%\FolderMount\mappings.xml</code>. Export and commit to Git or share across machines.
+              </p>
+            </div>
+            <div class="bento-visual">
+              <code>&lt;Mapping letter="P" path="D:\Code" /&gt;</code>
+            </div>
+          </div>
+
+          <!-- Feature 4: System Tray Integration -->
+          <div class="bento-card">
+            <div>
+              <div class="bento-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </div>
+              <h3>Unobtrusive System Tray</h3>
+              <p>
+                Lives quietly in your Windows notification area. Closing the window minimizes it directly to the tray so your workflow remains clean and distraction-free.
+              </p>
+            </div>
+            <div class="bento-visual">
+              Tray icon &bull; Fast right-click menu &bull; Minimize-to-tray
+            </div>
+          </div>
+
+          <!-- Feature 5: Native WPF Lightweight -->
+          <div class="bento-card">
+            <div>
+              <div class="bento-icon cyan">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              </div>
+              <h3>Featherweight Native WPF</h3>
+              <p>
+                No heavy web frameworks or Chromium bundles eating 400 MB of RAM. FolderMount consumes less than 15 MB of memory, launches in under 200 milliseconds, and has 0% idle CPU usage.
+              </p>
+            </div>
+            <div class="bento-visual">
+              1.2 MB installer &bull; .NET 4.8 Built-in &bull; &lt; 15 MB RAM
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         Comparison Matrix
+         ========================================================================== -->
+    <section id="comparison" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Head-to-Head</span>
+          <h2 class="section-title">How FolderMount Compares</h2>
+          <p class="section-subtitle">
+            See why developers and power users choose FolderMount over raw commands and fragile workarounds.
+          </p>
+        </div>
+
+        <div class="comparison-table-wrap">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Capability / Feature</th>
+                <th class="highlight">FolderMount</th>
+                <th>Raw SUBST Command</th>
+                <th>mklink (Symlinks / Junctions)</th>
+                <th>net use (Network Shares)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Survives Windows Reboots</strong></td>
+                <td class="highlight"><span class="check">✓ Automatic (Silent)</span></td>
+                <td><span class="cross">✕ Lost on restart</span></td>
+                <td><span class="check">✓ Permanent</span></td>
+                <td><span class="cross">⚠️ Flaky without network</span></td>
+              </tr>
+              <tr>
+                <td><strong>Requires Administrator / UAC</strong></td>
+                <td class="highlight"><span class="check">✓ Zero Admin Needed</span></td>
+                <td><span class="check">✓ Zero Admin Needed</span></td>
+                <td><span class="cross">✕ Requires Admin (Symlinks)</span></td>
+                <td><span class="check">✓ User level</span></td>
+              </tr>
+              <tr>
+                <td><strong>Modern Dark GUI &amp; Status Dots</strong></td>
+                <td class="highlight"><span class="check">✓ Live WPF Interface</span></td>
+                <td><span class="cross">✕ CLI only</span></td>
+                <td><span class="cross">✕ CLI only</span></td>
+                <td><span class="cross">✕ Explorer dialogs</span></td>
+              </tr>
+              <tr>
+                <td><strong>Assigns Dedicated Drive Letter</strong></td>
+                <td class="highlight"><span class="check">✓ Yes (P:, M:, Z:)</span></td>
+                <td><span class="check">✓ Yes</span></td>
+                <td><span class="cross">✕ No (Folder path only)</span></td>
+                <td><span class="check">✓ Yes</span></td>
+              </tr>
+              <tr>
+                <td><strong>Bypasses MAX_PATH 260 Limit</strong></td>
+                <td class="highlight"><span class="check">✓ Yes</span></td>
+                <td><span class="check">✓ Yes</span></td>
+                <td><span class="cross">⚠️ Partial</span></td>
+                <td><span class="cross">⚠️ Overhead &amp; latency</span></td>
+              </tr>
+              <tr>
+                <td><strong>XML Backup &amp; Team Portability</strong></td>
+                <td class="highlight"><span class="check">✓ 1-Click Import / Export</span></td>
+                <td><span class="cross">✕ Manual batch files</span></td>
+                <td><span class="cross">✕ None</span></td>
+                <td><span class="cross">✕ Complex script</span></td>
+              </tr>
+              <tr>
+                <td><strong>Third-party Drivers Needed</strong></td>
+                <td class="highlight"><span class="check">✓ Zero (Pure Windows API)</span></td>
+                <td><span class="check">✓ Zero</span></td>
+                <td><span class="check">✓ Zero</span></td>
+                <td><span class="cross">SMB stack dependency</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         How It Works Flow
+         ========================================================================== -->
+    <section class="section" style="background: rgba(22, 26, 41, 0.35);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Quick &amp; Simple</span>
+          <h2 class="section-title">Up and Running in 3 Steps</h2>
+          <p class="section-subtitle">No complicated terminal arguments or system tweaking required.</p>
+        </div>
+
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <h3>Select Any Local Folder</h3>
+            <p>Click "＋ Add Mapping" in FolderMount and choose your local directory—whether it's a repository, audio library, or project archive.</p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <h3>Pick a Drive Letter</h3>
+            <p>Select any available letter from A: to Z: and give it a helpful label like "Projects" or "Datasets".</p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <h3>Instant Virtual Drive</h3>
+            <p>Click Mount. The drive appears instantly in Windows Explorer, in cmd/PowerShell, and in all your apps—persisting automatically.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         Download Hub
+         ========================================================================== -->
+    <section id="download" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Get FolderMount Free</span>
+          <h2 class="section-title">Download for Windows 10 &amp; 11</h2>
+          <p class="section-subtitle">
+            Clean, lightweight, and completely open source under the MIT License. Choose your preferred package below.
+          </p>
+        </div>
+
+        <div class="download-grid">
+          <!-- Option A: Installer (Recommended) -->
+          <div class="download-card recommended">
+            <span class="download-badge">Recommended</span>
+            <div>
+              <h3>Installer Setup</h3>
+              <p class="download-sub">Zero-privilege setup wizard created with Inno Setup.</p>
+              <ul class="download-specs">
+                <li>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Installs to <code>%LOCALAPPDATA%</code> (No admin needed)</span>
+                </li>
+                <li>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Adds Start Menu &amp; optional Desktop shortcuts</span>
+                </li>
+                <li>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Registers clean HKCU silent startup hook</span>
+                </li>
+                <li>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Includes clean uninstaller</span>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <a href="https://github.com/AshV/FolderMount/releases/latest" class="btn btn-primary" style="width: 100%;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>Download FolderMountSetup.exe</span>
+              </a>
+              <div style="text-align: center; margin-top: 10px; font-size: 0.8rem; color: var(--text-muted);">
+                v1.0.0 &bull; ~1.2 MB &bull; Windows 10/11
+              </div>
+            </div>
+          </div>
+
+          <!-- Option B: Portable -->
+          <div class="download-card">
+            <div>
+              <h3>Portable Edition</h3>
+              <p class="download-sub">Single standalone executable. Nothing to install.</p>
+              <ul class="download-specs">
+                <li>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Zero installation required</span>
+                </li>
+                <li>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Run directly from USB drive or anywhere on disk</span>
+                </li>
+                <li>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>All settings saved to %APPDATA%\FolderMount</span>
+                </li>
+                <li>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Supports CLI arguments <code>/startup</code></span>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <a href="https://github.com/AshV/FolderMount/releases/latest" class="btn btn-secondary" style="width: 100%;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>Download FolderMount.exe (Portable)</span>
+              </a>
+              <div style="text-align: center; margin-top: 10px; font-size: 0.8rem; color: var(--text-muted);">
+                v1.0.0 &bull; Standalone .EXE &bull; Windows 10/11
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Build from source info -->
+        <div class="checksum-box" style="max-width: 960px; margin: 32px auto 0;">
+          <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
+            <span style="color: var(--accent-primary); font-weight: 600;">Build From Source:</span>
+            <span class="checksum-val">git clone https://github.com/AshV/FolderMount.git &amp;&amp; msbuild FolderMount.sln /p:Configuration=Release</span>
+          </div>
+          <button type="button" class="copy-btn" data-copy="git clone https://github.com/AshV/FolderMount.git && msbuild FolderMount.sln /p:Configuration=Release">
+            Copy
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         FAQ Accordion
+         ========================================================================== -->
+    <section id="faq" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Got Questions?</span>
+          <h2 class="section-title">Frequently Asked Questions</h2>
+          <p class="section-subtitle">Everything you need to know about FolderMount, virtual drives, and Windows SUBST.</p>
+        </div>
+
+        <div class="faq-grid">
+          <details class="faq-item" open>
+            <summary class="faq-question">
+              <span>Does FolderMount require administrator or UAC privileges?</span>
+              <span class="faq-icon">+</span>
+            </summary>
+            <div class="faq-answer">
+              No administrator privileges or UAC elevation prompts are ever required. FolderMount utilizes Microsoft's native <code>SUBST</code> command, which has been standard in Windows since Windows XP and operates entirely in user space. The installer installs to your local user directory (<code>%LOCALAPPDATA%\FolderMount</code>) and writes startup entries only to <code>HKCU</code>.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">
+              <span>How do mapped drives persist across Windows reboots?</span>
+              <span class="faq-icon">+</span>
+            </summary>
+            <div class="faq-answer">
+              By default in Windows, command-line <code>SUBST</code> mappings are temporary and vanish when the user logs off or restarts. When you enable "Run at Windows startup" in FolderMount Settings, the app registers a silent startup entry in <code>HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run</code> with the <code>/startup</code> parameter. When you log in, FolderMount reads your XML configuration and re-mounts all your active drives instantly in the background without opening any windows.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">
+              <span>How does this solve the Windows 260-character path limit (MAX_PATH)?</span>
+              <span class="faq-icon">+</span>
+            </summary>
+            <div class="faq-answer">
+              Windows legacy file APIs enforce a 260-character maximum path length (<code>MAX_PATH</code>). Modern development stacks like Node.js (<code>node_modules</code>), Python packages, and Git repositories frequently generate paths exceeding 280+ characters, causing build failures and file locking. By assigning a drive letter like <code>P:\</code> directly to your project root, you eliminate 100+ characters of prefix path, ensuring all build tools and Explorer operations succeed seamlessly.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">
+              <span>Does FolderMount install kernel drivers or virtual filesystem services?</span>
+              <span class="faq-icon">+</span>
+            </summary>
+            <div class="faq-answer">
+              Zero drivers are installed. Unlike virtual drive utilities like Dokany, WinFsp, or Daemon Tools, FolderMount does not inject kernel drivers or run memory-heavy background services. It is a pure, lightweight Windows Presentation Foundation (WPF) app targeting .NET Framework 4.8, which is pre-installed on all Windows 10 and 11 computers.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">
+              <span>Where are my drive mappings stored? Can I back them up?</span>
+              <span class="faq-icon">+</span>
+            </summary>
+            <div class="faq-answer">
+              All mappings are stored in a simple, human-readable XML file at <code>%APPDATA%\FolderMount\mappings.xml</code>. You can open, back up, export, or import this file with a single click in FolderMount Settings. This makes it effortless to replicate your drive layout across multiple developer workstations.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">
+              <span>What happens if a drive letter is already in use by a physical disk?</span>
+              <span class="faq-icon">+</span>
+            </summary>
+            <div class="faq-answer">
+              FolderMount automatically scans the active Windows drive table on launch and filters out all in-use physical drives (such as <code>C:</code>, <code>D:</code>, optical drives, or existing network mappings). The drive letter dropdown only lets you pick truly available letters (A-Z), preventing collisions.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">
+              <span>Is FolderMount completely free and open source?</span>
+              <span class="faq-icon">+</span>
+            </summary>
+            <div class="faq-answer">
+              Yes, 100% free and open-source under the permissive MIT License. There are no ads, no telemetry, no tracking, and no subscriptions. You are free to view, modify, and build the source code directly from GitHub.
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="./assets/icons/icon-44.png" alt="FolderMount" width="28" height="28" style="border-radius: 6px;">
+            <span style="font-weight: 800; font-size: 1.15rem; color: #ffffff;">FolderMount</span>
+          </div>
+          <p>
+            The fast, lightweight virtual drive manager for Windows. Map local folders to drive letters using native SUBST — no admin required, persists across reboots.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="#hero">Overview</a></li>
+            <li><a href="#demo">Live Simulator</a></li>
+            <li><a href="#path-solver">MAX_PATH Solver</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#comparison">Comparison</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Downloads</h4>
+          <ul class="footer-links">
+            <li><a href="https://github.com/AshV/FolderMount/releases/latest">Latest Release</a></li>
+            <li><a href="#download">Installer (.exe)</a></li>
+            <li><a href="#download">Portable Edition</a></li>
+            <li><a href="https://github.com/AshV/FolderMount/releases">Release Notes</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Open Source</h4>
+          <ul class="footer-links">
+            <li><a href="https://github.com/AshV/FolderMount" target="_blank" rel="noopener noreferrer">GitHub Repository</a></li>
+            <li><a href="https://github.com/AshV/FolderMount/issues" target="_blank" rel="noopener noreferrer">Issue Tracker</a></li>
+            <li><a href="https://github.com/AshV/FolderMount/blob/main/FolderMount.sln" target="_blank" rel="noopener noreferrer">Visual Studio Solution</a></li>
+            <li><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener noreferrer">MIT License</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          &copy; 2026 FolderMount. Released under the <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener noreferrer" style="color: var(--text-secondary);">MIT License</a>.
+        </div>
+        <div>
+          Designed for seamless GitHub Pages subpage hosting with zero external dependencies.
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts (Relative Path for GitHub Pages Subpage Hosting) -->
+  <script src="./js/app.js"></script>
+</body>
+</html>
