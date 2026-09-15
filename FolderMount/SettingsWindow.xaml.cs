@@ -27,7 +27,7 @@ namespace FolderMount
 
         private void ChkStartup_Checked(object sender, RoutedEventArgs e)
         {
-            string exePath = Assembly.GetExecutingAssembly().Location;
+            string exePath = Environment.ProcessPath ?? Assembly.GetExecutingAssembly().Location;
             StartupService.Enable(exePath);
         }
 

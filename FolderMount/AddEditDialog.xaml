@@ -82,30 +82,7 @@
                            Foreground="{StaticResource BrTextSec}"/>
                 <ComboBox Grid.Row="2" x:Name="CmbDriveLetter"
                           Style="{StaticResource InputCombo}"
-                          Height="36" Width="70" HorizontalAlignment="Left">
-                    <ComboBox.ItemContainerStyle>
-                        <Style TargetType="ComboBoxItem">
-                            <Setter Property="Background" Value="{StaticResource BrBgElevated}" />
-                            <Setter Property="Foreground" Value="{StaticResource BrText}" />
-                            <Setter Property="Padding" Value="8,4" />
-                            <Setter Property="BorderThickness" Value="0" />
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource BrBgRowSelect}" />
-                                    <Setter Property="Foreground" Value="{StaticResource BrText}" />
-                                </Trigger>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource BrBgRowSelect}" />
-                                    <Setter Property="Foreground" Value="{StaticResource BrText}" />
-                                </Trigger>
-                                <Trigger Property="IsFocused" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource BrBgRowSelect}" />
-                                    <Setter Property="Foreground" Value="{StaticResource BrText}" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ComboBox.ItemContainerStyle>
-                </ComboBox>
+                          Height="36" Width="70" HorizontalAlignment="Left"/>
             </Grid>
 
             <!-- Label -->

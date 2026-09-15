@@ -27,43 +27,29 @@ FolderMount is a polished Windows system tray app that lets you assign drive let
 ## Requirements
 
 - Windows 10 or 11
-- .NET Framework 4.8 (pre-installed on all Windows 10/11 systems — **no install needed**)
 
 ---
 
 ## Installation
 
-### Option A — Installer (Recommended)
-Run `FolderMountSetup.exe` — **no administrator rights needed**.
-- Installs to `%LOCALAPPDATA%\FolderMount`
-- Creates a Start Menu shortcut
-- Optionally registers a silent startup entry
-
-### Option B — Portable
-Copy `FolderMount.exe` anywhere and run it directly.
+Install from the [Microsoft Store](https://apps.microsoft.com/detail/FolderMount).
 
 ---
 
 ## Build from Source
 
-**Prerequisites:** Visual Studio 2019+ or MSBuild with .NET Framework 4.8 targeting pack.
+**Prerequisites:** Visual Studio 2022+ with the .NET desktop development workload.
 
 ```powershell
 # Clone
-git clone https://github.com/yourname/FolderMount.git
+git clone https://github.com/AshV/FolderMount.git
 cd FolderMount
 
 # Build Release
-msbuild FolderMount.sln /p:Configuration=Release /p:Platform="Any CPU"
+dotnet build FolderMount.sln --configuration Release
 
 # Output
-# FolderMount\bin\Release\FolderMount.exe
-```
-
-**Build installer** (requires [Inno Setup 6](https://jrsoftware.org/isinfo.php)):
-```powershell
-iscc Installer\FolderMount.iss
-# Output: Installer\Output\FolderMountSetup.exe
+# FolderMount\bin\Release\net10.0-windows\FolderMount.dll
 ```
 
 ---
