@@ -6,13 +6,13 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="FolderMount.App"
-    Publisher="CN=FolderMount"
-    Version="1.0.0.0" />
+    Name="AshV.FolderMount"
+    Publisher="CN=2D5D5741-B895-42D2-8ABF-E339497052D5"
+    Version="1.0.2.0" />
 
   <Properties>
-    <DisplayName>FolderMount</DisplayName>
-    <PublisherDisplayName>Ashish Vishwakarma</PublisherDisplayName>
+    <DisplayName>Folder Mount</DisplayName>
+    <PublisherDisplayName>AshV</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
 
@@ -29,7 +29,7 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="FolderMount"
+        DisplayName="Folder Mount"
         Description="FolderMount"
         BackgroundColor="transparent"
         Square150x150Logo="Images\Square150x150Logo.png"
