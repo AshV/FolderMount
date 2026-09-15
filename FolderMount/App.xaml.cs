@@ -20,8 +20,6 @@ namespace FolderMount
             // ── Single-instance guard ─────────────────────────────────────────
             if (!SingleInstance.TryClaimInstance())
             {
-                // Another instance is already running — it has been signalled
-                // to show its window. Exit this second instance immediately.
                 Shutdown();
                 return;
             }
@@ -30,35 +28,56 @@ namespace FolderMount
 
             _tray = new TrayManager(
                 onOpen:       ShowMainWindow,
-                onMountAll:   () => { 
-                    var mappings = Services.MappingStore.Load();
-                    Services.SubstService.MountAll(mappings);
-                    foreach(var m in mappings) m.MountOnLoad = true;
-                    Services.MappingStore.Save(mappings);
-                    RefreshMainIfOpen(); 
-                },
-                onUnmountAll: () => { 
-                    var mappings = Services.MappingStore.Load();
-                    Services.SubstService.UnmountAll(mappings);
-                    foreach(var m in mappings) m.MountOnLoad = false;
-                    Services.MappingStore.Save(mappings);
-                    RefreshMainIfOpen(); 
-                },
+                onMountAll:   HandleMountAll,
+                onUnmountAll: HandleUnmountAll,
                 onSettings:   ShowSettings,
                 onExit:       ExitApp
             );
 
-            System.Threading.Tasks.Task.Run(() => 
+            // Mount/unmount on a background thread for fast startup
+            System.Threading.Tasks.Task.Run(() =>
             {
                 var loadedMappings = Services.MappingStore.Load();
                 Services.SubstService.MountAll(loadedMappings.Where(m => m.MountOnLoad));
                 Services.SubstService.UnmountAll(loadedMappings.Where(m => !m.MountOnLoad));
-                
-                Application.Current.Dispatcher.Invoke(() => RefreshMainIfOpen());
+
+                Current.Dispatcher.Invoke(RefreshMainIfOpen);
             });
 
             if (!isStartupRun)
                 ShowMainWindow();
+        }
+
+        // ── Tray handlers ─────────────────────────────────────────────────────
+        // Delegate to the ViewModel when the main window is open so state stays
+        // in sync. Fall back to loading from disk when no window exists.
+
+        private void HandleMountAll()
+        {
+            if (_mainWindow?.ViewModel != null)
+            {
+                _mainWindow.ViewModel.DoMountAll();
+                return;
+            }
+
+            var mappings = Services.MappingStore.Load();
+            Services.SubstService.MountAll(mappings);
+            foreach (var m in mappings) m.MountOnLoad = true;
+            Services.MappingStore.Save(mappings);
+        }
+
+        private void HandleUnmountAll()
+        {
+            if (_mainWindow?.ViewModel != null)
+            {
+                _mainWindow.ViewModel.DoUnmountAll();
+                return;
+            }
+
+            var mappings = Services.MappingStore.Load();
+            Services.SubstService.UnmountAll(mappings);
+            foreach (var m in mappings) m.MountOnLoad = false;
+            Services.MappingStore.Save(mappings);
         }
 
         // ── Window management ─────────────────────────────────────────────────
@@ -75,8 +94,10 @@ namespace FolderMount
             _mainWindow.Activate();
         }
 
-        private void ShowSettings()
+        internal void ShowSettings()
         {
+            // Ensure the main window is available as Owner before opening settings
+            ShowMainWindow();
             var win = new SettingsWindow { Owner = _mainWindow };
             win.ShowDialog();
         }

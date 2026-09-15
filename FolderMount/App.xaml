@@ -83,17 +83,46 @@
             </Style>
 
             <!-- ═══════════════════════════════════════════════════
-                 BUTTONS — Primary
+                 BUTTONS — Shared base template
+                 All button variants derive from this to avoid
+                 duplicating the Border + ContentPresenter + Trigger
+                 structure across every style.
             ═══════════════════════════════════════════════════ -->
-            <Style x:Key="BtnPrimary" TargetType="Button">
-                <Setter Property="Background"     Value="{StaticResource BrAccent}"     />
-                <Setter Property="Foreground"     Value="White"                         />
-                <Setter Property="BorderBrush"    Value="Transparent"                   />
-                <Setter Property="BorderThickness" Value="0"                            />
-                <Setter Property="Padding"        Value="14,7"                          />
-                <Setter Property="FontSize"       Value="{StaticResource FontSizeBase}" />
-                <Setter Property="FontWeight"     Value="SemiBold"                      />
-                <Setter Property="Cursor"         Value="Hand"                          />
+            <Style x:Key="BtnBase" TargetType="Button">
+                <Setter Property="Background"      Value="Transparent"                   />
+                <Setter Property="Foreground"      Value="{StaticResource BrText}"       />
+                <Setter Property="BorderBrush"     Value="Transparent"                   />
+                <Setter Property="BorderThickness"  Value="0"                            />
+                <Setter Property="Padding"         Value="14,7"                          />
+                <Setter Property="FontSize"        Value="{StaticResource FontSizeBase}" />
+                <Setter Property="FontWeight"      Value="Normal"                        />
+                <Setter Property="Cursor"          Value="Hand"                          />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Root"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="6" Padding="{TemplateBinding Padding}"
+                                    SnapsToDevicePixels="True">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="Root" Property="Opacity" Value="0.4"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Primary (accent) button -->
+            <Style x:Key="BtnPrimary" TargetType="Button" BasedOn="{StaticResource BtnBase}">
+                <Setter Property="Background"  Value="{StaticResource BrAccent}" />
+                <Setter Property="Foreground"  Value="White"                     />
+                <Setter Property="FontWeight"  Value="SemiBold"                  />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
@@ -119,15 +148,11 @@
             </Style>
 
             <!-- Ghost / secondary button -->
-            <Style x:Key="BtnGhost" TargetType="Button">
-                <Setter Property="Background"     Value="{StaticResource BrBgElevated}" />
-                <Setter Property="Foreground"     Value="{StaticResource BrTextSec}"    />
-                <Setter Property="BorderBrush"    Value="{StaticResource BrBorder}"     />
-                <Setter Property="BorderThickness" Value="1"                            />
-                <Setter Property="Padding"        Value="14,7"                          />
-                <Setter Property="FontSize"       Value="{StaticResource FontSizeBase}" />
-                <Setter Property="FontWeight"     Value="Normal"                        />
-                <Setter Property="Cursor"         Value="Hand"                          />
+            <Style x:Key="BtnGhost" TargetType="Button" BasedOn="{StaticResource BtnBase}">
+                <Setter Property="Background"      Value="{StaticResource BrBgElevated}" />
+                <Setter Property="Foreground"      Value="{StaticResource BrTextSec}"    />
+                <Setter Property="BorderBrush"     Value="{StaticResource BrBorder}"     />
+                <Setter Property="BorderThickness"  Value="1"                            />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
@@ -155,49 +180,12 @@
                 </Setter>
             </Style>
 
-            <!-- Danger button -->
-            <Style x:Key="BtnDanger" TargetType="Button">
-                <Setter Property="Background"     Value="#7F1D1D"                       />
-                <Setter Property="Foreground"     Value="White"                         />
-                <Setter Property="BorderBrush"    Value="Transparent"                   />
-                <Setter Property="BorderThickness" Value="0"                            />
-                <Setter Property="Padding"        Value="14,7"                          />
-                <Setter Property="FontSize"       Value="{StaticResource FontSizeBase}" />
-                <Setter Property="FontWeight"     Value="SemiBold"                      />
-                <Setter Property="Cursor"         Value="Hand"                          />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="Button">
-                            <Border x:Name="Root" Background="{TemplateBinding Background}"
-                                    CornerRadius="6" Padding="{TemplateBinding Padding}"
-                                    SnapsToDevicePixels="True">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="Root" Property="Background" Value="{StaticResource BrDanger}"/>
-                                </Trigger>
-                                <Trigger Property="IsPressed" Value="True">
-                                    <Setter TargetName="Root" Property="Background" Value="#DC2626"/>
-                                </Trigger>
-                                <Trigger Property="IsEnabled" Value="False">
-                                    <Setter TargetName="Root" Property="Opacity" Value="0.4"/>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-
             <!-- Icon-only toolbar button -->
-            <Style x:Key="BtnIcon" TargetType="Button">
-                <Setter Property="Background"      Value="Transparent"               />
-                <Setter Property="Foreground"      Value="{StaticResource BrTextSec}" />
-                <Setter Property="BorderBrush"     Value="Transparent"               />
-                <Setter Property="BorderThickness"  Value="0"                        />
-                <Setter Property="Width"           Value="34"                        />
-                <Setter Property="Height"          Value="34"                        />
-                <Setter Property="Cursor"          Value="Hand"                      />
+            <Style x:Key="BtnIcon" TargetType="Button" BasedOn="{StaticResource BtnBase}">
+                <Setter Property="Foreground" Value="{StaticResource BrTextSec}" />
+                <Setter Property="Width"      Value="34"                         />
+                <Setter Property="Height"     Value="34"                         />
+                <Setter Property="Padding"    Value="0"                          />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
@@ -307,7 +295,7 @@
             ═══════════════════════════════════════════════════ -->
             <Style x:Key="InputCombo" TargetType="ComboBox">
                 <Setter Property="Background"      Value="{StaticResource BrBgElevated}"  />
-                <Setter Property="Foreground"      Value="Black"                          />
+                <Setter Property="Foreground"      Value="{StaticResource BrText}"        />
                 <Setter Property="BorderBrush"     Value="{StaticResource BrBorder}"      />
                 <Setter Property="BorderThickness"  Value="1"                             />
                 <Setter Property="Padding"         Value="10,6"                           />

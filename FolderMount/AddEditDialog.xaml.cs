@@ -53,36 +53,19 @@ namespace FolderMount
 
         private void BrowseFolder_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new Microsoft.Win32.OpenFileDialog
+            using (var dlg = new FolderBrowserDialog())
             {
-                Title = "Select a file inside the folder you want to map, or paste a folder path",
-                CheckFileExists = false,
-                ValidateNames = false,
-                FileName = "Folder Selection"
-            };
+                dlg.Description         = "Select the folder to map as a virtual drive";
+                dlg.UseDescriptionForTitle = true;
+                dlg.ShowNewFolderButton  = true;
 
-            if (dlg.ShowDialog() == true)
-            {
-                string path = dlg.FileName;
-                // If they picked an actual file, extract the directory
-                if (File.Exists(path))
-                {
-                    path = Path.GetDirectoryName(path);
-                }
-                else if (Path.GetFileName(path) == "Folder Selection")
-                {
-                    path = Path.GetDirectoryName(path);
-                }
-                
-                if (!string.IsNullOrWhiteSpace(path) && Directory.Exists(path))
-                {
-                    TxtFolderPath.Text = path;
-                }
-                else if (!string.IsNullOrWhiteSpace(path))
-                {
-                    // Fallback to just whatever they pasted if it doesn't match above logic
-                    TxtFolderPath.Text = path;
-                }
+                // If the user already has a path typed/pasted, start the browser there
+                string currentPath = TxtFolderPath.Text.Trim();
+                if (!string.IsNullOrEmpty(currentPath) && Directory.Exists(currentPath))
+                    dlg.SelectedPath = currentPath;
+
+                if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    TxtFolderPath.Text = dlg.SelectedPath;
             }
         }
 

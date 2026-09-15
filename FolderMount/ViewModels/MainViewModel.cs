@@ -41,17 +41,17 @@ namespace FolderMount.ViewModels
 
         // ── Commands ───────────────────────────────────────────────────────────
 
-        public ICommand AddCommand        { get; }
-        public ICommand EditCommand       { get; }
-        public ICommand RemoveCommand     { get; }
-        public ICommand MountCommand      { get; }
-        public ICommand UnmountCommand    { get; }
-        public ICommand MountAllCommand   { get; }
-        public ICommand UnmountAllCommand { get; }
+        public ICommand AddCommand          { get; }
+        public ICommand EditCommand         { get; }
+        public ICommand RemoveCommand       { get; }
+        public ICommand MountCommand        { get; }
+        public ICommand UnmountCommand      { get; }
+        public ICommand MountAllCommand     { get; }
+        public ICommand UnmountAllCommand   { get; }
         public ICommand OpenExplorerCommand { get; }
-        public ICommand ExportCommand     { get; }
-        public ICommand ImportCommand     { get; }
-        public ICommand RefreshCommand    { get; }
+        public ICommand ExportCommand       { get; }
+        public ICommand ImportCommand       { get; }
+        public ICommand RefreshCommand      { get; }
 
         // ── Constructor ───────────────────────────────────────────────────────
 
@@ -77,11 +77,9 @@ namespace FolderMount.ViewModels
         public void LoadMappings()
         {
             Mappings.Clear();
-            var saved = MappingStore.Load();
-            foreach (var m in saved)
+            foreach (var m in MappingStore.Load())
                 Mappings.Add(m);
             RefreshStatus();
-            NotifyCounts();
         }
 
         public void RefreshStatus()
@@ -95,59 +93,53 @@ namespace FolderMount.ViewModels
 
         private void DoAdd()
         {
-            // Pass all currently-saved letters so they won't show in the picker
             var usedLetters = Mappings.Select(m => m.DriveLetter);
-            var dlg = new AddEditDialog(null, usedLetters);
-            dlg.Owner = Application.Current.MainWindow;
-            if (dlg.ShowDialog() == true)
+            var dlg = new AddEditDialog(null, usedLetters) { Owner = Application.Current.MainWindow };
+
+            if (dlg.ShowDialog() != true) return;
+
+            var m = dlg.Result;
+            if (Mappings.Any(x => x.DriveLetter.Equals(m.DriveLetter, StringComparison.OrdinalIgnoreCase)))
             {
-                var m = dlg.Result;
-                // Fallback conflict check (defence-in-depth)
-                if (Mappings.Any(x => x.DriveLetter.Equals(m.DriveLetter, StringComparison.OrdinalIgnoreCase)))
-                {
-                    MessageBox.Show($"Drive {m.DisplayLetter} is already in the list.", "Duplicate Letter",
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-                Mappings.Add(m);
-                SaveAll();
-                RefreshStatus();
-                StatusMessage = $"Added {m.DisplayLetter}";
+                MessageBox.Show($"Drive {m.DisplayLetter} is already in the list.", "Duplicate Letter",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
             }
+
+            Mappings.Add(m);
+            SaveAll();
+            RefreshStatus();
+            StatusMessage = $"Added {m.DisplayLetter}";
         }
 
         private void DoEdit(object param)
         {
-            var mapping = param as Models.DriveMapping ?? SelectedMapping;
+            var mapping = ResolveMapping(param);
             if (mapping == null) return;
-            
-            // Exclude other mappings' letters (but keep the one being edited available)
-            var usedLetters = Mappings
-                .Where(m => m != mapping)
-                .Select(m => m.DriveLetter);
-            var dlg = new AddEditDialog(mapping.Clone(), usedLetters);
-            dlg.Owner = Application.Current.MainWindow;
-            if (dlg.ShowDialog() == true)
-            {
-                var newM = dlg.Result;
-                var idx  = Mappings.IndexOf(mapping);
-                if (idx >= 0)
-                {
-                    Mappings[idx] = newM;
-                    if (mapping.IsActive)
-                        SubstService.Unmount(mapping.DriveLetter);
-                    SaveAll();
-                    RefreshStatus();
-                    StatusMessage = $"Updated {newM.DisplayLetter}";
-                }
-            }
+
+            var usedLetters = Mappings.Where(m => m != mapping).Select(m => m.DriveLetter);
+            var dlg = new AddEditDialog(mapping.Clone(), usedLetters) { Owner = Application.Current.MainWindow };
+
+            if (dlg.ShowDialog() != true) return;
+
+            var newM = dlg.Result;
+            var idx  = Mappings.IndexOf(mapping);
+            if (idx < 0) return;
+
+            Mappings[idx] = newM;
+            if (mapping.IsActive)
+                SubstService.Unmount(mapping.DriveLetter);
+
+            SaveAll();
+            RefreshStatus();
+            StatusMessage = $"Updated {newM.DisplayLetter}";
         }
 
         private void DoRemove(object param)
         {
-            var mapping = param as Models.DriveMapping ?? SelectedMapping;
+            var mapping = ResolveMapping(param);
             if (mapping == null) return;
-            
+
             var ans = MessageBox.Show(
                 $"Remove mapping for {mapping.DisplayLetter}?\n\nThe virtual drive will be disconnected if currently active.",
                 "Confirm Remove", MessageBoxButton.YesNo, MessageBoxImage.Question);
@@ -164,9 +156,9 @@ namespace FolderMount.ViewModels
 
         private void DoMount(object param)
         {
-            var mapping = param as Models.DriveMapping ?? SelectedMapping;
+            var mapping = ResolveMapping(param);
             if (mapping == null) return;
-            
+
             var (ok, err) = SubstService.Mount(mapping.DriveLetter, mapping.FolderPath);
             if (ok)
             {
@@ -184,9 +176,9 @@ namespace FolderMount.ViewModels
 
         private void DoUnmount(object param)
         {
-            var mapping = param as Models.DriveMapping ?? SelectedMapping;
+            var mapping = ResolveMapping(param);
             if (mapping == null) return;
-            
+
             var (ok, err) = SubstService.Unmount(mapping.DriveLetter);
             if (ok)
             {
@@ -202,7 +194,7 @@ namespace FolderMount.ViewModels
             }
         }
 
-        private void DoMountAll()
+        public void DoMountAll()
         {
             var inactive = Mappings.Where(x => !x.IsActive).ToList();
             if (inactive.Count == 0)
@@ -211,35 +203,23 @@ namespace FolderMount.ViewModels
                 return;
             }
 
-            int mounted = 0;
-            var failures = new System.Text.StringBuilder();
+            var (mounted, failures) = SubstService.MountAll(inactive);
 
-            foreach (var m in inactive)
+            // Update model state for successfully mounted drives
+            foreach (var m in inactive.Where(m => !failures.Any(f => f.Letter == m.DisplayLetter)))
             {
-                var (ok, err) = SubstService.Mount(m.DriveLetter, m.FolderPath);
-                if (ok)
-                {
-                    m.IsActive = true;
-                    m.MountOnLoad = true;
-                    mounted++;
-                }
-                else
-                {
-                    failures.AppendLine($"  {m.DisplayLetter}  →  {err}");
-                }
+                m.IsActive = true;
+                m.MountOnLoad = true;
             }
 
             NotifyCounts();
+            if (mounted > 0) SaveAll();
 
-            if (mounted > 0)
-                SaveAll();
-
-            if (failures.Length > 0)
+            if (failures.Count > 0)
             {
-                StatusMessage = $"Mounted {mounted} drive(s). {inactive.Count - mounted} failed.";
-                ShowError(
-                    $"Mounted {mounted} of {inactive.Count} drive(s).\n\n" +
-                    $"The following could not be mounted:\n{failures}");
+                var errorLines = string.Join("\n", failures.Select(f => $"  {f.Letter}  →  {f.Error}"));
+                StatusMessage = $"Mounted {mounted} drive(s). {failures.Count} failed.";
+                ShowError($"Mounted {mounted} of {inactive.Count} drive(s).\n\nThe following could not be mounted:\n{errorLines}");
             }
             else
             {
@@ -247,23 +227,26 @@ namespace FolderMount.ViewModels
             }
         }
 
-        private void DoUnmountAll()
+        public void DoUnmountAll()
         {
-            foreach (var m in Mappings.Where(x => x.IsActive))
+            SubstService.UnmountAll(Mappings.Where(x => x.IsActive));
+
+            foreach (var m in Mappings)
             {
-                SubstService.Unmount(m.DriveLetter);
                 m.IsActive = false;
                 m.MountOnLoad = false;
             }
+
             SaveAll();
             NotifyCounts();
             StatusMessage = "All drives disconnected.";
         }
 
-        private void DoOpenExplorer()
+        private void DoOpenExplorer(object param)
         {
-            if (SelectedMapping?.IsActive == true)
-                Process.Start("explorer.exe", $"{SelectedMapping.DisplayLetter}\\");
+            var mapping = ResolveMapping(param);
+            if (mapping?.IsActive == true)
+                Process.Start("explorer.exe", $"{mapping.DisplayLetter}\\");
         }
 
         private void DoExport()
@@ -289,21 +272,20 @@ namespace FolderMount.ViewModels
                 Title  = "Import Mappings",
                 Filter = "XML Files (*.xml)|*.xml"
             };
-            if (dlg.ShowDialog() == true)
+            if (dlg.ShowDialog() != true) return;
+
+            try
             {
-                try
-                {
-                    var merged = MappingStore.Import(dlg.FileName, Mappings);
-                    Mappings.Clear();
-                    foreach (var m in merged) Mappings.Add(m);
-                    SaveAll();
-                    RefreshStatus();
-                    StatusMessage = $"Imported {merged.Count} mapping(s).";
-                }
-                catch (Exception ex)
-                {
-                    ShowError($"Import failed:\n{ex.Message}");
-                }
+                var merged = MappingStore.Import(dlg.FileName, Mappings);
+                Mappings.Clear();
+                foreach (var m in merged) Mappings.Add(m);
+                SaveAll();
+                RefreshStatus();
+                StatusMessage = $"Imported {merged.Count} mapping(s).";
+            }
+            catch (Exception ex)
+            {
+                ShowError($"Import failed:\n{ex.Message}");
             }
         }
 
@@ -312,6 +294,12 @@ namespace FolderMount.ViewModels
         // ── Helpers ────────────────────────────────────────────────────────────
 
         private void SaveAll() => MappingStore.Save(Mappings);
+
+        /// <summary>
+        /// Resolves the target mapping from a command parameter, falling back to SelectedMapping.
+        /// Centralises the "param as DriveMapping ?? SelectedMapping" pattern used by all row commands.
+        /// </summary>
+        private DriveMapping ResolveMapping(object param) => param as DriveMapping ?? SelectedMapping;
 
         private void NotifyCounts()
         {

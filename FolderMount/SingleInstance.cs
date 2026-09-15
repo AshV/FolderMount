@@ -22,7 +22,7 @@ namespace FolderMount
 
         private static Mutex _mutex;
         private static EventWaitHandle _showEvent;
-        private static Thread _listenerThread;
+        private static CancellationTokenSource _cts;
 
         /// <summary>
         /// Call this at application startup (before any windows are created).
@@ -31,14 +31,12 @@ namespace FolderMount
         /// </summary>
         public static bool TryClaimInstance()
         {
-            // Create or open the named event (used for cross-instance signalling)
             _showEvent = new EventWaitHandle(
                 initialState: false,
                 mode:         EventResetMode.AutoReset,
                 name:         EventName);
 
-            bool createdNew;
-            _mutex = new Mutex(initiallyOwned: true, name: MutexName, createdNew: out createdNew);
+            _mutex = new Mutex(initiallyOwned: true, name: MutexName, createdNew: out bool createdNew);
 
             if (!createdNew)
             {
@@ -51,12 +49,13 @@ namespace FolderMount
 
             // We are the first instance — start a background listener thread
             // that watches for show-window signals from future instances.
-            _listenerThread = new Thread(ListenForShowSignal)
+            _cts = new CancellationTokenSource();
+            var listenerThread = new Thread(() => ListenForShowSignal(_cts.Token))
             {
                 IsBackground = true,
                 Name         = "SingleInstanceListener"
             };
-            _listenerThread.Start();
+            listenerThread.Start();
 
             return true;
         }
@@ -66,24 +65,25 @@ namespace FolderMount
         /// </summary>
         public static void Release()
         {
-            _listenerThread = null; // signals the background thread to stop (app is exiting)
+            _cts?.Cancel();         // signal the background thread to stop
             _showEvent?.Set();      // unblock the wait so the thread can exit cleanly
             try { _mutex?.ReleaseMutex(); } catch { /* already released */ }
             _mutex?.Dispose();
             _showEvent?.Dispose();
+            _cts?.Dispose();
         }
 
         // ── Background listener ───────────────────────────────────────────────
 
-        private static void ListenForShowSignal()
+        private static void ListenForShowSignal(CancellationToken token)
         {
-            while (true)
+            while (!token.IsCancellationRequested)
             {
                 // Block until a second instance signals us (or app exits)
                 bool signalled = _showEvent.WaitOne(Timeout.Infinite);
 
-                if (!signalled || _listenerThread == null)
-                    break; // app is shutting down
+                if (!signalled || token.IsCancellationRequested)
+                    break;
 
                 // Dispatch ShowMainWindow back to the UI thread
                 Application.Current?.Dispatcher.BeginInvoke(

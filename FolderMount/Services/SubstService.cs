@@ -138,7 +138,7 @@ namespace FolderMount.Services
         }
 
         public static (int Mounted, List<(string Letter, string Error)> Failures)
-            MountAll(System.Collections.Generic.IEnumerable<DriveMapping> mappings)
+            MountAll(IEnumerable<DriveMapping> mappings)
         {
             int mounted = 0;
             var failures = new List<(string, string)>();
@@ -151,7 +151,7 @@ namespace FolderMount.Services
             return (mounted, failures);
         }
 
-        public static void UnmountAll(System.Collections.Generic.IEnumerable<DriveMapping> mappings)
+        public static void UnmountAll(IEnumerable<DriveMapping> mappings)
         {
             var active = GetActiveMappings();
             foreach (var m in mappings)

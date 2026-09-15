@@ -31,8 +31,14 @@ namespace FolderMount.Services
             {
                 return Parse(XDocument.Load(MappingsFilePath));
             }
-            catch
+            catch (System.Exception ex)
             {
+                System.Windows.MessageBox.Show(
+                    $"Failed to load mappings from:\n{MappingsFilePath}\n\n{ex.GetType().Name}: {ex.Message}\n\n" +
+                    "Your mapping file may be corrupt. You can try restoring from a backup via Settings → Import.",
+                    "FolderMount — Config Error",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Warning);
                 return new List<DriveMapping>();
             }
         }
@@ -70,9 +76,9 @@ namespace FolderMount.Services
         public static List<DriveMapping> Import(string sourcePath, IEnumerable<DriveMapping> existing)
         {
             var imported = Parse(XDocument.Load(sourcePath));
-            var merged = existing.ToDictionary(m => m.DriveLetter.ToUpper(), StringComparer.OrdinalIgnoreCase);
+            var merged = existing.ToDictionary(m => m.DriveLetter, StringComparer.OrdinalIgnoreCase);
             foreach (var m in imported)
-                merged[m.DriveLetter.ToUpper()] = m;
+                merged[m.DriveLetter] = m;
             return merged.Values.OrderBy(m => m.DriveLetter).ToList();
         }
 
