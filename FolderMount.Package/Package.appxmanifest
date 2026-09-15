@@ -8,7 +8,7 @@
   <Identity
     Name="AshV.FolderMount"
     Publisher="CN=2D5D5741-B895-42D2-8ABF-E339497052D5"
-    Version="1.0.2.0" />
+    Version="1.0.5.0" />
 
   <Properties>
     <DisplayName>Folder Mount</DisplayName>

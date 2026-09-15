@@ -9,10 +9,24 @@
     <AssemblyName>FolderMount</AssemblyName>
     <RootNamespace>FolderMount</RootNamespace>
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <NoWarn>$(NoWarn);WFO0003</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <Resource Include="Assets\icon.ico" />
   </ItemGroup>
+
+  <!-- Workaround for WAP (DesktopBridge) project publishing: ensure project.assets.json exists when wappublish is targeted -->
+  <Target Name="EnsureWapPublishAssetsFile" BeforeTargets="ResolvePackageAssets;_CheckForInvalidConfigurationAndPlatform">
+    <PropertyGroup>
+      <_SourceAssetsFile>$(MSBuildProjectDirectory)\obj\project.assets.json</_SourceAssetsFile>
+    </PropertyGroup>
+    <Copy SourceFiles="$(_SourceAssetsFile)"
+          DestinationFiles="$(ProjectAssetsFile)"
+          SkipUnchangedFiles="true"
+          Condition="'$(ProjectAssetsFile)' != '' and !Exists('$(ProjectAssetsFile)') and Exists('$(_SourceAssetsFile)')" />
+  </Target>
 
 </Project>
