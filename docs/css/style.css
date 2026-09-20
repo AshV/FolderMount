@@ -70,7 +70,7 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body {
@@ -81,7 +81,7 @@ body {
     radial-gradient(circle at 85% 25%, rgba(56, 189, 248, 0.10) 0%, transparent 40%),
     radial-gradient(circle at 50% 65%, rgba(124, 115, 255, 0.08) 0%, transparent 50%);
   background-attachment: fixed;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 a {
@@ -176,6 +176,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Navigation Bar */
 .navbar {
+  position: -webkit-sticky;
   position: sticky;
   top: 0;
   z-index: 1000;
