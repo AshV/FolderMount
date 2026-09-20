@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - FolderMount</title>
+  <style>
+    :root {
+      --bg: #1E1E28;
+      --card-bg: #252530;
+      --border: #3F3F5A;
+      --text: #F8FAFC;
+      --text-sec: #CBD5E1;
+      --accent: #7C73FF;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      margin: 0;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px 40px;
+    }
+    h1 {
+      color: var(--text);
+      margin-top: 0;
+      font-size: 1.8rem;
+    }
+    h2 {
+      color: var(--accent);
+      font-size: 1.2rem;
+      margin-top: 28px;
+    }
+    p, li {
+      color: var(--text-sec);
+      font-size: 0.95rem;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    .date {
+      color: #94A3B8;
+      font-size: 0.85rem;
+      margin-bottom: 24px;
+    }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Privacy Policy for FolderMount</h1>
+    <div class="date">Last updated: September 15, 2026</div>
+
+    <p><strong>FolderMount</strong> is committed to protecting your privacy. This Privacy Policy explains our practices regarding user data.</p>
+
+    <h2>1. No Personal Data Collection</h2>
+    <p>FolderMount is a completely offline desktop utility. It does not collect, transmit, store, or share any personally identifiable information (PII) or user data.</p>
+
+    <h2>2. No Telemetry or Analytics</h2>
+    <p>FolderMount does not contain any analytics SDKs, telemetry frameworks, tracking cookies, or third-party monitoring services. No usage statistics or error reports are transmitted over the internet.</p>
+
+    <h2>3. Local Device Storage Only</h2>
+    <p>FolderMount operates entirely on your local machine:</p>
+    <ul>
+      <li><strong>Drive Mappings:</strong> Your folder paths, drive letters, and labels are stored locally on your device in an XML file at <code>%APPDATA%\FolderMount\mappings.xml</code>. This file never leaves your computer.</li>
+      <li><strong>Startup Settings:</strong> If you choose to enable "Run at Windows startup", FolderMount creates a standard Windows registry entry under your user profile (<code>HKCU</code>) solely to restart the app when you log in.</li>
+    </ul>
+
+    <h2>4. Network Access</h2>
+    <p>FolderMount does not require, request, or initiate any internet connections. It functions completely without an active network connection.</p>
+
+    <h2>5. Changes to This Policy</h2>
+    <p>If we update this policy, the updated version will be posted here with a revised "Last updated" date.</p>
+
+    <h2>6. Contact</h2>
+    <p>If you have any questions or feedback regarding this Privacy Policy, please open an issue on our GitHub repository: <a href="https://github.com/AshV/FolderMount" target="_blank" rel="noopener">https://github.com/AshV/FolderMount</a>.</p>
+  </div>
+</body>
+</html>
