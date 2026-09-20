@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initPathShortener();
   initCopyButtons();
   initMobileNav();
-  initDynamicCanonical();
 });
 
 /* ==========================================================================
