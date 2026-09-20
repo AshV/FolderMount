@@ -1343,10 +1343,9 @@ h1, h2, h3, h4, h5, h6 {
    Download Hub Section
    ========================================================================== */
 .download-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  max-width: 960px;
+  display: flex;
+  justify-content: center;
+  max-width: 640px;
   margin: 0 auto;
 }
 
@@ -1734,9 +1733,6 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 0.95rem;
   }
 
-  .hero-cta .btn-secondary {
-    display: none; /* Hide 'Try Interactive simulator' button on small screens */
-  }
 
   .ms-store-badge-link {
     width: 100%;
@@ -1868,7 +1864,7 @@ h1, h2, h3, h4, h5, h6 {
 
   /* Download Section */
   .download-grid {
-    grid-template-columns: 1fr;
+    width: 100%;
   }
 
   .download-card {
