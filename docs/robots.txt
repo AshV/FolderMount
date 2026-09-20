@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ashv.github.io/FolderMount/sitemap.xml
+Sitemap: https://www.ashishvishwakarma.com/FolderMount/sitemap.xml
