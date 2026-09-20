@@ -70,6 +70,7 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 body {
@@ -230,6 +231,10 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   gap: 32px;
   list-style: none;
+}
+
+.mobile-only-item {
+  display: none;
 }
 
 .nav-link {
@@ -1386,6 +1391,13 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text-muted);
 }
 
+.checksum-text-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+}
+
 .checksum-val {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1540,86 +1552,426 @@ h1, h2, h3, h4, h5, h6 {
 /* ==========================================================================
    Responsive Media Queries
    ========================================================================== */
+
+/* --- Tablet / Small Laptop (<= 1024px) --- */
 @media (max-width: 1024px) {
   .apps-grid {
     grid-template-columns: 1fr;
   }
+
   .apps-spotlight {
     flex-direction: column;
     align-items: flex-start;
   }
+
   .spotlight-actions {
     width: 100%;
   }
+
   .bento-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .bento-card.col-span-2 {
     grid-column: span 1;
   }
+
   .steps-grid {
     grid-template-columns: 1fr;
     gap: 32px;
   }
+
   .footer-grid {
     grid-template-columns: 1fr 1fr;
   }
 }
 
+/* --- Mobile / Tablet Portrait (<= 768px) --- */
 @media (max-width: 768px) {
-  .nav-menu {
-    display: none;
-    position: absolute;
-    top: 74px;
-    left: 0;
-    width: 100%;
-    background: var(--bg-surface);
-    border-bottom: 1px solid var(--border-subtle);
-    flex-direction: column;
-    padding: 24px;
-    gap: 18px;
+  /* Section Spacing */
+  .section {
+    padding-top: 60px;
+    padding-bottom: 60px;
   }
 
-  .nav-menu.open {
-    display: flex;
+  .section-header {
+    margin-bottom: 36px;
+  }
+
+  .section-title {
+    font-size: 1.85rem;
+  }
+
+  /* Header & Navigation */
+  .nav-container {
+    height: 64px;
+  }
+
+  .nav-actions .btn-ghost {
+    display: none; /* Hide GitHub star button on mobile to prevent navbar blowout */
+  }
+
+  .nav-actions .btn-primary {
+    padding: 7px 14px;
+    font-size: 0.82rem;
   }
 
   .mobile-toggle {
     display: block;
   }
 
-  .apps-spotlight {
-    padding: 24px 20px;
-  }
-
-  .bento-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .download-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .path-compare-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .sim-tb-left, .sim-tb-right {
+  .nav-menu {
+    display: none;
+    position: absolute;
+    top: 64px;
+    left: 0;
     width: 100%;
-    justify-content: flex-start;
+    background: rgba(15, 18, 29, 0.98);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid var(--border-card);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    flex-direction: column;
+    padding: 20px 24px;
+    gap: 14px;
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
+    z-index: 999;
   }
 
-  .footer-grid {
-    grid-template-columns: 1fr;
+  .nav-menu.open {
+    display: flex;
+  }
+
+  .nav-link {
+    font-size: 1.05rem;
+    padding: 8px 0;
+    display: block;
+    width: 100%;
+  }
+
+  .mobile-only-item {
+    display: block;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 12px;
+    margin-top: 4px;
+  }
+
+  /* Hero Section */
+  .hero {
+    padding-top: 36px;
+    padding-bottom: 56px;
+  }
+
+  .hero-pill {
+    font-size: 0.8rem;
+    padding: 6px 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .hero-title {
+    font-size: clamp(1.85rem, 7vw, 2.6rem);
+    margin-bottom: 16px;
+  }
+
+  .hero-lead {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  .hero-cta {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .hero-cta .btn {
+    width: 100%;
+    white-space: normal;
+    text-align: center;
+    padding: 14px 20px;
+    font-size: 0.95rem;
+  }
+
+  .hero-meta {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px 16px;
+    font-size: 0.82rem;
+    text-align: left;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+
+  /* Simulator */
+  .simulator-container {
+    border-radius: var(--radius-md);
   }
 
   .sim-titlebar {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+    padding: 12px 16px;
   }
+
   .sim-stats {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .sim-toolbar {
+    padding: 10px 14px;
+    gap: 8px;
+  }
+
+  .sim-tb-left, .sim-tb-right {
+    width: 100%;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  .sim-btn {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+
+  .sim-divider {
+    display: none;
+  }
+
+  .sim-grid-wrap {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sim-cli-inspector {
+    padding: 10px 14px;
+    font-size: 0.72rem;
+  }
+
+  .sim-statusbar {
+    padding: 8px 14px;
+    font-size: 0.68rem;
+  }
+
+  /* MAX_PATH Solver */
+  .path-solver-card {
+    padding: 24px 18px;
+    border-radius: var(--radius-lg);
+  }
+
+  .path-input-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .path-input-group .form-control {
+    min-width: 0 !important;
+    width: 100%;
+  }
+
+  #path-tester-letter {
+    max-width: 100% !important;
+    width: 100%;
+  }
+
+  .path-compare-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .path-box {
+    padding: 16px 14px;
+  }
+
+  .path-display {
+    font-size: 0.78rem;
+    padding: 10px;
+  }
+
+  /* Use Cases & Spotlight */
+  .apps-spotlight {
+    padding: 24px 20px;
+  }
+
+  .spotlight-content h3 {
+    font-size: 1.25rem;
+  }
+
+  .spotlight-actions .btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .app-card {
+    padding: 24px 20px;
+  }
+
+  /* Bento Grid */
+  .bento-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .bento-card {
+    padding: 24px 20px;
+  }
+
+  /* Comparison Table */
+  .comparison-table-wrap {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .comparison-table th, .comparison-table td {
+    padding: 12px 14px;
+    font-size: 0.82rem;
+  }
+
+  /* Download Section */
+  .download-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .download-card {
+    padding: 32px 22px;
+  }
+
+  .download-card h3 {
+    font-size: 1.4rem;
+  }
+
+  .checksum-box {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  .checksum-box > div, .checksum-text-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    width: 100%;
+  }
+
+  .checksum-val {
+    white-space: normal;
+    word-break: break-all;
+    font-size: 0.74rem;
+  }
+
+  .copy-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 9px;
+  }
+
+  /* FAQ */
+  .faq-question {
+    padding: 16px 18px;
+    font-size: 0.96rem;
+  }
+
+  .faq-answer {
+    padding: 0 18px 18px;
+    font-size: 0.9rem;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 48px 0 24px;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+/* --- Small Mobile Phones (<= 480px) --- */
+@media (max-width: 480px) {
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .nav-brand {
+    gap: 8px;
+  }
+
+  .brand-text {
+    font-size: 1.1rem;
+  }
+
+  .brand-badge {
+    display: none; /* Free up space for brand text on narrow devices */
+  }
+
+  .nav-actions {
+    gap: 8px;
+  }
+
+  .nav-actions .btn-primary {
+    padding: 6px 10px;
+    font-size: 0.78rem;
+  }
+
+  .hero-meta {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    max-width: 280px;
+  }
+
+  .hero-pill {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+
+  .hero-pill-badge {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+  }
+
+  .sim-brand img {
+    width: 26px;
+    height: 26px;
+  }
+
+  .sim-title-group h4 {
+    font-size: 0.9rem;
+  }
+
+  .sim-stat-pill {
+    padding: 4px 8px;
+    font-size: 0.72rem;
+  }
+
+  .sim-win-btn {
+    width: 20px;
+    height: 20px;
+  }
+
+  .path-solver-card {
+    padding: 18px 14px;
+  }
+
+  .download-card {
+    padding: 28px 16px;
+  }
+
+  .download-badge {
+    right: 16px;
+    top: -10px;
+    font-size: 0.68rem;
+    padding: 3px 9px;
   }
 }
