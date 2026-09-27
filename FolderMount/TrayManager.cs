@@ -36,7 +36,7 @@ namespace FolderMount
 
             AddItem(menu, "📂  Open FolderMount",          onOpen);
             AddItem(menu, "⚡  Mount All Drives",          onMountAll);
-            AddItem(menu, "⏏  Disconnect All",             onUnmountAll);
+            AddItem(menu, "⏏  Eject All Drives",          onUnmountAll);
             menu.Items.Add(new ToolStripSeparator());
             AddItem(menu, "💽  Actual Drives & Labels",   onActualDrives);
             AddItem(menu, "⚙  Settings",                   onSettings);

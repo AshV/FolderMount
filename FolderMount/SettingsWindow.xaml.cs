@@ -98,7 +98,7 @@ namespace FolderMount
             if (dlg.ShowDialog() == true)
             {
                 var ans = MessageBox.Show(
-                    "Importing will replace your current mappings. Existing mapped drives will be disconnected.\n\nAre you sure you want to proceed?",
+                    "Importing will replace your current mappings. Existing mapped drives will be ejected.\n\nAre you sure you want to proceed?",
                     "Confirm Import", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
                 if (ans == MessageBoxResult.Yes)

@@ -78,7 +78,7 @@ namespace FolderMount.Models
         public SolidColorBrush StatusBrush => IsActive ? BrushActive : BrushInactive;
 
         /// <summary>Human-readable status.</summary>
-        public string StatusText => IsActive ? "Mounted" : "Inactive";
+        public string StatusText => IsActive ? "Mounted" : "Ejected";
 
         /// <summary>Visible when the drive is NOT mounted (show "Mount" button).</summary>
         public Visibility MountVisibility => IsActive ? Visibility.Collapsed : Visibility.Visible;

@@ -58,7 +58,7 @@ function initAppSimulator() {
           <div class="sim-status-cell">
             <span class="sim-status-dot ${item.active ? 'status-active' : 'status-inactive'}"></span>
             <span style="font-weight: 500; color: ${item.active ? 'var(--accent-success)' : 'var(--text-muted)'};">
-              ${item.active ? 'Active' : 'Inactive'}
+              ${item.active ? 'Mounted' : 'Ejected'}
             </span>
           </div>
         </td>
@@ -73,7 +73,7 @@ function initAppSimulator() {
         </td>
         <td>
           <div class="sim-action-cell">
-            <button class="sim-act-btn ${item.active ? 'btn-eject' : 'btn-mount'}" data-action="toggle" data-id="${item.id}" title="${item.active ? 'Disconnect virtual drive' : 'Mount virtual drive'}">
+            <button class="sim-act-btn ${item.active ? 'btn-eject' : 'btn-mount'}" data-action="toggle" data-id="${item.id}" title="${item.active ? 'Eject virtual drive' : 'Mount virtual drive'}">
               ${item.active ? '⏏ Eject' : '⚡ Mount'}
             </button>
             <span style="color: #3f3f5a;">|</span>
@@ -130,14 +130,14 @@ function initAppSimulator() {
       if (item.active) {
         setCommand(`SUBST ${item.letter}: "${item.path}"`, `Virtual drive ${item.letter}: mounted successfully.`);
       } else {
-        setCommand(`SUBST ${item.letter}: /D`, `Virtual drive ${item.letter}: disconnected.`);
+        setCommand(`SUBST ${item.letter}: /D`, `Virtual drive ${item.letter}: ejected.`);
       }
       renderGrid();
     } else if (action === 'open') {
       setCommand(`explorer.exe "${item.letter}:\\"`, `Opening virtual drive ${item.letter}: in Windows File Explorer...`);
     } else if (action === 'delete') {
       if (item.active) {
-        setCommand(`SUBST ${item.letter}: /D`, `Unmounted and deleted mapping for ${item.letter}:`);
+        setCommand(`SUBST ${item.letter}: /D`, `Ejected and deleted mapping for ${item.letter}:`);
       } else {
         setCommand(`<!-- Removed ${item.letter}: mapping from mappings.xml -->`, `Mapping for ${item.letter}: removed.`);
       }
@@ -159,7 +159,7 @@ function initAppSimulator() {
     unmountAllBtn.addEventListener('click', () => {
       mappings.forEach(m => m.active = false);
       renderGrid();
-      setCommand(`FolderMount /unmountall (disconnected all virtual drives)`, `All virtual drives disconnected.`);
+      setCommand(`FolderMount /unmountall (ejected all virtual drives)`, `All virtual drives ejected.`);
     });
   }
 

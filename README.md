@@ -16,8 +16,8 @@ Published and distributed via the **Microsoft Store** with automatic background 
 | 🔄 **Auto-Mount on Login** | Silent startup via Windows Registry (`HKCU`) — no elevation needed |
 | 📋 **XML Persistence** | Mappings safely saved to `%APPDATA%\FolderMount\mappings.xml` |
 | 📤 **Export / Import** | Back up or share your mappings across PCs via XML |
-| 🟢 **Live Status** | Real-time active/inactive status dot and action buttons per drive |
-| ⚡ **Bulk Actions** | Mount All / Disconnect All in one click from main window or tray |
+| 🟢 **Live Status** | Real-time mounted/ejected status dot and action buttons per drive |
+| ⚡ **Bulk Actions** | Mount All / Eject All in one click from main window or tray |
 | 📂 **Open in Explorer** | Jump straight to the virtual drive with a single click |
 | 🏷️ **Labels** | Assign friendly nicknames to folders |
 | 💽 **Actual Drive Optimization** | Convert host volume labels to registry drive labels so virtual drives display custom names |

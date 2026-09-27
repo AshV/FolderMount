@@ -108,11 +108,11 @@
 
                     <Button Content="⚡ Mount All" Style="{StaticResource BtnGhost}"
                             Command="{Binding MountAllCommand}" Margin="0,0,6,0"
-                            ToolTip="Mount all inactive drives"/>
+                            ToolTip="Mount all ejected drives"/>
 
-                    <Button Content="⏏ Disconnect All" Style="{StaticResource BtnGhost}"
+                    <Button Content="⏏ Eject All" Style="{StaticResource BtnGhost}"
                             Command="{Binding UnmountAllCommand}" Margin="0,0,6,0"
-                            ToolTip="Disconnect all active drives"/>
+                            ToolTip="Eject all mounted drives"/>
                 </StackPanel>
 
                 <!-- Right: Actual Drives, Settings & Refresh -->
@@ -216,7 +216,7 @@
                                         Command="{Binding DataContext.UnmountCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                         CommandParameter="{Binding}"
                                         Visibility="{Binding UnmountVisibility}"
-                                        Content="⏏ Eject" ToolTip="Disconnect this drive"/>
+                                        Content="⏏ Eject" ToolTip="Eject this drive"/>
                                 
                                 <Rectangle Width="1" Fill="{StaticResource BrBorderSubtle}" Margin="4,2,8,2"/>
 

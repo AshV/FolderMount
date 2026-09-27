@@ -159,7 +159,7 @@ namespace FolderMount.ViewModels
             if (mapping == null) return;
 
             var ans = MessageBox.Show(
-                $"Remove mapping for {mapping.DisplayLetter}?\n\nThe virtual drive will be disconnected if currently active.",
+                $"Remove mapping for {mapping.DisplayLetter}?\n\nThe virtual drive will be ejected if currently active.",
                 "Confirm Remove", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (ans != MessageBoxResult.Yes) return;
 
@@ -203,11 +203,11 @@ namespace FolderMount.ViewModels
                 mapping.MountOnLoad = false;
                 SaveAll();
                 NotifyCounts();
-                StatusMessage = $"{mapping.DisplayLetter} disconnected.";
+                StatusMessage = $"{mapping.DisplayLetter} ejected.";
             }
             else
             {
-                ShowError($"Could not disconnect {mapping.DisplayLetter}:\n{err}");
+                ShowError($"Could not eject {mapping.DisplayLetter}:\n{err}");
             }
         }
 
@@ -256,7 +256,7 @@ namespace FolderMount.ViewModels
 
             SaveAll();
             NotifyCounts();
-            StatusMessage = "All drives disconnected.";
+            StatusMessage = "All drives ejected.";
         }
 
         private void DoOpenExplorer(object param)

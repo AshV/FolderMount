@@ -58,7 +58,7 @@ namespace FolderMount.Services
             {
                 return (false,
                     $"Drive {letter}: is already in use by another drive or mapping.\n" +
-                    $"Disconnect the existing drive first, or choose a different letter.");
+                    $"Eject the existing drive first, or choose a different letter.");
             }
 
             string targetPath = @"\??\" + folderPath;
