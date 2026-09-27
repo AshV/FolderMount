@@ -82,13 +82,14 @@
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
                   CanUserResizeRows="False"
+                  CanUserResizeColumns="True"
                   IsReadOnly="True"
                   Margin="20,14,20,10">
 
             <DataGrid.Columns>
 
                 <!-- DRIVE LETTER & DETAILS -->
-                <DataGridTemplateColumn Header="DRIVE" Width="170">
+                <DataGridTemplateColumn Header="DRIVE" Width="1.3*" MinWidth="150">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel VerticalAlignment="Center">
@@ -101,19 +102,20 @@
                                     </Border>
                                 </StackPanel>
                                 <TextBlock Text="{Binding DisplayDetails}" FontSize="11"
-                                           Foreground="{StaticResource BrTextSec}" Margin="0,3,0,0"/>
+                                           Foreground="{StaticResource BrTextSec}" Margin="0,3,0,0"
+                                           TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
                 <!-- VOLUME LABEL (FILESYSTEM) -->
-                <DataGridTemplateColumn Header="VOLUME LABEL (DISK)" Width="170">
+                <DataGridTemplateColumn Header="VOLUME LABEL (DISK)" Width="1*" MinWidth="110">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel VerticalAlignment="Center">
                                 <TextBlock Text="{Binding DisplayVolumeLabel}" FontWeight="SemiBold" FontSize="12"
-                                           Foreground="{StaticResource BrText}"/>
+                                           Foreground="{StaticResource BrText}" TextTrimming="CharacterEllipsis"/>
                                 <TextBlock Text="Filesystem metadata" FontSize="10"
                                            Foreground="{StaticResource BrTextMuted}" Margin="0,2,0,0"/>
                             </StackPanel>
@@ -122,12 +124,12 @@
                 </DataGridTemplateColumn>
 
                 <!-- DRIVE LABEL (EXPLORER OVERRIDE) -->
-                <DataGridTemplateColumn Header="DRIVE LABEL (EXPLORER)" Width="170">
+                <DataGridTemplateColumn Header="DRIVE LABEL (EXPLORER)" Width="1*" MinWidth="110">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel VerticalAlignment="Center">
                                 <TextBlock Text="{Binding DisplayDriveLabel}" FontWeight="SemiBold" FontSize="12"
-                                           Foreground="{StaticResource BrText}"/>
+                                           Foreground="{StaticResource BrText}" TextTrimming="CharacterEllipsis"/>
                                 <TextBlock Text="Registry override" FontSize="10"
                                            Foreground="{StaticResource BrTextMuted}" Margin="0,2,0,0"/>
                             </StackPanel>
@@ -136,7 +138,7 @@
                 </DataGridTemplateColumn>
 
                 <!-- STATUS -->
-                <DataGridTemplateColumn Header="STATUS" Width="160">
+                <DataGridTemplateColumn Header="STATUS" Width="1.4*" MinWidth="140">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding StatusText}" Foreground="{Binding StatusBrush}"
@@ -147,7 +149,7 @@
                 </DataGridTemplateColumn>
 
                 <!-- ACTIONS -->
-                <DataGridTemplateColumn Header="ACTIONS" Width="*">
+                <DataGridTemplateColumn Header="ACTIONS" Width="210" MinWidth="200">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">

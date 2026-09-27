@@ -143,12 +143,13 @@
                   CellStyle="{StaticResource GridCell}"
                   ItemsSource="{Binding Mappings}"
                   SelectedItem="{Binding SelectedMapping, Mode=TwoWay}"
+                  CanUserResizeColumns="True"
                   Margin="16,12,16,4">
 
             <DataGrid.Columns>
 
                 <!-- STATUS DOT — binds directly to model properties -->
-                <DataGridTemplateColumn Header="STATUS" Width="80" IsReadOnly="True">
+                <DataGridTemplateColumn Header="STATUS" Width="95" MinWidth="85" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -163,7 +164,7 @@
                 </DataGridTemplateColumn>
 
                 <!-- DRIVE LETTER -->
-                <DataGridTemplateColumn Header="DRIVE" Width="80" IsReadOnly="True">
+                <DataGridTemplateColumn Header="DRIVE" Width="70" MinWidth="60" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Border Background="{StaticResource BrBgElevated}"
@@ -178,7 +179,7 @@
                 </DataGridTemplateColumn>
 
                 <!-- FOLDER PATH -->
-                <DataGridTextColumn Header="FOLDER PATH" Width="*" IsReadOnly="True"
+                <DataGridTextColumn Header="FOLDER PATH" Width="2.5*" MinWidth="180" IsReadOnly="True"
                                     Binding="{Binding FolderPath}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
@@ -186,23 +187,25 @@
                             <Setter Property="Foreground" Value="{StaticResource BrText}"/>
                             <Setter Property="FontFamily" Value="Consolas"/>
                             <Setter Property="FontSize"   Value="12"/>
+                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
                 <!-- LABEL -->
-                <DataGridTextColumn Header="LABEL" Width="180" IsReadOnly="True"
+                <DataGridTextColumn Header="LABEL" Width="1.2*" MinWidth="120" IsReadOnly="True"
                                     Binding="{Binding Label}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="VerticalAlignment" Value="Center"/>
                             <Setter Property="Foreground" Value="{StaticResource BrTextSec}"/>
+                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
                 <!-- ACTIONS (inline buttons) — uses model Visibility properties -->
-                <DataGridTemplateColumn Header="ACTIONS" Width="260" IsReadOnly="True">
+                <DataGridTemplateColumn Header="ACTIONS" Width="230" MinWidth="220" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
