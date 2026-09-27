@@ -16,24 +16,42 @@ namespace FolderMount
             CommandBindings.Add(new System.Windows.Input.CommandBinding(SystemCommands.CloseWindowCommand, (s, e) => SystemCommands.CloseWindow((Window)e.Parameter)));
         }
 
+        private bool _isInitializing;
+
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            // Reflect current startup state
-            ChkStartup.IsChecked = StartupService.IsEnabled;
+            _isInitializing = true;
+            try
+            {
+                // Reflect current startup state (enabled by default)
+                ChkStartup.IsChecked = StartupService.IsEnabled;
 
-            // Show mappings file path
-            TxtMappingPath.Text = MappingStore.MappingsFilePath;
+                // Show mappings file path
+                TxtMappingPath.Text = MappingStore.MappingsFilePath;
+            }
+            finally
+            {
+                _isInitializing = false;
+            }
         }
 
         private void ChkStartup_Checked(object sender, RoutedEventArgs e)
         {
-            string exePath = Environment.ProcessPath ?? Assembly.GetExecutingAssembly().Location;
+            if (_isInitializing) return;
+
+            string exePath = StartupService.GetExecutablePath();
             StartupService.Enable(exePath);
+            SettingsStore.Current.RunAtWindowsStartup = true;
+            SettingsStore.Save();
         }
 
         private void ChkStartup_Unchecked(object sender, RoutedEventArgs e)
         {
+            if (_isInitializing) return;
+
             StartupService.Disable();
+            SettingsStore.Current.RunAtWindowsStartup = false;
+            SettingsStore.Save();
         }
 
         private void OpenDataFolder_Click(object sender, RoutedEventArgs e)

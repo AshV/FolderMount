@@ -26,6 +26,9 @@ namespace FolderMount
 
             bool isStartupRun = e.Args.Contains("/startup", StringComparer.OrdinalIgnoreCase);
 
+            // ── Windows Startup sync (enabled by default) ────────────────────
+            Services.StartupService.SyncStartupState();
+
             _tray = new TrayManager(
                 onOpen:       ShowMainWindow,
                 onMountAll:   HandleMountAll,

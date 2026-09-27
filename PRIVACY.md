@@ -12,8 +12,8 @@ FolderMount does not contain any analytics SDKs, telemetry, cookies, or tracking
 
 ## 3. Local File System & Settings Storage
 All application data remains strictly on your local PC:
-- **Drive Mappings:** Your assigned folder paths, drive letters, and labels are stored locally in `%APPDATA%\FolderMount\mappings.xml`. This file never leaves your machine.
-- **Startup Configuration:** If you enable "Run at Windows startup", FolderMount creates a standard Windows user-level registry entry under `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` to enable automatic mounting on login.
+- **Startup Configuration:** To ensure your mapped drives are available on login, FolderMount registers a standard Windows user-level registry entry under `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` (enabled by default; can be disabled in Settings at any time).
+- **Application Settings:** General settings (such as startup preferences) are stored locally in `%APPDATA%\FolderMount\settings.json`.
 
 ## 4. Internet & Network Access
 FolderMount does not require, request, or initiate any internet or network connections. The application is completely functional in offline environments.

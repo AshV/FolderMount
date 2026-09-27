@@ -115,7 +115,7 @@
             "name": "How do virtual drive mappings persist across reboots?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "When 'Run at Windows startup' is enabled, FolderMount registers a silent launcher in HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run with the /startup flag. On login, it silently re-mounts all saved drive letters in milliseconds without opening any windows."
+              "text": "By default, FolderMount registers a silent launcher in HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run with the /startup flag (enabled by default; toggleable in Settings). On login, it silently re-mounts all saved drive letters in milliseconds without opening any windows."
             }
           },
           {
@@ -861,7 +861,7 @@
               <span class="faq-icon">+</span>
             </summary>
             <div class="faq-answer">
-              By default in Windows, command-line <code>SUBST</code> mappings are temporary and vanish when the user logs off or restarts. When you enable "Run at Windows startup" in FolderMount Settings, the app registers a silent startup entry in <code>HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run</code> with the <code>/startup</code> parameter. When you log in, FolderMount reads your XML configuration and re-mounts all your active drives instantly in the background without opening any windows.
+              By default in Windows, command-line <code>SUBST</code> mappings are temporary and vanish when the user logs off or restarts. FolderMount enables "Run at Windows startup" by default (toggleable in Settings), registering a silent startup entry in <code>HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run</code> with the <code>/startup</code> parameter. When you log in, FolderMount reads your XML configuration and re-mounts all your active drives instantly in the background without opening any windows.
             </div>
           </details>
 

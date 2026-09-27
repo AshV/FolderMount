@@ -151,7 +151,7 @@ Example format:
 
 ### Windows Startup Integration
 
-When **Run at Windows startup** is enabled in Settings, FolderMount registers a user-level Run key:
+FolderMount has **Run at Windows startup** enabled by default (toggleable in Settings). It registers a user-level Run key:
 ```
 HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
   FolderMount = "<ExecutablePath>" /startup

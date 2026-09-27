@@ -92,8 +92,8 @@
     <h2>3. Local Device Storage Only</h2>
     <p>FolderMount operates entirely on your local machine:</p>
     <ul>
-      <li><strong>Drive Mappings:</strong> Your folder paths, drive letters, and labels are stored locally on your device in an XML file at <code>%APPDATA%\FolderMount\mappings.xml</code>. This file never leaves your computer.</li>
-      <li><strong>Startup Settings:</strong> If you choose to enable "Run at Windows startup", FolderMount creates a standard Windows registry entry under your user profile (<code>HKCU</code>) solely to restart the app when you log in.</li>
+      <li><strong>Startup Settings:</strong> FolderMount registers a standard Windows registry entry under your user profile (<code>HKCU</code>) to restart the app and re-mount drives when you log in (enabled by default; can be disabled in Settings at any time).</li>
+      <li><strong>Application Settings:</strong> General configuration (such as your startup preference) is kept locally at <code>%APPDATA%\FolderMount\settings.json</code>.</li>
     </ul>
 
     <h2>4. Network Access</h2>
