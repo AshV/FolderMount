@@ -5,6 +5,16 @@ using System.Text.Json;
 namespace FolderMount.Services
 {
     /// <summary>
+    /// Supported application theme modes.
+    /// </summary>
+    public enum AppThemeMode
+    {
+        System = 0,
+        Dark = 1,
+        Light = 2
+    }
+
+    /// <summary>
     /// Represents user preferences for FolderMount.
     /// </summary>
     public class AppSettings
@@ -14,6 +24,11 @@ namespace FolderMount.Services
         /// Enabled by default.
         /// </summary>
         public bool RunAtWindowsStartup { get; set; } = true;
+
+        /// <summary>
+        /// Preferred theme: System (default, follows Windows), Dark, or Light.
+        /// </summary>
+        public AppThemeMode Theme { get; set; } = AppThemeMode.System;
     }
 
     /// <summary>

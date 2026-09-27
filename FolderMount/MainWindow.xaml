@@ -6,8 +6,8 @@
         Title="FolderMount" Height="620" Width="920"
         MinHeight="480" MinWidth="720"
         WindowStartupLocation="CenterScreen"
-        Background="{StaticResource BrBgBase}"
-        Foreground="{StaticResource BrText}"
+        Background="{DynamicResource BrBgBase}"
+        Foreground="{DynamicResource BrText}"
         FontFamily="{StaticResource FontMain}"
         Style="{StaticResource WindowStyle}">
 
@@ -15,7 +15,7 @@
         <conv:IntToVisibilityConverter x:Key="IntToVisibility" />
     </Window.Resources>
 
-    <Border BorderBrush="{StaticResource BrBorderSubtle}" BorderThickness="1">
+    <Border BorderBrush="{DynamicResource BrBorderSubtle}" BorderThickness="1">
         <Grid>
             <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>  <!-- Header -->
@@ -27,8 +27,8 @@
         <!-- ═══════════════════════════════════════════════
              HEADER
         ═══════════════════════════════════════════════ -->
-        <Border Grid.Row="0" Background="{StaticResource BrBgCard}"
-                BorderBrush="{StaticResource BrBorderSubtle}" BorderThickness="0,0,0,1">
+        <Border Grid.Row="0" Background="{DynamicResource BrBgCard}"
+                BorderBrush="{DynamicResource BrBorderSubtle}" BorderThickness="0,0,0,1">
             <Grid Margin="24,18">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -43,9 +43,9 @@
                            RenderOptions.BitmapScalingMode="HighQuality"/>
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock Text="FolderMount" FontSize="20" FontWeight="Bold"
-                                   Foreground="{StaticResource BrText}"/>
+                                   Foreground="{DynamicResource BrText}"/>
                         <TextBlock Text="Virtual Drive Manager" FontSize="11"
-                                   Foreground="{StaticResource BrTextSec}" Margin="0,1,0,0"/>
+                                   Foreground="{DynamicResource BrTextSec}" Margin="0,1,0,0"/>
                     </StackPanel>
                 </StackPanel>
 
@@ -53,20 +53,20 @@
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top" Margin="0,-18,-24,0">
                     
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,18,10,0">
-                        <Border Background="{StaticResource BrBgElevated}" CornerRadius="8"
+                        <Border Background="{DynamicResource BrBgElevated}" CornerRadius="8"
                                 Padding="12,6" Margin="0,0,10,0">
                             <StackPanel Orientation="Horizontal">
-                                <Ellipse Width="8" Height="8" Fill="{StaticResource BrSuccess}"
+                                <Ellipse Width="8" Height="8" Fill="{DynamicResource BrSuccess}"
                                          VerticalAlignment="Center" Margin="0,0,6,0"/>
                                 <TextBlock x:Name="TxtActiveCount"
                                            Text="{Binding ActiveCount, StringFormat='{}{0} Active'}"
-                                           FontSize="12" Foreground="{StaticResource BrTextSec}"
+                                           FontSize="12" Foreground="{DynamicResource BrTextSec}"
                                            VerticalAlignment="Center"/>
                             </StackPanel>
                         </Border>
-                        <Border Background="{StaticResource BrBgElevated}" CornerRadius="8" Padding="12,6">
+                        <Border Background="{DynamicResource BrBgElevated}" CornerRadius="8" Padding="12,6">
                             <TextBlock Text="{Binding TotalCount, StringFormat='{}{0} Total'}"
-                                       FontSize="12" Foreground="{StaticResource BrTextSec}"
+                                       FontSize="12" Foreground="{DynamicResource BrTextSec}"
                                        VerticalAlignment="Center"/>
                         </Border>
                     </StackPanel>
@@ -90,8 +90,8 @@
         <!-- ═══════════════════════════════════════════════
              TOOLBAR
         ═══════════════════════════════════════════════ -->
-        <Border Grid.Row="1" Background="{StaticResource BrBgSurface}"
-                BorderBrush="{StaticResource BrBorderSubtle}" BorderThickness="0,0,0,1"
+        <Border Grid.Row="1" Background="{DynamicResource BrBgSurface}"
+                BorderBrush="{DynamicResource BrBorderSubtle}" BorderThickness="0,0,0,1"
                 Padding="16,10">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -105,7 +105,7 @@
                             Command="{Binding AddCommand}" Margin="0,0,16,0"
                             ToolTip="Add a new folder → drive mapping"/>
 
-                    <Rectangle Width="1" Fill="{StaticResource BrBorderSubtle}" Margin="0,4,16,4"/>
+                    <Rectangle Width="1" Fill="{DynamicResource BrBorderSubtle}" Margin="0,4,16,4"/>
 
                     <Button Content="⚡ Mount All" Style="{StaticResource BtnGhost}"
                             Command="{Binding MountAllCommand}" Margin="0,0,6,0"
@@ -116,7 +116,7 @@
                             ToolTip="Eject all mounted drives"/>
                 </StackPanel>
 
-                <!-- Right: Actual Drives, Settings & Refresh -->
+                <!-- Right: Actual Drives, Settings, Theme & Refresh -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <Button Content="💽 Actual Drives" Style="{StaticResource BtnGhost}"
                             Click="BtnActualDrives_Click" Margin="0,0,6,0"
@@ -125,6 +125,12 @@
                     <Button Content="⚙ Settings" Style="{StaticResource BtnGhost}"
                             Click="BtnSettings_Click" Margin="0,0,6,0"
                             ToolTip="Open settings and storage options"/>
+
+                    <Button x:Name="BtnThemeToggle" Style="{StaticResource BtnIcon}"
+                            Click="BtnThemeToggle_Click" Margin="0,0,6,0"
+                            ToolTip="Switch Theme (System / Dark / Light)" FontSize="15">
+                        <TextBlock x:Name="TxtThemeIcon" Text="💻" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Button>
 
                     <Button Content="↻" Style="{StaticResource BtnIcon}"
                             Command="{Binding RefreshCommand}"
@@ -168,11 +174,11 @@
                 <DataGridTemplateColumn Header="DRIVE" Width="70" MinWidth="60" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Border Background="{StaticResource BrBgElevated}"
+                            <Border Background="{DynamicResource BrBgElevated}"
                                     CornerRadius="6" Padding="8,3" HorizontalAlignment="Left">
                                 <TextBlock Text="{Binding DisplayLetter}"
                                            FontSize="14" FontWeight="Bold"
-                                           Foreground="{StaticResource BrAccent}"
+                                           Foreground="{DynamicResource BrAccent}"
                                            FontFamily="Consolas"/>
                             </Border>
                         </DataTemplate>
@@ -185,7 +191,7 @@
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="Foreground" Value="{StaticResource BrText}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource BrText}"/>
                             <Setter Property="FontFamily" Value="Consolas"/>
                             <Setter Property="FontSize"   Value="12"/>
                             <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
@@ -199,7 +205,7 @@
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="Foreground" Value="{StaticResource BrTextSec}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource BrTextSec}"/>
                             <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
                         </Style>
                     </DataGridTextColumn.ElementStyle>
@@ -222,7 +228,7 @@
                                         Visibility="{Binding UnmountVisibility}"
                                         Content="⏏ Eject" ToolTip="Eject this drive"/>
                                 
-                                <Rectangle Width="1" Fill="{StaticResource BrBorderSubtle}" Margin="4,2,8,2"/>
+                                <Rectangle Width="1" Fill="{DynamicResource BrBorderSubtle}" Margin="4,2,8,2"/>
 
                                 <!-- Secondary Actions -->
                                 <Button Style="{StaticResource BtnGhost}" Padding="8,4" FontSize="11" Margin="0,0,4,0"
@@ -235,7 +241,7 @@
                                         CommandParameter="{Binding}"
                                         Content="✎" ToolTip="Edit this mapping"/>
                                 <Button Style="{StaticResource BtnGhost}" Padding="8,4" FontSize="11" Margin="0,0,0,0"
-                                        Foreground="{StaticResource BrDanger}"
+                                        Foreground="{DynamicResource BrDanger}"
                                         Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                         CommandParameter="{Binding}"
                                         Content="🗑" ToolTip="Remove this mapping"/>
@@ -248,20 +254,20 @@
         </DataGrid>
 
         <!-- Empty state message -->
-        <Border Grid.Row="2" Background="{StaticResource BrBgSurface}" CornerRadius="12"
+        <Border Grid.Row="2" Background="{DynamicResource BrBgSurface}" CornerRadius="12"
                 Margin="32" Padding="40" VerticalAlignment="Center" HorizontalAlignment="Center"
-                BorderBrush="{StaticResource BrBorderSubtle}" BorderThickness="1"
+                BorderBrush="{DynamicResource BrBorderSubtle}" BorderThickness="1"
                 Visibility="{Binding TotalCount, Converter={StaticResource IntToVisibility}, ConverterParameter=zeroIsVisible}">
             <StackPanel>
-                <Border Width="64" Height="64" CornerRadius="32" Background="{StaticResource BrBgElevated}"
+                <Border Width="64" Height="64" CornerRadius="32" Background="{DynamicResource BrBgElevated}"
                         HorizontalAlignment="Center" Margin="0,0,0,16">
-                    <TextBlock Text="⊞" FontSize="32" Foreground="{StaticResource BrAccent}"
+                    <TextBlock Text="⊞" FontSize="32" Foreground="{DynamicResource BrAccent}"
                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
                 <TextBlock Text="No mappings yet" FontSize="20" FontWeight="SemiBold"
-                           Foreground="{StaticResource BrText}" HorizontalAlignment="Center"/>
+                           Foreground="{DynamicResource BrText}" HorizontalAlignment="Center"/>
                 <TextBlock Text="Map any local folder to a virtual drive letter for quick access."
-                           FontSize="13" Foreground="{StaticResource BrTextSec}"
+                           FontSize="13" Foreground="{DynamicResource BrTextSec}"
                            HorizontalAlignment="Center" Margin="0,8,0,24"/>
                 <Button Content="＋  Add Your First Mapping" Style="{StaticResource BtnPrimary}"
                         Command="{Binding AddCommand}" HorizontalAlignment="Center" Padding="24,12" FontSize="14"/>
@@ -271,8 +277,8 @@
         <!-- ═══════════════════════════════════════════════
              STATUS BAR
         ═══════════════════════════════════════════════ -->
-        <Border Grid.Row="3" Background="{StaticResource BrBgCard}"
-                BorderBrush="{StaticResource BrBorderSubtle}" BorderThickness="0,1,0,0"
+        <Border Grid.Row="3" Background="{DynamicResource BrBgCard}"
+                BorderBrush="{DynamicResource BrBorderSubtle}" BorderThickness="0,1,0,0"
                 Padding="16,8">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -280,11 +286,11 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="{Binding StatusMessage}"
-                           Foreground="{StaticResource BrTextSec}" FontSize="11"
+                           Foreground="{DynamicResource BrTextSec}" FontSize="11"
                            VerticalAlignment="Center"/>
                 <TextBlock Grid.Column="1"
                            Text="{Binding TotalCount, StringFormat='{}Mappings: {0}'}"
-                           Foreground="{StaticResource BrTextMuted}" FontSize="11"
+                           Foreground="{DynamicResource BrTextMuted}" FontSize="11"
                            VerticalAlignment="Center"/>
             </Grid>
         </Border>

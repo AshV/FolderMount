@@ -5,13 +5,13 @@
         WindowStartupLocation="CenterOwner"
         SizeToContent="Height"
         ResizeMode="NoResize"
-        Background="{StaticResource BrBgDialog}"
-        Foreground="{StaticResource BrText}"
+        Background="{DynamicResource BrBgDialog}"
+        Foreground="{DynamicResource BrText}"
         FontFamily="{StaticResource FontMain}"
         Style="{StaticResource DialogWindowStyle}">
 
-    <Border BorderBrush="{StaticResource BrBorderDialog}" BorderThickness="1"
-            Background="{StaticResource BrBgDialog}">
+    <Border BorderBrush="{DynamicResource BrBorderDialog}" BorderThickness="1"
+            Background="{DynamicResource BrBgDialog}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>  <!-- Custom Title bar -->
@@ -19,14 +19,14 @@
             </Grid.RowDefinitions>
 
             <!-- Sleek Top Accent Highlight Line -->
-            <Border Grid.Row="0" Height="2" VerticalAlignment="Top" Background="{StaticResource BrAccent}" Panel.ZIndex="10"/>
+            <Border Grid.Row="0" Height="2" VerticalAlignment="Top" Background="{DynamicResource BrAccent}" Panel.ZIndex="10"/>
 
             <!-- Custom Title Bar -->
-            <Border Grid.Row="0" Height="40" Background="{StaticResource BrBgCard}"
-                    BorderBrush="{StaticResource BrBorderSubtle}" BorderThickness="0,0,0,1">
+            <Border Grid.Row="0" Height="40" Background="{DynamicResource BrBgCard}"
+                    BorderBrush="{DynamicResource BrBorderSubtle}" BorderThickness="0,0,0,1">
                 <Grid>
                     <TextBlock Text="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}" VerticalAlignment="Center" Margin="24,0,0,0" 
-                               FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource BrText}"/>
+                               FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrText}"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         <Button Content="✕" Style="{StaticResource BtnWindowClose}" FontSize="12"
                                 Width="40" Height="40"
@@ -54,7 +54,7 @@
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" Text="FOLDER PATH"
                            FontSize="10" FontWeight="SemiBold"
-                           Foreground="{StaticResource BrTextSec}"/>
+                           Foreground="{DynamicResource BrTextSec}"/>
                 <Grid Grid.Row="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -88,7 +88,7 @@
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" Text="DRIVE LETTER"
                            FontSize="10" FontWeight="SemiBold"
-                           Foreground="{StaticResource BrTextSec}"/>
+                           Foreground="{DynamicResource BrTextSec}"/>
                 <ComboBox Grid.Row="2" x:Name="CmbDriveLetter"
                           Style="{StaticResource InputCombo}"
                           Height="36" Width="70" HorizontalAlignment="Left"/>
@@ -103,7 +103,7 @@
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" Text="LABEL  (optional)"
                            FontSize="10" FontWeight="SemiBold"
-                           Foreground="{StaticResource BrTextSec}"/>
+                           Foreground="{DynamicResource BrTextSec}"/>
 
                 <Grid Grid.Row="2">
                     <Grid.ColumnDefinitions>
@@ -119,8 +119,8 @@
 
                     <Button Grid.Column="1" x:Name="BtnLabelWarning"
                             Style="{StaticResource BtnBase}"
-                            Background="{StaticResource BrBgElevated}"
-                            BorderBrush="{StaticResource BrWarning}"
+                            Background="{DynamicResource BrBgElevated}"
+                            BorderBrush="{DynamicResource BrWarning}"
                             BorderThickness="1"
                             Width="36" Height="36"
                             Margin="8,0,0,0"
@@ -143,7 +143,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" x:Name="TxtValidation"
-                           Foreground="{StaticResource BrDanger}" FontSize="11"
+                           Foreground="{DynamicResource BrDanger}" FontSize="11"
                            VerticalAlignment="Center" TextWrapping="Wrap"/>
                 <Button Grid.Column="2" Content="Cancel" Style="{StaticResource BtnGhost}"
                         Padding="18,8" Click="Cancel_Click" IsCancel="True"/>

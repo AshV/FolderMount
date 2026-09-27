@@ -30,6 +30,57 @@ namespace FolderMount
             }));
             CommandBindings.Add(new System.Windows.Input.CommandBinding(SystemCommands.MinimizeWindowCommand, (s, e) => SystemCommands.MinimizeWindow((Window)e.Parameter)));
             CommandBindings.Add(new System.Windows.Input.CommandBinding(SystemCommands.RestoreWindowCommand, (s, e) => SystemCommands.RestoreWindow((Window)e.Parameter)));
+
+            ThemeService.ThemeChanged += OnThemeChanged;
+            UpdateThemeButtonState(SettingsStore.Current.Theme, ThemeService.CurrentActiveTheme == ThemeService.ActiveTheme.Dark);
+        }
+
+        private void OnThemeChanged(AppThemeMode mode, bool isDark)
+        {
+            Dispatcher.Invoke(() => UpdateThemeButtonState(mode, isDark));
+        }
+
+        private void UpdateThemeButtonState(AppThemeMode mode, bool isDark)
+        {
+            if (TxtThemeIcon == null || BtnThemeToggle == null) return;
+
+            switch (mode)
+            {
+                case AppThemeMode.System:
+                    TxtThemeIcon.Text = "💻";
+                    BtnThemeToggle.ToolTip = $"Theme: System Default ({(isDark ? "Dark" : "Light")} active)\nClick to change theme";
+                    break;
+                case AppThemeMode.Dark:
+                    TxtThemeIcon.Text = "🌙";
+                    BtnThemeToggle.ToolTip = "Theme: Dark\nClick to change theme";
+                    break;
+                case AppThemeMode.Light:
+                    TxtThemeIcon.Text = "☀️";
+                    BtnThemeToggle.ToolTip = "Theme: Light\nClick to change theme";
+                    break;
+            }
+        }
+
+        private void BtnThemeToggle_Click(object sender, RoutedEventArgs e)
+        {
+            var current = SettingsStore.Current.Theme;
+            var next = current switch
+            {
+                AppThemeMode.System => AppThemeMode.Dark,
+                AppThemeMode.Dark   => AppThemeMode.Light,
+                AppThemeMode.Light  => AppThemeMode.System,
+                _                   => AppThemeMode.System
+            };
+
+            SettingsStore.Current.Theme = next;
+            SettingsStore.Save();
+            ThemeService.ApplyTheme(next);
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            ThemeService.ThemeChanged -= OnThemeChanged;
+            base.OnClosed(e);
         }
 
         /// <summary>

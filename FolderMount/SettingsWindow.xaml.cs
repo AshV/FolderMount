@@ -14,6 +14,8 @@ namespace FolderMount
             InitializeComponent();
             WindowHelper.ApplyModernWindowStyling(this, isDialog: true);
             Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
+            ThemeService.ThemeChanged += OnThemeChanged;
             CommandBindings.Add(new System.Windows.Input.CommandBinding(SystemCommands.CloseWindowCommand, (s, e) => SystemCommands.CloseWindow((Window)e.Parameter)));
         }
 
@@ -24,6 +26,10 @@ namespace FolderMount
             _isInitializing = true;
             try
             {
+                // Reflect current theme setting
+                CmbTheme.SelectedIndex = (int)SettingsStore.Current.Theme;
+                UpdateThemeDescription(SettingsStore.Current.Theme);
+
                 // Reflect current startup state (enabled by default)
                 ChkStartup.IsChecked = StartupService.IsEnabled;
 
@@ -33,6 +39,58 @@ namespace FolderMount
             finally
             {
                 _isInitializing = false;
+            }
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            ThemeService.ThemeChanged -= OnThemeChanged;
+        }
+
+        private void OnThemeChanged(AppThemeMode mode, bool isDark)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (!_isInitializing)
+                {
+                    _isInitializing = true;
+                    try
+                    {
+                        CmbTheme.SelectedIndex = (int)mode;
+                        UpdateThemeDescription(mode);
+                    }
+                    finally
+                    {
+                        _isInitializing = false;
+                    }
+                }
+            });
+        }
+
+        private void UpdateThemeDescription(AppThemeMode mode)
+        {
+            if (TxtThemeDesc == null) return;
+
+            TxtThemeDesc.Text = mode switch
+            {
+                AppThemeMode.System => $"Follows Windows (currently {(ThemeService.IsWindowsDarkMode ? "Dark" : "Light")}).",
+                AppThemeMode.Dark   => "Dark theme is active.",
+                AppThemeMode.Light  => "Light theme is active.",
+                _                   => "Follows Windows system setting."
+            };
+        }
+
+        private void CmbTheme_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (_isInitializing) return;
+
+            if (CmbTheme.SelectedIndex >= 0)
+            {
+                var selectedMode = (AppThemeMode)CmbTheme.SelectedIndex;
+                SettingsStore.Current.Theme = selectedMode;
+                SettingsStore.Save();
+                ThemeService.ApplyTheme(selectedMode);
+                UpdateThemeDescription(selectedMode);
             }
         }
 

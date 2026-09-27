@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using FolderMount.Services;
 
 namespace FolderMount
 {
@@ -12,6 +13,10 @@ namespace FolderMount
     internal sealed class TrayManager : IDisposable
     {
         private readonly NotifyIcon _icon;
+        private readonly ContextMenuStrip _menu;
+        private readonly ToolStripMenuItem _itemSystem;
+        private readonly ToolStripMenuItem _itemDark;
+        private readonly ToolStripMenuItem _itemLight;
 
         public TrayManager(
             Action onOpen,
@@ -28,23 +33,68 @@ namespace FolderMount
                 Icon    = LoadAppIcon()
             };
 
-            var menu        = new ContextMenuStrip();
-            menu.BackColor  = Color.FromArgb(26, 26, 46);
-            menu.ForeColor  = Color.FromArgb(241, 245, 249);
-            menu.Font       = new Font("Segoe UI", 9.5f);
-            menu.Renderer   = new DarkMenuRenderer();
+            _menu       = new ContextMenuStrip();
+            _menu.Font  = new Font("Segoe UI", 9.5f);
 
-            AddItem(menu, "📂  Open FolderMount",          onOpen);
-            AddItem(menu, "⚡  Mount All Drives",          onMountAll);
-            AddItem(menu, "⏏  Eject All Drives",          onUnmountAll);
-            menu.Items.Add(new ToolStripSeparator());
-            AddItem(menu, "💽  Actual Drives & Labels",   onActualDrives);
-            AddItem(menu, "⚙  Settings",                   onSettings);
-            menu.Items.Add(new ToolStripSeparator());
-            AddItem(menu, "✕  Exit",                        onExit);
+            AddItem(_menu, "📂  Open FolderMount",          onOpen);
+            AddItem(_menu, "⚡  Mount All Drives",          onMountAll);
+            AddItem(_menu, "⏏  Eject All Drives",          onUnmountAll);
+            _menu.Items.Add(new ToolStripSeparator());
 
-            _icon.ContextMenuStrip = menu;
+            // Theme submenu
+            var themeMenu = new ToolStripMenuItem("🌓  Theme");
+            _itemSystem = new ToolStripMenuItem("💻  Follow Windows", null, (_, __) => SetTheme(AppThemeMode.System));
+            _itemDark   = new ToolStripMenuItem("🌙  Dark Theme",     null, (_, __) => SetTheme(AppThemeMode.Dark));
+            _itemLight  = new ToolStripMenuItem("☀️  Light Theme",    null, (_, __) => SetTheme(AppThemeMode.Light));
+            themeMenu.DropDownItems.Add(_itemSystem);
+            themeMenu.DropDownItems.Add(_itemDark);
+            themeMenu.DropDownItems.Add(_itemLight);
+            _menu.Items.Add(themeMenu);
+
+            _menu.Items.Add(new ToolStripSeparator());
+            AddItem(_menu, "💽  Actual Drives & Labels",   onActualDrives);
+            AddItem(_menu, "⚙  Settings",                   onSettings);
+            _menu.Items.Add(new ToolStripSeparator());
+            AddItem(_menu, "✕  Exit",                        onExit);
+
+            _icon.ContextMenuStrip = _menu;
             _icon.DoubleClick     += (_, __) => onOpen();
+
+            UpdateThemeMenu(SettingsStore.Current.Theme, ThemeService.CurrentActiveTheme == ThemeService.ActiveTheme.Dark);
+            ThemeService.ThemeChanged += OnThemeChanged;
+        }
+
+        private void OnThemeChanged(AppThemeMode mode, bool isDark)
+        {
+            if (_menu.IsHandleCreated)
+            {
+                _menu.BeginInvoke(new Action(() => UpdateThemeMenu(mode, isDark)));
+            }
+            else
+            {
+                UpdateThemeMenu(mode, isDark);
+            }
+        }
+
+        private void SetTheme(AppThemeMode mode)
+        {
+            SettingsStore.Current.Theme = mode;
+            SettingsStore.Save();
+            System.Windows.Application.Current?.Dispatcher?.Invoke(() =>
+            {
+                ThemeService.ApplyTheme(mode);
+            });
+        }
+
+        private void UpdateThemeMenu(AppThemeMode mode, bool isDark)
+        {
+            _itemSystem.Checked = (mode == AppThemeMode.System);
+            _itemDark.Checked   = (mode == AppThemeMode.Dark);
+            _itemLight.Checked  = (mode == AppThemeMode.Light);
+
+            _menu.BackColor = isDark ? Color.FromArgb(26, 26, 46) : Color.FromArgb(255, 255, 255);
+            _menu.ForeColor = isDark ? Color.FromArgb(241, 245, 249) : Color.FromArgb(15, 23, 42);
+            _menu.Renderer  = new ModernMenuRenderer(isDark);
         }
 
         private static ToolStripMenuItem AddItem(ContextMenuStrip menu, string text, Action action)
@@ -59,8 +109,6 @@ namespace FolderMount
         {
             try
             {
-                // Load from the embedded WPF resource (pack:// URI)
-                // This works whether the app is run from bin\Debug, bin\Release, or installed anywhere.
                 var uri = new Uri("pack://application:,,,/Assets/icon.ico", UriKind.Absolute);
                 var sri = System.Windows.Application.GetResourceStream(uri);
                 if (sri != null)
@@ -68,7 +116,6 @@ namespace FolderMount
             }
             catch { }
 
-            // Fallback: try loading from disk (same directory as the exe)
             try
             {
                 string dir     = System.IO.Path.GetDirectoryName(
@@ -84,45 +131,69 @@ namespace FolderMount
 
         public void Dispose()
         {
+            ThemeService.ThemeChanged -= OnThemeChanged;
             _icon.Visible = false;
             _icon.Dispose();
         }
     }
 
-    // ─── Dark tray context menu theming ──────────────────────────────────────
+    // ─── Modern tray context menu theming ──────────────────────────────────────
 
-    internal class DarkMenuRenderer : ToolStripProfessionalRenderer
+    internal class ModernMenuRenderer : ToolStripProfessionalRenderer
     {
-        public DarkMenuRenderer() : base(new DarkMenuColors()) { }
+        private readonly bool _isDark;
+
+        public ModernMenuRenderer(bool isDark) : base(new ModernMenuColors(isDark))
+        {
+            _isDark = isDark;
+        }
 
         protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
         {
             e.TextColor = e.Item.Enabled
-                ? Color.FromArgb(241, 245, 249)
-                : Color.FromArgb(100, 116, 139);
+                ? (_isDark ? Color.FromArgb(241, 245, 249) : Color.FromArgb(15, 23, 42))
+                : (_isDark ? Color.FromArgb(100, 116, 139) : Color.FromArgb(148, 163, 184));
             base.OnRenderItemText(e);
         }
     }
 
-    internal class DarkMenuColors : ProfessionalColorTable
+    internal class ModernMenuColors : ProfessionalColorTable
     {
-        private static readonly Color Bg        = Color.FromArgb(26, 26, 46);
-        private static readonly Color Hover     = Color.FromArgb(45, 58, 107);
-        private static readonly Color BorderClr = Color.FromArgb(45, 58, 107);
-        private static readonly Color Sep       = Color.FromArgb(30, 42, 74);
+        private readonly Color _bg;
+        private readonly Color _hover;
+        private readonly Color _border;
+        private readonly Color _sep;
 
-        public override Color MenuItemSelected              => Hover;
-        public override Color MenuItemBorder                => BorderClr;
-        public override Color MenuBorder                    => BorderClr;
-        public override Color ToolStripDropDownBackground   => Bg;
-        public override Color ImageMarginGradientBegin      => Bg;
-        public override Color ImageMarginGradientMiddle     => Bg;
-        public override Color ImageMarginGradientEnd        => Bg;
-        public override Color SeparatorDark                 => Sep;
-        public override Color SeparatorLight                => Sep;
-        public override Color MenuItemSelectedGradientBegin => Hover;
-        public override Color MenuItemSelectedGradientEnd   => Hover;
-        public override Color MenuItemPressedGradientBegin  => Color.FromArgb(108, 99, 255);
-        public override Color MenuItemPressedGradientEnd    => Color.FromArgb(108, 99, 255);
+        public ModernMenuColors(bool isDark)
+        {
+            if (isDark)
+            {
+                _bg     = Color.FromArgb(26, 26, 46);
+                _hover  = Color.FromArgb(45, 58, 107);
+                _border = Color.FromArgb(45, 58, 107);
+                _sep    = Color.FromArgb(30, 42, 74);
+            }
+            else
+            {
+                _bg     = Color.FromArgb(255, 255, 255);
+                _hover  = Color.FromArgb(238, 242, 246);
+                _border = Color.FromArgb(203, 213, 225);
+                _sep    = Color.FromArgb(226, 232, 240);
+            }
+        }
+
+        public override Color MenuItemSelected              => _hover;
+        public override Color MenuItemBorder                => _border;
+        public override Color MenuBorder                    => _border;
+        public override Color ToolStripDropDownBackground   => _bg;
+        public override Color ImageMarginGradientBegin      => _bg;
+        public override Color ImageMarginGradientMiddle     => _bg;
+        public override Color ImageMarginGradientEnd        => _bg;
+        public override Color SeparatorDark                 => _sep;
+        public override Color SeparatorLight                => _sep;
+        public override Color MenuItemSelectedGradientBegin => _hover;
+        public override Color MenuItemSelectedGradientEnd   => _hover;
+        public override Color MenuItemPressedGradientBegin  => _hover;
+        public override Color MenuItemPressedGradientEnd    => _hover;
     }
 }

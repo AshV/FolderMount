@@ -35,23 +35,13 @@ namespace FolderMount.Services
                     var hwnd = new WindowInteropHelper(window).Handle;
                     if (hwnd == IntPtr.Zero) return;
 
-                    // 1. Enable Immersive Dark Mode for DWM rendering
-                    int darkMode = 1;
-                    if (DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, ref darkMode, sizeof(int)) != 0)
-                    {
-                        DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1, ref darkMode, sizeof(int));
-                    }
-
-                    // 2. Windows 11 Rounded corners
+                    // 1. Windows 11 Rounded corners
                     int cornerPreference = DWMWCP_ROUND;
                     DwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE, ref cornerPreference, sizeof(int));
 
-                    // 3. Windows 11 crisp border color (#4E4E6E in BGR format: 0x006E4E4E)
-                    if (isDialog)
-                    {
-                        int borderColor = 0x006E4E4E;
-                        DwmSetWindowAttribute(hwnd, DWMWA_BORDER_COLOR, ref borderColor, sizeof(int));
-                    }
+                    // 2. Apply current active theme (Dark / Light)
+                    bool isDark = ThemeService.CurrentActiveTheme == ThemeService.ActiveTheme.Dark;
+                    UpdateWindowTheme(window, isDark, isDialog);
                 }
                 catch
                 {
@@ -63,6 +53,33 @@ namespace FolderMount.Services
                 Apply();
             else
                 window.SourceInitialized += (s, e) => Apply();
+        }
+
+        /// <summary>
+        /// Updates the DWM theme attributes (dark mode title bar, Windows 11 border color) live.
+        /// </summary>
+        public static void UpdateWindowTheme(Window window, bool isDark, bool isDialog = false)
+        {
+            if (window == null) return;
+
+            try
+            {
+                var hwnd = new WindowInteropHelper(window).Handle;
+                if (hwnd == IntPtr.Zero) return;
+
+                int darkMode = isDark ? 1 : 0;
+                if (DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, ref darkMode, sizeof(int)) != 0)
+                {
+                    DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1, ref darkMode, sizeof(int));
+                }
+
+                // In BGR: Dark #4E4E6E is 0x006E4E4E; Light #CBD5E1 is 0x00E1D5CB
+                int borderColor = isDark ? 0x006E4E4E : 0x00E1D5CB;
+                DwmSetWindowAttribute(hwnd, DWMWA_BORDER_COLOR, ref borderColor, sizeof(int));
+            }
+            catch
+            {
+            }
         }
     }
 }

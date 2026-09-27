@@ -29,6 +29,9 @@ namespace FolderMount
             // ── Windows Startup sync (enabled by default) ────────────────────
             Services.StartupService.SyncStartupState();
 
+            // ── Theme initialization (follows Windows default setting) ──────
+            Services.ThemeService.Initialize();
+
             _tray = new TrayManager(
                 onOpen:         ShowMainWindow,
                 onMountAll:     HandleMountAll,

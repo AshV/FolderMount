@@ -4,13 +4,13 @@
         Title="Actual Drives &amp; Labels — FolderMount" Width="880" Height="580"
         MinWidth="760" MinHeight="440"
         WindowStartupLocation="CenterOwner"
-        Background="{StaticResource BrBgDialog}"
-        Foreground="{StaticResource BrText}"
+        Background="{DynamicResource BrBgDialog}"
+        Foreground="{DynamicResource BrText}"
         FontFamily="{StaticResource FontMain}"
         Style="{StaticResource WindowStyle}">
 
-    <Border BorderBrush="{StaticResource BrBorderDialog}" BorderThickness="1"
-            Background="{StaticResource BrBgDialog}">
+    <Border BorderBrush="{DynamicResource BrBorderDialog}" BorderThickness="1"
+            Background="{DynamicResource BrBgDialog}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>  <!-- Custom Title bar -->
@@ -20,13 +20,13 @@
             </Grid.RowDefinitions>
 
             <!-- Sleek Top Accent Highlight Line -->
-            <Border Grid.Row="0" Height="2" VerticalAlignment="Top" Background="{StaticResource BrAccent}" Panel.ZIndex="10"/>
+            <Border Grid.Row="0" Height="2" VerticalAlignment="Top" Background="{DynamicResource BrAccent}" Panel.ZIndex="10"/>
 
         <!-- ═══════════════════════════════════════════════
              CUSTOM TITLE BAR
         ═══════════════════════════════════════════════ -->
-        <Border Grid.Row="0" Background="{StaticResource BrBgCard}"
-                BorderBrush="{StaticResource BrBorderSubtle}" BorderThickness="0,0,0,1">
+        <Border Grid.Row="0" Background="{DynamicResource BrBgCard}"
+                BorderBrush="{DynamicResource BrBorderSubtle}" BorderThickness="0,0,0,1">
             <Grid Height="46">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -37,9 +37,9 @@
                     <TextBlock Text="💽" FontSize="18" Margin="0,0,10,0" VerticalAlignment="Center"/>
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock Text="Actual Drives &amp; Explorer Labels" FontSize="14" FontWeight="Bold"
-                                   Foreground="{StaticResource BrText}"/>
+                                   Foreground="{DynamicResource BrText}"/>
                         <TextBlock Text="Optimize physical drive labels so virtual (SUBST) drives display custom names"
-                                   FontSize="11" Foreground="{StaticResource BrTextSec}" Margin="0,1,0,0"/>
+                                   FontSize="11" Foreground="{DynamicResource BrTextSec}" Margin="0,1,0,0"/>
                     </StackPanel>
                 </StackPanel>
 
@@ -55,8 +55,8 @@
         <!-- ═══════════════════════════════════════════════
              INFO BANNER
         ═══════════════════════════════════════════════ -->
-        <Border Grid.Row="1" Background="{StaticResource BrBgSurface}"
-                BorderBrush="{StaticResource BrBorderSubtle}" BorderThickness="0,0,0,1"
+        <Border Grid.Row="1" Background="{DynamicResource BrBgSurface}"
+                BorderBrush="{DynamicResource BrBorderSubtle}" BorderThickness="0,0,0,1"
                 Padding="24,14">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -67,9 +67,9 @@
                 <TextBlock Grid.Column="0" Text="💡" FontSize="20" Margin="0,2,14,0" VerticalAlignment="Top"/>
                 <StackPanel Grid.Column="1">
                     <TextBlock Text="Why use Drive Labels instead of Volume Labels?"
-                               FontWeight="SemiBold" FontSize="12" Foreground="{StaticResource BrText}"/>
+                               FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource BrText}"/>
                     <TextBlock Text="When a virtual (SUBST) drive is mounted from a physical drive that has a filesystem Volume Label, Windows Explorer inherits that label on the virtual drive, masking its friendly name. By clicking 'Use as Drive Label', the volume label is cleared from disk and preserved as an Explorer Drive Label—keeping the physical drive's name while allowing virtual drives to display their own labels."
-                               FontSize="11" Foreground="{StaticResource BrTextSec}" TextWrapping="Wrap" Margin="0,3,0,0" LineHeight="16"/>
+                               FontSize="11" Foreground="{DynamicResource BrTextSec}" TextWrapping="Wrap" Margin="0,3,0,0" LineHeight="16"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -100,14 +100,14 @@
                             <StackPanel VerticalAlignment="Center">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="{Binding DisplayLetter}" FontWeight="Bold" FontSize="15"
-                                               Foreground="{StaticResource BrText}"/>
-                                    <Border Background="{StaticResource BrBgElevated}" CornerRadius="4"
+                                               Foreground="{DynamicResource BrText}"/>
+                                    <Border Background="{DynamicResource BrBgElevated}" CornerRadius="4"
                                             Padding="6,1" Margin="8,0,0,0" VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding FileSystem}" FontSize="10" Foreground="{StaticResource BrTextMuted}"/>
+                                        <TextBlock Text="{Binding FileSystem}" FontSize="10" Foreground="{DynamicResource BrTextMuted}"/>
                                     </Border>
                                 </StackPanel>
                                 <TextBlock Text="{Binding DisplayDetails}" FontSize="11"
-                                           Foreground="{StaticResource BrTextSec}" Margin="0,3,0,0"
+                                           Foreground="{DynamicResource BrTextSec}" Margin="0,3,0,0"
                                            TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
                         </DataTemplate>
@@ -120,9 +120,9 @@
                         <DataTemplate>
                             <StackPanel VerticalAlignment="Center">
                                 <TextBlock Text="{Binding DisplayVolumeLabel}" FontWeight="SemiBold" FontSize="12"
-                                           Foreground="{StaticResource BrText}" TextTrimming="CharacterEllipsis"/>
+                                           Foreground="{DynamicResource BrText}" TextTrimming="CharacterEllipsis"/>
                                 <TextBlock Text="Filesystem metadata" FontSize="10"
-                                           Foreground="{StaticResource BrTextMuted}" Margin="0,2,0,0"/>
+                                           Foreground="{DynamicResource BrTextMuted}" Margin="0,2,0,0"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -134,9 +134,9 @@
                         <DataTemplate>
                             <StackPanel VerticalAlignment="Center">
                                 <TextBlock Text="{Binding DisplayDriveLabel}" FontWeight="SemiBold" FontSize="12"
-                                           Foreground="{StaticResource BrText}" TextTrimming="CharacterEllipsis"/>
+                                           Foreground="{DynamicResource BrText}" TextTrimming="CharacterEllipsis"/>
                                 <TextBlock Text="Registry override" FontSize="10"
-                                           Foreground="{StaticResource BrTextMuted}" Margin="0,2,0,0"/>
+                                           Foreground="{DynamicResource BrTextMuted}" Margin="0,2,0,0"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -191,8 +191,8 @@
         <!-- ═══════════════════════════════════════════════
              STATUS BAR & FOOTER
         ═══════════════════════════════════════════════ -->
-        <Border Grid.Row="3" Background="{StaticResource BrBgCard}"
-                BorderBrush="{StaticResource BrBorderSubtle}" BorderThickness="0,1,0,0"
+        <Border Grid.Row="3" Background="{DynamicResource BrBgCard}"
+                BorderBrush="{DynamicResource BrBorderSubtle}" BorderThickness="0,1,0,0"
                 Padding="20,10">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -201,7 +201,7 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock x:Name="TxtStatus" Text="Ready" VerticalAlignment="Center"
-                           FontSize="12" Foreground="{StaticResource BrTextSec}"/>
+                           FontSize="12" Foreground="{DynamicResource BrTextSec}"/>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <Button Content="↻ Refresh" Style="{StaticResource BtnGhost}"

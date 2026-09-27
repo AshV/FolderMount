@@ -5,13 +5,13 @@
         WindowStartupLocation="CenterOwner"
         SizeToContent="Height"
         ResizeMode="NoResize"
-        Background="{StaticResource BrBgDialog}"
-        Foreground="{StaticResource BrText}"
+        Background="{DynamicResource BrBgDialog}"
+        Foreground="{DynamicResource BrText}"
         FontFamily="{StaticResource FontMain}"
         Style="{StaticResource DialogWindowStyle}">
 
-    <Border BorderBrush="{StaticResource BrBorderDialog}" BorderThickness="1"
-            Background="{StaticResource BrBgDialog}">
+    <Border BorderBrush="{DynamicResource BrBorderDialog}" BorderThickness="1"
+            Background="{DynamicResource BrBgDialog}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>  <!-- Custom Title bar -->
@@ -19,14 +19,14 @@
             </Grid.RowDefinitions>
 
             <!-- Sleek Top Accent Highlight Line -->
-            <Border Grid.Row="0" Height="2" VerticalAlignment="Top" Background="{StaticResource BrAccent}" Panel.ZIndex="10"/>
+            <Border Grid.Row="0" Height="2" VerticalAlignment="Top" Background="{DynamicResource BrAccent}" Panel.ZIndex="10"/>
 
             <!-- Custom Title Bar -->
-            <Border Grid.Row="0" Height="40" Background="{StaticResource BrBgCard}"
-                    BorderBrush="{StaticResource BrBorderSubtle}" BorderThickness="0,0,0,1">
+            <Border Grid.Row="0" Height="40" Background="{DynamicResource BrBgCard}"
+                    BorderBrush="{DynamicResource BrBorderSubtle}" BorderThickness="0,0,0,1">
                 <Grid>
                     <TextBlock x:Name="TxtTitle" Text="Edit Drive Label" VerticalAlignment="Center" Margin="24,0,0,0" 
-                               FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource BrText}"/>
+                               FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrText}"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         <Button Content="✕" Style="{StaticResource BtnWindowClose}" FontSize="12"
                                 Width="40" Height="40"
@@ -46,8 +46,8 @@
             </Grid.RowDefinitions>
 
             <!-- Info summary -->
-            <Border Grid.Row="0" Background="{StaticResource BrBgCard}"
-                    BorderBrush="{StaticResource BrBorderSubtle}" BorderThickness="1"
+            <Border Grid.Row="0" Background="{DynamicResource BrBgCard}"
+                    BorderBrush="{DynamicResource BrBorderSubtle}" BorderThickness="1"
                     CornerRadius="8" Padding="14,12">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -60,11 +60,11 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Drive Letter:" FontSize="11" Foreground="{StaticResource BrTextMuted}" Margin="0,0,12,0"/>
-                    <TextBlock Grid.Row="0" Grid.Column="1" x:Name="TxtDriveLetter" Text="D:" FontSize="11" FontWeight="Bold" Foreground="{StaticResource BrText}"/>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Drive Letter:" FontSize="11" Foreground="{DynamicResource BrTextMuted}" Margin="0,0,12,0"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" x:Name="TxtDriveLetter" Text="D:" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrText}"/>
 
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Filesystem Volume Label:" FontSize="11" Foreground="{StaticResource BrTextMuted}" Margin="0,0,12,0"/>
-                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="TxtCurrentVolLabel" Text="(None)" FontSize="11" Foreground="{StaticResource BrTextSec}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Filesystem Volume Label:" FontSize="11" Foreground="{DynamicResource BrTextMuted}" Margin="0,0,12,0"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="TxtCurrentVolLabel" Text="(None)" FontSize="11" Foreground="{DynamicResource BrTextSec}"/>
                 </Grid>
             </Border>
 
@@ -80,14 +80,14 @@
 
                 <TextBlock Grid.Row="0" Text="EXPLORER DRIVE LABEL"
                            FontSize="10" FontWeight="SemiBold"
-                           Foreground="{StaticResource BrTextSec}"/>
+                           Foreground="{DynamicResource BrTextSec}"/>
 
                 <TextBox Grid.Row="2" x:Name="TxtDriveLabel"
                          Style="{StaticResource InputBox}" Height="36"
                          VerticalContentAlignment="Center"/>
 
                 <TextBlock Grid.Row="4" Text="This name will appear in Windows Explorer without affecting the underlying volume."
-                           FontSize="10" Foreground="{StaticResource BrTextMuted}"/>
+                           FontSize="10" Foreground="{DynamicResource BrTextMuted}"/>
             </Grid>
 
             <!-- Buttons -->
@@ -101,7 +101,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0" x:Name="BtnClear" Content="Clear Label"
-                        Style="{StaticResource BtnGhost}" Foreground="{StaticResource BrDanger}"
+                        Style="{StaticResource BtnGhost}" Foreground="{DynamicResource BrDanger}"
                         Padding="12,8" Click="BtnClear_Click"
                         ToolTip="Remove registry override and revert to default Windows name"/>
 
