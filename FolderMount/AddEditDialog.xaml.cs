@@ -20,6 +20,7 @@ namespace FolderMount
         public AddEditDialog(DriveMapping existing, System.Collections.Generic.IEnumerable<string> usedLetters = null)
         {
             InitializeComponent();
+            WindowHelper.ApplyModernWindowStyling(this, isDialog: true);
             CommandBindings.Add(new System.Windows.Input.CommandBinding(SystemCommands.CloseWindowCommand, (s, e) => SystemCommands.CloseWindow((Window)e.Parameter)));
             _isEdit = existing != null;
 

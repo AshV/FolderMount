@@ -15,8 +15,9 @@
         <conv:IntToVisibilityConverter x:Key="IntToVisibility" />
     </Window.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
+    <Border BorderBrush="{StaticResource BrBorderSubtle}" BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>  <!-- Header -->
             <RowDefinition Height="Auto"/>  <!-- Toolbar -->
             <RowDefinition Height="*"   />  <!-- DataGrid -->
@@ -288,5 +289,16 @@
             </Grid>
         </Border>
 
-    </Grid>
+        <!-- ═══════════════════════════════════════════════
+             MODAL BACKDROP DIMMER
+             Dims main window when a sub-window or dialog is open
+        ═══════════════════════════════════════════════ -->
+        <Border x:Name="ModalDimmer"
+                Grid.Row="0" Grid.RowSpan="4"
+                Background="#88080812"
+                Visibility="Collapsed"
+                Panel.ZIndex="999"/>
+
+        </Grid>
+    </Border>
 </Window>

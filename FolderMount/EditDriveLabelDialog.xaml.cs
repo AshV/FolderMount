@@ -12,6 +12,7 @@ namespace FolderMount
         public EditDriveLabelDialog(ActualDrive drive)
         {
             InitializeComponent();
+            WindowHelper.ApplyModernWindowStyling(this, isDialog: true);
             _drive = drive ?? throw new ArgumentNullException(nameof(drive));
 
             TxtTitle.Text = $"Edit Drive Label — {drive.DisplayLetter}";

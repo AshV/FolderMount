@@ -29,12 +29,15 @@
             <Color x:Key="TextMuted"     >#94A3B8</Color>
             <Color x:Key="Border"        >#3F3F5A</Color>
             <Color x:Key="BorderSubtle"  >#2D2D44</Color>
+            <Color x:Key="BgDialog"      >#252536</Color>
+            <Color x:Key="BorderDialog"  >#4E4E6E</Color>
 
             <!-- Brushes -->
             <SolidColorBrush x:Key="BrBgBase"        Color="{StaticResource BgBase}"         />
             <SolidColorBrush x:Key="BrBgSurface"     Color="{StaticResource BgSurface}"      />
             <SolidColorBrush x:Key="BrBgCard"        Color="{StaticResource BgCard}"         />
             <SolidColorBrush x:Key="BrBgElevated"    Color="{StaticResource BgElevated}"     />
+            <SolidColorBrush x:Key="BrBgDialog"      Color="{StaticResource BgDialog}"       />
             <SolidColorBrush x:Key="BrBgRow"         Color="{StaticResource BgRow}"          />
             <SolidColorBrush x:Key="BrBgRowAlt"      Color="{StaticResource BgRowAlt}"       />
             <SolidColorBrush x:Key="BrBgRowHover"    Color="{StaticResource BgRowHover}"     />
@@ -51,6 +54,7 @@
             <SolidColorBrush x:Key="BrTextMuted"     Color="{StaticResource TextMuted}"      />
             <SolidColorBrush x:Key="BrBorder"        Color="{StaticResource Border}"         />
             <SolidColorBrush x:Key="BrBorderSubtle"  Color="{StaticResource BorderSubtle}"   />
+            <SolidColorBrush x:Key="BrBorderDialog"  Color="{StaticResource BorderDialog}"   />
             <SolidColorBrush x:Key="BrTransparent"   Color="Transparent"                     />
 
             <!-- ═══════════════════════════════════════════════════
@@ -76,7 +80,23 @@
                         <WindowChrome CaptionHeight="40"
                                       ResizeBorderThickness="6"
                                       CornerRadius="0"
-                                      GlassFrameThickness="0"
+                                      GlassFrameThickness="1"
+                                      UseAeroCaptionButtons="False" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- ═══════════════════════════════════════════════════
+                 DIALOG WINDOW STYLE (Modal / Sub-windows)
+            ═══════════════════════════════════════════════════ -->
+            <Style x:Key="DialogWindowStyle" TargetType="Window" BasedOn="{StaticResource WindowStyle}">
+                <Setter Property="Background" Value="{StaticResource BrBgDialog}"/>
+                <Setter Property="WindowChrome.WindowChrome">
+                    <Setter.Value>
+                        <WindowChrome CaptionHeight="40"
+                                      ResizeBorderThickness="0"
+                                      CornerRadius="0"
+                                      GlassFrameThickness="1"
                                       UseAeroCaptionButtons="False" />
                     </Setter.Value>
                 </Setter>

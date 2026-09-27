@@ -12,6 +12,7 @@ namespace FolderMount
         public SettingsWindow()
         {
             InitializeComponent();
+            WindowHelper.ApplyModernWindowStyling(this, isDialog: true);
             Loaded += OnLoaded;
             CommandBindings.Add(new System.Windows.Input.CommandBinding(SystemCommands.CloseWindowCommand, (s, e) => SystemCommands.CloseWindow((Window)e.Parameter)));
         }

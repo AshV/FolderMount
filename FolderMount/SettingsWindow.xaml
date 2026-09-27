@@ -5,26 +5,36 @@
         WindowStartupLocation="CenterOwner"
         SizeToContent="Height"
         ResizeMode="NoResize"
-        Background="{StaticResource BrBgBase}"
+        Background="{StaticResource BrBgDialog}"
         Foreground="{StaticResource BrText}"
         FontFamily="{StaticResource FontMain}"
-        Style="{StaticResource WindowStyle}">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>  <!-- Custom Title bar -->
-            <RowDefinition Height="*"/>     <!-- Content -->
-        </Grid.RowDefinitions>
+        Style="{StaticResource DialogWindowStyle}">
 
-        <!-- Custom Title Bar -->
-        <Grid Grid.Row="0" Height="40">
-            <TextBlock Text="Settings" VerticalAlignment="Center" Margin="28,0,0,0" 
-                       FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource BrTextSec}"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="✕" Style="{StaticResource BtnWindowClose}" FontSize="12"
-                        Command="{x:Static SystemCommands.CloseWindowCommand}"
-                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
-            </StackPanel>
-        </Grid>
+    <Border BorderBrush="{StaticResource BrBorderDialog}" BorderThickness="1"
+            Background="{StaticResource BrBgDialog}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>  <!-- Custom Title bar -->
+                <RowDefinition Height="*"/>     <!-- Content -->
+            </Grid.RowDefinitions>
+
+            <!-- Sleek Top Accent Highlight Line -->
+            <Border Grid.Row="0" Height="2" VerticalAlignment="Top" Background="{StaticResource BrAccent}" Panel.ZIndex="10"/>
+
+            <!-- Custom Title Bar -->
+            <Border Grid.Row="0" Height="40" Background="{StaticResource BrBgCard}"
+                    BorderBrush="{StaticResource BrBorderSubtle}" BorderThickness="0,0,0,1">
+                <Grid>
+                    <TextBlock Text="Settings" VerticalAlignment="Center" Margin="24,0,0,0" 
+                               FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource BrText}"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="✕" Style="{StaticResource BtnWindowClose}" FontSize="12"
+                                Width="40" Height="40"
+                                Command="{x:Static SystemCommands.CloseWindowCommand}"
+                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
 
         <Grid Grid.Row="1" Margin="28,0,28,24">
             <Grid.RowDefinitions>
@@ -161,4 +171,5 @@
                 Padding="16,10" HorizontalAlignment="Right" Click="BtnClose_Click"/>
         </Grid>
     </Grid>
+    </Border>
 </Window>

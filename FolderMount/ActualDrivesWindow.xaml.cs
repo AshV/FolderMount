@@ -13,12 +13,25 @@ namespace FolderMount
         public ActualDrivesWindow()
         {
             InitializeComponent();
+            WindowHelper.ApplyModernWindowStyling(this, isDialog: true);
             GridDrives.ItemsSource = Drives;
             Loaded += (s, e) => LoadDrives();
 
             CommandBindings.Add(new System.Windows.Input.CommandBinding(
                 SystemCommands.CloseWindowCommand,
                 (s, e) => Close()));
+        }
+
+        public void ShowDimmer()
+        {
+            if (ModalDimmer != null)
+                ModalDimmer.Visibility = Visibility.Visible;
+        }
+
+        public void HideDimmer()
+        {
+            if (ModalDimmer != null)
+                ModalDimmer.Visibility = Visibility.Collapsed;
         }
 
         public void LoadDrives()
@@ -109,11 +122,19 @@ namespace FolderMount
         {
             if ((sender as FrameworkElement)?.DataContext is not ActualDrive drive) return;
 
-            var dlg = new EditDriveLabelDialog(drive) { Owner = this };
-            if (dlg.ShowDialog() == true)
+            ShowDimmer();
+            try
             {
-                LoadDrives();
-                TxtStatus.Text = $"Updated label for {drive.DisplayLetter}.";
+                var dlg = new EditDriveLabelDialog(drive) { Owner = this };
+                if (dlg.ShowDialog() == true)
+                {
+                    LoadDrives();
+                    TxtStatus.Text = $"Updated label for {drive.DisplayLetter}.";
+                }
+            }
+            finally
+            {
+                HideDimmer();
             }
         }
 

@@ -93,36 +93,45 @@ namespace FolderMount.ViewModels
 
         private void DoAdd()
         {
-            var usedLetters = Mappings.Select(m => m.DriveLetter);
-            var dlg = new AddEditDialog(null, usedLetters) { Owner = Application.Current.MainWindow };
-
-            if (dlg.ShowDialog() != true) return;
-
-            var m = dlg.Result;
-            if (Mappings.Any(x => x.DriveLetter.Equals(m.DriveLetter, StringComparison.OrdinalIgnoreCase)))
+            var mainWin = Application.Current.MainWindow as MainWindow;
+            mainWin?.ShowDimmer();
+            try
             {
-                MessageBox.Show($"Drive {m.DisplayLetter} is already in the list.", "Duplicate Letter",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
+                var usedLetters = Mappings.Select(m => m.DriveLetter);
+                var dlg = new AddEditDialog(null, usedLetters) { Owner = Application.Current.MainWindow };
+
+                if (dlg.ShowDialog() != true) return;
+
+                var m = dlg.Result;
+                if (Mappings.Any(x => x.DriveLetter.Equals(m.DriveLetter, StringComparison.OrdinalIgnoreCase)))
+                {
+                    MessageBox.Show($"Drive {m.DisplayLetter} is already in the list.", "Duplicate Letter",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                Mappings.Add(m);
+
+                var (ok, err) = SubstService.Mount(m.DriveLetter, m.FolderPath, m.Label);
+                m.IsActive = ok;
+                m.MountOnLoad = true;
+
+                SaveAll();
+                RefreshStatus();
+
+                if (ok)
+                {
+                    StatusMessage = $"{m.DisplayLetter} added and mounted.";
+                }
+                else
+                {
+                    StatusMessage = $"Added {m.DisplayLetter} (mount failed).";
+                    ShowError($"Added {m.DisplayLetter}, but could not mount it immediately:\n{err}");
+                }
             }
-
-            Mappings.Add(m);
-
-            var (ok, err) = SubstService.Mount(m.DriveLetter, m.FolderPath, m.Label);
-            m.IsActive = ok;
-            m.MountOnLoad = true;
-
-            SaveAll();
-            RefreshStatus();
-
-            if (ok)
+            finally
             {
-                StatusMessage = $"{m.DisplayLetter} added and mounted.";
-            }
-            else
-            {
-                StatusMessage = $"Added {m.DisplayLetter} (mount failed).";
-                ShowError($"Added {m.DisplayLetter}, but could not mount it immediately:\n{err}");
+                mainWin?.HideDimmer();
             }
         }
 
@@ -131,40 +140,49 @@ namespace FolderMount.ViewModels
             var mapping = ResolveMapping(param);
             if (mapping == null) return;
 
-            var usedLetters = Mappings.Where(m => m != mapping).Select(m => m.DriveLetter);
-            var dlg = new AddEditDialog(mapping.Clone(), usedLetters) { Owner = Application.Current.MainWindow };
-
-            if (dlg.ShowDialog() != true) return;
-
-            var newM = dlg.Result;
-            var idx  = Mappings.IndexOf(mapping);
-            if (idx < 0) return;
-
-            bool wasActive = mapping.IsActive;
-            bool letterChanged = !string.Equals(mapping.DriveLetter, newM.DriveLetter, StringComparison.OrdinalIgnoreCase);
-            bool pathChanged = !string.Equals(mapping.FolderPath, newM.FolderPath, StringComparison.OrdinalIgnoreCase);
-
-            Mappings[idx] = newM;
-
-            if (wasActive)
+            var mainWin = Application.Current.MainWindow as MainWindow;
+            mainWin?.ShowDimmer();
+            try
             {
-                if (letterChanged || pathChanged)
-                {
-                    SubstService.Unmount(mapping.DriveLetter);
-                    var (ok, _) = SubstService.Mount(newM.DriveLetter, newM.FolderPath, newM.Label);
-                    newM.IsActive = ok;
-                }
-                else
-                {
-                    // Only label or flags changed; update label directly without dropping active drive
-                    DriveLabelService.SetOrClearLabel(newM.DriveLetter, newM.Label);
-                    newM.IsActive = true;
-                }
-            }
+                var usedLetters = Mappings.Where(m => m != mapping).Select(m => m.DriveLetter);
+                var dlg = new AddEditDialog(mapping.Clone(), usedLetters) { Owner = Application.Current.MainWindow };
 
-            SaveAll();
-            RefreshStatus();
-            StatusMessage = $"Updated {newM.DisplayLetter}";
+                if (dlg.ShowDialog() != true) return;
+
+                var newM = dlg.Result;
+                var idx  = Mappings.IndexOf(mapping);
+                if (idx < 0) return;
+
+                bool wasActive = mapping.IsActive;
+                bool letterChanged = !string.Equals(mapping.DriveLetter, newM.DriveLetter, StringComparison.OrdinalIgnoreCase);
+                bool pathChanged = !string.Equals(mapping.FolderPath, newM.FolderPath, StringComparison.OrdinalIgnoreCase);
+
+                Mappings[idx] = newM;
+
+                if (wasActive)
+                {
+                    if (letterChanged || pathChanged)
+                    {
+                        SubstService.Unmount(mapping.DriveLetter);
+                        var (ok, _) = SubstService.Mount(newM.DriveLetter, newM.FolderPath, newM.Label);
+                        newM.IsActive = ok;
+                    }
+                    else
+                    {
+                        // Only label or flags changed; update label directly without dropping active drive
+                        DriveLabelService.SetOrClearLabel(newM.DriveLetter, newM.Label);
+                        newM.IsActive = true;
+                    }
+                }
+
+                SaveAll();
+                RefreshStatus();
+                StatusMessage = $"Updated {newM.DisplayLetter}";
+            }
+            finally
+            {
+                mainWin?.HideDimmer();
+            }
         }
 
         private void DoRemove(object param)

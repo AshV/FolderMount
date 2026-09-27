@@ -102,16 +102,32 @@ namespace FolderMount
         {
             // Ensure the main window is available as Owner before opening settings
             ShowMainWindow();
-            var win = new SettingsWindow { Owner = _mainWindow };
-            win.ShowDialog();
+            _mainWindow?.ShowDimmer();
+            try
+            {
+                var win = new SettingsWindow { Owner = _mainWindow };
+                win.ShowDialog();
+            }
+            finally
+            {
+                _mainWindow?.HideDimmer();
+            }
         }
 
         internal void ShowActualDrives()
         {
             // Ensure the main window is available as Owner before opening actual drives
             ShowMainWindow();
-            var win = new ActualDrivesWindow { Owner = _mainWindow };
-            win.ShowDialog();
+            _mainWindow?.ShowDimmer();
+            try
+            {
+                var win = new ActualDrivesWindow { Owner = _mainWindow };
+                win.ShowDialog();
+            }
+            finally
+            {
+                _mainWindow?.HideDimmer();
+            }
         }
 
         private void RefreshMainIfOpen()

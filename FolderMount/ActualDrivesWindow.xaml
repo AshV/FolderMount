@@ -4,18 +4,23 @@
         Title="Actual Drives &amp; Labels — FolderMount" Width="880" Height="580"
         MinWidth="760" MinHeight="440"
         WindowStartupLocation="CenterOwner"
-        Background="{StaticResource BrBgBase}"
+        Background="{StaticResource BrBgDialog}"
         Foreground="{StaticResource BrText}"
         FontFamily="{StaticResource FontMain}"
         Style="{StaticResource WindowStyle}">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>  <!-- Custom Title bar -->
-            <RowDefinition Height="Auto"/>  <!-- Info Banner -->
-            <RowDefinition Height="*"/>     <!-- DataGrid -->
-            <RowDefinition Height="Auto"/>  <!-- Status bar -->
-        </Grid.RowDefinitions>
+    <Border BorderBrush="{StaticResource BrBorderDialog}" BorderThickness="1"
+            Background="{StaticResource BrBgDialog}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>  <!-- Custom Title bar -->
+                <RowDefinition Height="Auto"/>  <!-- Info Banner -->
+                <RowDefinition Height="*"/>     <!-- DataGrid -->
+                <RowDefinition Height="Auto"/>  <!-- Status bar -->
+            </Grid.RowDefinitions>
+
+            <!-- Sleek Top Accent Highlight Line -->
+            <Border Grid.Row="0" Height="2" VerticalAlignment="Top" Background="{StaticResource BrAccent}" Panel.ZIndex="10"/>
 
         <!-- ═══════════════════════════════════════════════
              CUSTOM TITLE BAR
@@ -206,5 +211,17 @@
                 </StackPanel>
             </Grid>
         </Border>
-    </Grid>
+
+        <!-- ═══════════════════════════════════════════════
+             MODAL BACKDROP DIMMER
+             Dims Actual Drives window when Edit dialog is open
+        ═══════════════════════════════════════════════ -->
+        <Border x:Name="ModalDimmer"
+                Grid.Row="0" Grid.RowSpan="4"
+                Background="#88080812"
+                Visibility="Collapsed"
+                Panel.ZIndex="999"/>
+
+        </Grid>
+    </Border>
 </Window>
