@@ -126,9 +126,27 @@ namespace FolderMount.ViewModels
             var idx  = Mappings.IndexOf(mapping);
             if (idx < 0) return;
 
+            bool wasActive = mapping.IsActive;
+            bool letterChanged = !string.Equals(mapping.DriveLetter, newM.DriveLetter, StringComparison.OrdinalIgnoreCase);
+            bool pathChanged = !string.Equals(mapping.FolderPath, newM.FolderPath, StringComparison.OrdinalIgnoreCase);
+
             Mappings[idx] = newM;
-            if (mapping.IsActive)
-                SubstService.Unmount(mapping.DriveLetter);
+
+            if (wasActive)
+            {
+                if (letterChanged || pathChanged)
+                {
+                    SubstService.Unmount(mapping.DriveLetter);
+                    var (ok, _) = SubstService.Mount(newM.DriveLetter, newM.FolderPath, newM.Label);
+                    newM.IsActive = ok;
+                }
+                else
+                {
+                    // Only label or flags changed; update label directly without dropping active drive
+                    DriveLabelService.SetOrClearLabel(newM.DriveLetter, newM.Label);
+                    newM.IsActive = true;
+                }
+            }
 
             SaveAll();
             RefreshStatus();
@@ -147,6 +165,8 @@ namespace FolderMount.ViewModels
 
             if (mapping.IsActive)
                 SubstService.Unmount(mapping.DriveLetter);
+            else
+                DriveLabelService.ClearDriveLabel(mapping.DriveLetter);
 
             Mappings.Remove(mapping);
             SaveAll();
@@ -159,7 +179,7 @@ namespace FolderMount.ViewModels
             var mapping = ResolveMapping(param);
             if (mapping == null) return;
 
-            var (ok, err) = SubstService.Mount(mapping.DriveLetter, mapping.FolderPath);
+            var (ok, err) = SubstService.Mount(mapping.DriveLetter, mapping.FolderPath, mapping.Label);
             if (ok)
             {
                 mapping.IsActive = true;

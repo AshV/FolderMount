@@ -98,7 +98,8 @@
 
                 <TextBox Grid.Row="2" x:Name="TxtLabel"
                          Style="{StaticResource InputBox}" Height="36"
-                         VerticalContentAlignment="Center"/>
+                         VerticalContentAlignment="Center"
+                         ToolTip="Custom name displayed for this drive in Windows Explorer"/>
             </Grid>
         </Grid>
 

@@ -24,9 +24,10 @@ namespace FolderMount.Services
 
         /// <summary>
         /// Mounts a folder as a virtual drive letter using DefineDosDevice.
+        /// Optionally sets a custom drive label in Windows Explorer via HKCU DriveIcons.
         /// Returns (success, errorMessage).
         /// </summary>
-        public static (bool Success, string Error) Mount(string driveLetter, string folderPath)
+        public static (bool Success, string Error) Mount(string driveLetter, string folderPath, string label = null, bool notifyShell = true)
         {
             if (string.IsNullOrWhiteSpace(driveLetter) || string.IsNullOrWhiteSpace(folderPath))
                 return (false, "Drive letter and folder path are required.");
@@ -41,6 +42,7 @@ namespace FolderMount.Services
             if (active.TryGetValue(letter, out string existingPath)
                 && string.Equals(existingPath, folderPath, StringComparison.OrdinalIgnoreCase))
             {
+                DriveLabelService.SetOrClearLabel(letter, label, notifyShell);
                 return (true, null);
             }
 
@@ -64,18 +66,22 @@ namespace FolderMount.Services
                 return (false, $"Failed to mount. Error code: {error}");
             }
 
+            DriveLabelService.SetOrClearLabel(letter, label, notifyShell);
             return (true, null);
         }
 
         /// <summary>
-        /// Removes the mapping for the given drive letter.
+        /// Removes the mapping for the given drive letter and clears any custom Explorer label.
         /// </summary>
-        public static (bool Success, string Error) Unmount(string driveLetter)
+        public static (bool Success, string Error) Unmount(string driveLetter, bool notifyShell = true)
         {
             string letter = driveLetter.TrimEnd(':').ToUpper();
             
             bool result = DefineDosDevice(DDD_REMOVE_DEFINITION, letter + ":", null);
             
+            // Clear custom label in registry regardless of unmount result, ensuring no leftover label
+            DriveLabelService.ClearDriveLabel(letter, notifyShell);
+
             if (!result)
             {
                 int error = Marshal.GetLastWin32Error();
@@ -144,9 +150,13 @@ namespace FolderMount.Services
             var failures = new List<(string, string)>();
             foreach (var m in mappings)
             {
-                var (ok, err) = Mount(m.DriveLetter, m.FolderPath);
+                var (ok, err) = Mount(m.DriveLetter, m.FolderPath, m.Label, notifyShell: false);
                 if (ok) mounted++;
                 else    failures.Add((m.DisplayLetter, err));
+            }
+            if (mounted > 0)
+            {
+                DriveLabelService.NotifyShell();
             }
             return (mounted, failures);
         }
@@ -154,10 +164,23 @@ namespace FolderMount.Services
         public static void UnmountAll(IEnumerable<DriveMapping> mappings)
         {
             var active = GetActiveMappings();
+            bool unmountedAny = false;
             foreach (var m in mappings)
             {
                 if (active.ContainsKey(m.DriveLetter))
-                    Unmount(m.DriveLetter);
+                {
+                    Unmount(m.DriveLetter, notifyShell: false);
+                    unmountedAny = true;
+                }
+                else
+                {
+                    // Ensure orphaned drive label is also cleared
+                    DriveLabelService.ClearDriveLabel(m.DriveLetter, notifyShell: false);
+                }
+            }
+            if (unmountedAny)
+            {
+                DriveLabelService.NotifyShell();
             }
         }
     }
