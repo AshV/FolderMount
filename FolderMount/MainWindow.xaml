@@ -115,8 +115,12 @@
                             ToolTip="Disconnect all active drives"/>
                 </StackPanel>
 
-                <!-- Right: Settings & Refresh -->
+                <!-- Right: Actual Drives, Settings & Refresh -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="💽 Actual Drives" Style="{StaticResource BtnGhost}"
+                            Click="BtnActualDrives_Click" Margin="0,0,6,0"
+                            ToolTip="Manage physical drive labels so virtual drives display correctly in Windows Explorer"/>
+
                     <Button Content="⚙ Settings" Style="{StaticResource BtnGhost}"
                             Click="BtnSettings_Click" Margin="0,0,6,0"
                             ToolTip="Open settings and storage options"/>

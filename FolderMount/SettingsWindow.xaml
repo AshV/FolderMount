@@ -35,6 +35,10 @@
                 <RowDefinition Height="Auto"/>  <!-- Section: Storage -->
                 <RowDefinition Height="16"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="Auto"/>  <!-- Section: Actual Drives -->
+                <RowDefinition Height="16"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>  <!-- Close -->
             </Grid.RowDefinitions>
@@ -125,8 +129,35 @@
             </Grid>
         </Border>
 
+        <!-- SECTION: Actual Drives & Labels -->
+        <TextBlock Grid.Row="8" Text="ACTUAL DRIVES &amp; EXPLORER LABELS"
+                   FontSize="10" FontWeight="SemiBold"
+                   Foreground="{StaticResource BrTextMuted}"/>
+
+        <Border Grid.Row="10" Background="{StaticResource BrBgCard}"
+                BorderBrush="{StaticResource BrBorder}" BorderThickness="1"
+                CornerRadius="8" Padding="16,14">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Virtual Drive Label Optimization"
+                               FontWeight="SemiBold" Foreground="{StaticResource BrText}"/>
+                    <TextBlock Text="Clear host filesystem Volume Labels and use Drive Labels instead so virtual (SUBST) drives display custom names in Windows Explorer."
+                               FontSize="11" Foreground="{StaticResource BrTextSec}"
+                               Margin="0,3,0,0" TextWrapping="Wrap"/>
+                </StackPanel>
+                <Button Grid.Column="1" Content="Manage Drives…"
+                        Style="{StaticResource BtnGhost}" Padding="12,6"
+                        VerticalAlignment="Center" Margin="12,0,0,0"
+                        Click="BtnActualDrives_Click"/>
+            </Grid>
+        </Border>
+
         <!-- Close -->
-        <Button Grid.Row="8" Content="Close" Style="{StaticResource BtnPrimary}"
+        <Button Grid.Row="12" Content="Close" Style="{StaticResource BtnPrimary}"
                 Padding="16,10" HorizontalAlignment="Right" Click="BtnClose_Click"/>
         </Grid>
     </Grid>

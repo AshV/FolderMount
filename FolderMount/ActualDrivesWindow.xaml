@@ -1,0 +1,210 @@
+<Window x:Class="FolderMount.ActualDrivesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Actual Drives &amp; Labels — FolderMount" Width="880" Height="580"
+        MinWidth="760" MinHeight="440"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BrBgBase}"
+        Foreground="{StaticResource BrText}"
+        FontFamily="{StaticResource FontMain}"
+        Style="{StaticResource WindowStyle}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- Custom Title bar -->
+            <RowDefinition Height="Auto"/>  <!-- Info Banner -->
+            <RowDefinition Height="*"/>     <!-- DataGrid -->
+            <RowDefinition Height="Auto"/>  <!-- Status bar -->
+        </Grid.RowDefinitions>
+
+        <!-- ═══════════════════════════════════════════════
+             CUSTOM TITLE BAR
+        ═══════════════════════════════════════════════ -->
+        <Border Grid.Row="0" Background="{StaticResource BrBgCard}"
+                BorderBrush="{StaticResource BrBorderSubtle}" BorderThickness="0,0,0,1">
+            <Grid Height="46" Margin="24,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="💽" FontSize="18" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Actual Drives &amp; Explorer Labels" FontSize="14" FontWeight="Bold"
+                                   Foreground="{StaticResource BrText}"/>
+                        <TextBlock Text="Optimize physical drive labels so virtual (SUBST) drives display custom names"
+                                   FontSize="11" Foreground="{StaticResource BrTextSec}" Margin="0,1,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,-24,0">
+                    <Button Content="—" Style="{StaticResource BtnWindowControl}" FontSize="12"
+                            Command="{x:Static SystemCommands.MinimizeWindowCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
+                    <Button Content="✕" Style="{StaticResource BtnWindowClose}" FontSize="12"
+                            Command="{x:Static SystemCommands.CloseWindowCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ═══════════════════════════════════════════════
+             INFO BANNER
+        ═══════════════════════════════════════════════ -->
+        <Border Grid.Row="1" Background="{StaticResource BrBgSurface}"
+                BorderBrush="{StaticResource BrBorderSubtle}" BorderThickness="0,0,0,1"
+                Padding="24,14">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="💡" FontSize="20" Margin="0,2,14,0" VerticalAlignment="Top"/>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="Why use Drive Labels instead of Volume Labels?"
+                               FontWeight="SemiBold" FontSize="12" Foreground="{StaticResource BrText}"/>
+                    <TextBlock Text="When a virtual (SUBST) drive is mounted from a physical drive that has a filesystem Volume Label, Windows Explorer inherits that label on the virtual drive, masking its friendly name. By clicking 'Use as Drive Label', the volume label is cleared from disk and preserved as an Explorer Drive Label—keeping the physical drive's name while allowing virtual drives to display their own labels."
+                               FontSize="11" Foreground="{StaticResource BrTextSec}" TextWrapping="Wrap" Margin="0,3,0,0" LineHeight="16"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ═══════════════════════════════════════════════
+             ACTUAL DRIVES DATAGRID
+        ═══════════════════════════════════════════════ -->
+        <DataGrid Grid.Row="2"
+                  x:Name="GridDrives"
+                  Style="{StaticResource ModernGrid}"
+                  ColumnHeaderStyle="{StaticResource GridColHeader}"
+                  RowStyle="{StaticResource GridRow}"
+                  CellStyle="{StaticResource GridCell}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  CanUserResizeRows="False"
+                  IsReadOnly="True"
+                  Margin="20,14,20,10">
+
+            <DataGrid.Columns>
+
+                <!-- DRIVE LETTER & DETAILS -->
+                <DataGridTemplateColumn Header="DRIVE" Width="170">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding DisplayLetter}" FontWeight="Bold" FontSize="15"
+                                               Foreground="{StaticResource BrText}"/>
+                                    <Border Background="{StaticResource BrBgElevated}" CornerRadius="4"
+                                            Padding="6,1" Margin="8,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding FileSystem}" FontSize="10" Foreground="{StaticResource BrTextMuted}"/>
+                                    </Border>
+                                </StackPanel>
+                                <TextBlock Text="{Binding DisplayDetails}" FontSize="11"
+                                           Foreground="{StaticResource BrTextSec}" Margin="0,3,0,0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- VOLUME LABEL (FILESYSTEM) -->
+                <DataGridTemplateColumn Header="VOLUME LABEL (DISK)" Width="170">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="{Binding DisplayVolumeLabel}" FontWeight="SemiBold" FontSize="12"
+                                           Foreground="{StaticResource BrText}"/>
+                                <TextBlock Text="Filesystem metadata" FontSize="10"
+                                           Foreground="{StaticResource BrTextMuted}" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- DRIVE LABEL (EXPLORER OVERRIDE) -->
+                <DataGridTemplateColumn Header="DRIVE LABEL (EXPLORER)" Width="170">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="{Binding DisplayDriveLabel}" FontWeight="SemiBold" FontSize="12"
+                                           Foreground="{StaticResource BrText}"/>
+                                <TextBlock Text="Registry override" FontSize="10"
+                                           Foreground="{StaticResource BrTextMuted}" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- STATUS -->
+                <DataGridTemplateColumn Header="STATUS" Width="160">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding StatusText}" Foreground="{Binding StatusBrush}"
+                                       FontSize="11" FontWeight="SemiBold" TextWrapping="Wrap"
+                                       VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- ACTIONS -->
+                <DataGridTemplateColumn Header="ACTIONS" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <!-- Primary action: Migrate Volume Label to Drive Label -->
+                                <Button Content="Use as Drive Label"
+                                        Style="{StaticResource BtnPrimary}"
+                                        Padding="10,5" FontSize="11" Margin="0,0,6,0"
+                                        Visibility="{Binding MigrateVisibility}"
+                                        Click="BtnMigrate_Click"
+                                        ToolTip="Remove Volume Label and use same name as Explorer Drive Label"/>
+
+                                <!-- Restore action if already migrated -->
+                                <Button Content="Restore Volume Label"
+                                        Style="{StaticResource BtnGhost}"
+                                        Padding="10,5" FontSize="11" Margin="0,0,6,0"
+                                        Visibility="{Binding RestoreVisibility}"
+                                        Click="BtnRestore_Click"
+                                        ToolTip="Write Drive Label back to the filesystem Volume Label"/>
+
+                                <!-- Edit action -->
+                                <Button Content="Edit…"
+                                        Style="{StaticResource BtnGhost}"
+                                        Padding="8,5" FontSize="11" Margin="0,0,6,0"
+                                        Click="BtnEdit_Click"
+                                        ToolTip="Edit or clear Explorer Drive Label"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- ═══════════════════════════════════════════════
+             STATUS BAR & FOOTER
+        ═══════════════════════════════════════════════ -->
+        <Border Grid.Row="3" Background="{StaticResource BrBgCard}"
+                BorderBrush="{StaticResource BrBorderSubtle}" BorderThickness="0,1,0,0"
+                Padding="20,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock x:Name="TxtStatus" Text="Ready" VerticalAlignment="Center"
+                           FontSize="12" Foreground="{StaticResource BrTextSec}"/>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="↻ Refresh" Style="{StaticResource BtnGhost}"
+                            Padding="12,6" Margin="0,0,8,0" Click="BtnRefresh_Click"/>
+                    <Button Content="Close" Style="{StaticResource BtnPrimary}"
+                            Padding="16,6" Click="BtnClose_Click" IsCancel="True"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

@@ -20,6 +20,7 @@ Published and distributed via the **Microsoft Store** with automatic background 
 | ⚡ **Bulk Actions** | Mount All / Disconnect All in one click from main window or tray |
 | 📂 **Open in Explorer** | Jump straight to the virtual drive with a single click |
 | 🏷️ **Labels** | Assign friendly nicknames to folders |
+| 💽 **Actual Drive Optimization** | Convert host volume labels to registry drive labels so virtual drives display custom names |
 | ⚙️ **Settings** | Toggle startup, quick access to data folder, and XML backup |
 | 🔵 **System Tray** | Runs unobtrusively in the tray with quick-action context menu |
 | 🎨 **Dark Theme** | Sleek, custom-crafted dark UI with high-contrast inputs |
@@ -157,10 +158,14 @@ HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
   FolderMount = "<ExecutablePath>" /startup
 ```
 
-On login with the `/startup` flag:
-1. The app starts silently minimized in the system tray.
-2. Saved mappings flagged with `mountOnLoad="true"` are mounted automatically in a background thread.
-3. No disruptive popup windows are displayed on login.
+### Virtual Drive Labels & Host Drive Optimization
+
+In Windows Explorer, virtual (`SUBST`) drives query the underlying filesystem for volume metadata. If the physical host drive has a filesystem **Volume Label** (e.g., `Data` on `D:`), Windows Explorer displays `Data (P:)` on virtual drives mounted from `D:`, ignoring the virtual drive's friendly label.
+
+FolderMount provides an **Actual Drives** management tool that allows you to:
+1. Identify all physical/logical drives on your system and inspect their filesystem **Volume Label** vs. Explorer **Drive Label**.
+2. Click **"Use as Drive Label"** to clear the filesystem Volume Label from the host disk and save that same name as a Windows Explorer Drive Label override (`HKCU\...\DriveIcons`).
+3. The physical drive retains its friendly name in "This PC", while all virtual drives mounted from it are freed to display their own individual custom labels.
 
 ---
 

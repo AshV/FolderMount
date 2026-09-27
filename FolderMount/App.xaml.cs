@@ -30,11 +30,12 @@ namespace FolderMount
             Services.StartupService.SyncStartupState();
 
             _tray = new TrayManager(
-                onOpen:       ShowMainWindow,
-                onMountAll:   HandleMountAll,
-                onUnmountAll: HandleUnmountAll,
-                onSettings:   ShowSettings,
-                onExit:       ExitApp
+                onOpen:         ShowMainWindow,
+                onMountAll:     HandleMountAll,
+                onUnmountAll:   HandleUnmountAll,
+                onActualDrives: ShowActualDrives,
+                onSettings:     ShowSettings,
+                onExit:         ExitApp
             );
 
             // Mount/unmount on a background thread for fast startup
@@ -102,6 +103,14 @@ namespace FolderMount
             // Ensure the main window is available as Owner before opening settings
             ShowMainWindow();
             var win = new SettingsWindow { Owner = _mainWindow };
+            win.ShowDialog();
+        }
+
+        internal void ShowActualDrives()
+        {
+            // Ensure the main window is available as Owner before opening actual drives
+            ShowMainWindow();
+            var win = new ActualDrivesWindow { Owner = _mainWindow };
             win.ShowDialog();
         }
 

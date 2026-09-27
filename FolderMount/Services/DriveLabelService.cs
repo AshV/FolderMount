@@ -158,6 +158,187 @@ namespace FolderMount.Services
             catch { }
         }
 
+        /// <summary>
+        /// Retrieves the custom drive label override stored in HKCU DriveIcons for the given drive letter.
+        /// </summary>
+        public static string GetDriveLabel(string driveLetter)
+        {
+            if (string.IsNullOrWhiteSpace(driveLetter)) return string.Empty;
+            string letter = driveLetter.TrimEnd(':', '\\').ToUpper();
+
+            try
+            {
+                string subKeyPath = $@"{DriveIconsBasePath}\{letter}\DefaultLabel";
+                using var key = Registry.CurrentUser.OpenSubKey(subKeyPath);
+                return key?.GetValue(null)?.ToString() ?? string.Empty;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        private static extern bool SetVolumeLabel(string lpRootPathName, string lpVolumeName);
+
+        /// <summary>
+        /// Sets or clears the actual filesystem volume label on disk.
+        /// Attempts direct Win32 call first; if access is denied, requests elevation via PowerShell.
+        /// </summary>
+        public static bool SetFileSystemVolumeLabel(string driveLetter, string newLabel, out string errorMessage)
+        {
+            errorMessage = null;
+            if (string.IsNullOrWhiteSpace(driveLetter))
+            {
+                errorMessage = "Drive letter is required.";
+                return false;
+            }
+
+            string letter = driveLetter.TrimEnd(':', '\\').ToUpper();
+            string root = letter + @":\";
+            string labelToSet = string.IsNullOrWhiteSpace(newLabel) ? null : newLabel.Trim();
+
+            // 1. Try Win32 API directly
+            if (SetVolumeLabel(root, labelToSet))
+            {
+                NotifyShell();
+                return true;
+            }
+
+            int error = Marshal.GetLastWin32Error();
+            // 5 = ERROR_ACCESS_DENIED. If access denied, request elevation via PowerShell
+            if (error == 5)
+            {
+                try
+                {
+                    string psScript = string.IsNullOrEmpty(labelToSet)
+                        ? $"Set-Volume -DriveLetter {letter} -NewFileSystemLabel ''"
+                        : $"Set-Volume -DriveLetter {letter} -NewFileSystemLabel '{labelToSet.Replace("'", "''")}'";
+
+                    var psi = new ProcessStartInfo
+                    {
+                        FileName = "powershell.exe",
+                        Arguments = $"-NoProfile -WindowStyle Hidden -Command \"{psScript}\"",
+                        Verb = "runas",
+                        UseShellExecute = true,
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        CreateNoWindow = true
+                    };
+
+                    using var proc = Process.Start(psi);
+                    proc?.WaitForExit(10000);
+
+                    if (proc != null && proc.ExitCode == 0)
+                    {
+                        NotifyShell();
+                        return true;
+                    }
+
+                    errorMessage = "Failed to update filesystem volume label with elevated privileges.";
+                    return false;
+                }
+                catch (System.ComponentModel.Win32Exception wEx) when (wEx.NativeErrorCode == 1223)
+                {
+                    errorMessage = "Operation cancelled. Administrator permission was not granted.";
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    errorMessage = $"Elevation error: {ex.Message}";
+                    return false;
+                }
+            }
+
+            errorMessage = $"Failed to set volume label. Error code: {error}";
+            return false;
+        }
+
+        /// <summary>
+        /// Clears the actual filesystem volume label on disk.
+        /// </summary>
+        public static bool ClearFileSystemVolumeLabel(string driveLetter, out string errorMessage)
+        {
+            return SetFileSystemVolumeLabel(driveLetter, null, out errorMessage);
+        }
+
+        /// <summary>
+        /// Migrates a drive's filesystem Volume Label into an Explorer Drive Label override,
+        /// and clears the filesystem Volume Label from the disk.
+        /// This allows virtual (SUBST) drives mounted from this drive to show their own custom labels.
+        /// </summary>
+        public static bool MigrateVolumeLabelToDriveLabel(string driveLetter, out string errorMessage)
+        {
+            errorMessage = null;
+            if (string.IsNullOrWhiteSpace(driveLetter))
+            {
+                errorMessage = "Drive letter is required.";
+                return false;
+            }
+
+            string letter = driveLetter.TrimEnd(':', '\\').ToUpper();
+
+            // 1. Read current filesystem volume label
+            string currentVolLabel = string.Empty;
+            try
+            {
+                var di = new System.IO.DriveInfo(letter + ":");
+                if (di.IsReady)
+                    currentVolLabel = di.VolumeLabel;
+            }
+            catch { }
+
+            if (string.IsNullOrWhiteSpace(currentVolLabel))
+            {
+                errorMessage = $"Drive {letter}: has no filesystem Volume Label to migrate.";
+                return false;
+            }
+
+            // 2. Clear filesystem volume label on disk (prompts UAC if needed)
+            bool cleared = ClearFileSystemVolumeLabel(letter, out errorMessage);
+            if (!cleared)
+            {
+                return false;
+            }
+
+            // 3. Set the registry Drive Label using the same name
+            SetDriveLabel(letter, currentVolLabel, notifyShell: true);
+            return true;
+        }
+
+        /// <summary>
+        /// Restores a drive's registry Drive Label back to the filesystem Volume Label,
+        /// and deletes the registry Drive Label override.
+        /// </summary>
+        public static bool RestoreVolumeLabelFromDriveLabel(string driveLetter, out string errorMessage)
+        {
+            errorMessage = null;
+            if (string.IsNullOrWhiteSpace(driveLetter))
+            {
+                errorMessage = "Drive letter is required.";
+                return false;
+            }
+
+            string letter = driveLetter.TrimEnd(':', '\\').ToUpper();
+            string driveLabel = GetDriveLabel(letter);
+
+            if (string.IsNullOrWhiteSpace(driveLabel))
+            {
+                errorMessage = $"Drive {letter}: has no Drive Label override to restore.";
+                return false;
+            }
+
+            // 1. Write to filesystem Volume Label (prompts UAC if needed)
+            bool set = SetFileSystemVolumeLabel(letter, driveLabel, out errorMessage);
+            if (!set)
+            {
+                return false;
+            }
+
+            // 2. Remove registry Drive Label
+            ClearDriveLabel(letter, notifyShell: true);
+            return true;
+        }
+
         private static void SetRegistryViaRegExe(string letter, string label)
         {
             try

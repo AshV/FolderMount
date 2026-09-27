@@ -17,6 +17,7 @@ namespace FolderMount
             Action onOpen,
             Action onMountAll,
             Action onUnmountAll,
+            Action onActualDrives,
             Action onSettings,
             Action onExit)
         {
@@ -33,13 +34,14 @@ namespace FolderMount
             menu.Font       = new Font("Segoe UI", 9.5f);
             menu.Renderer   = new DarkMenuRenderer();
 
-            AddItem(menu, "📂  Open FolderMount",    onOpen);
-            AddItem(menu, "⚡  Mount All Drives",    onMountAll);
-            AddItem(menu, "⏏  Disconnect All",       onUnmountAll);
+            AddItem(menu, "📂  Open FolderMount",          onOpen);
+            AddItem(menu, "⚡  Mount All Drives",          onMountAll);
+            AddItem(menu, "⏏  Disconnect All",             onUnmountAll);
             menu.Items.Add(new ToolStripSeparator());
-            AddItem(menu, "⚙  Settings",             onSettings);
+            AddItem(menu, "💽  Actual Drives & Labels",   onActualDrives);
+            AddItem(menu, "⚙  Settings",                   onSettings);
             menu.Items.Add(new ToolStripSeparator());
-            AddItem(menu, "✕  Exit",                  onExit);
+            AddItem(menu, "✕  Exit",                        onExit);
 
             _icon.ContextMenuStrip = menu;
             _icon.DoubleClick     += (_, __) => onOpen();

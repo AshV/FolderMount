@@ -97,11 +97,31 @@
                            FontSize="10" FontWeight="SemiBold"
                            Foreground="{StaticResource BrTextSec}"/>
 
-                <TextBox Grid.Row="2" x:Name="TxtLabel"
-                         Style="{StaticResource InputBox}" Height="36"
-                         VerticalContentAlignment="Center"
-                         ToolTip="Custom name displayed for this drive in Windows Explorer"
-                         TextChanged="TxtLabel_TextChanged"/>
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Grid.Column="0" x:Name="TxtLabel"
+                             Style="{StaticResource InputBox}" Height="36"
+                             VerticalContentAlignment="Center"
+                             ToolTip="Custom name displayed for this drive in Windows Explorer"
+                             TextChanged="TxtLabel_TextChanged"/>
+
+                    <Button Grid.Column="1" x:Name="BtnLabelWarning"
+                            Style="{StaticResource BtnBase}"
+                            Background="{StaticResource BrBgElevated}"
+                            BorderBrush="{StaticResource BrWarning}"
+                            BorderThickness="1"
+                            Width="36" Height="36"
+                            Margin="8,0,0,0"
+                            Padding="0"
+                            Visibility="Collapsed"
+                            Click="BtnLabelWarning_Click">
+                        <TextBlock Text="⚠️" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
+                </Grid>
             </Grid>
         </Grid>
 

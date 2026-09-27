@@ -1,0 +1,107 @@
+<Window x:Class="FolderMount.EditDriveLabelDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Edit Drive Label" Width="440"
+        WindowStartupLocation="CenterOwner"
+        SizeToContent="Height"
+        ResizeMode="NoResize"
+        Background="{StaticResource BrBgBase}"
+        Foreground="{StaticResource BrText}"
+        FontFamily="{StaticResource FontMain}"
+        Style="{StaticResource WindowStyle}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- Custom Title bar -->
+            <RowDefinition Height="*"/>     <!-- Content -->
+        </Grid.RowDefinitions>
+
+        <!-- Custom Title Bar -->
+        <Grid Grid.Row="0" Height="40">
+            <TextBlock x:Name="TxtTitle" Text="Edit Drive Label" VerticalAlignment="Center" Margin="28,0,0,0" 
+                       FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource BrTextSec}"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="✕" Style="{StaticResource BtnWindowClose}" FontSize="12"
+                        Command="{x:Static SystemCommands.CloseWindowCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="28,0,28,24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>  <!-- Info card -->
+                <RowDefinition Height="16"/>
+                <RowDefinition Height="Auto"/>  <!-- Drive Label Input -->
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="Auto"/>  <!-- Buttons -->
+            </Grid.RowDefinitions>
+
+            <!-- Info summary -->
+            <Border Grid.Row="0" Background="{StaticResource BrBgCard}"
+                    BorderBrush="{StaticResource BrBorderSubtle}" BorderThickness="1"
+                    CornerRadius="8" Padding="14,12">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="6"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Drive Letter:" FontSize="11" Foreground="{StaticResource BrTextMuted}" Margin="0,0,12,0"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" x:Name="TxtDriveLetter" Text="D:" FontSize="11" FontWeight="Bold" Foreground="{StaticResource BrText}"/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Filesystem Volume Label:" FontSize="11" Foreground="{StaticResource BrTextMuted}" Margin="0,0,12,0"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="TxtCurrentVolLabel" Text="(None)" FontSize="11" Foreground="{StaticResource BrTextSec}"/>
+                </Grid>
+            </Border>
+
+            <!-- Drive Label Input -->
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="4"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="EXPLORER DRIVE LABEL"
+                           FontSize="10" FontWeight="SemiBold"
+                           Foreground="{StaticResource BrTextSec}"/>
+
+                <TextBox Grid.Row="2" x:Name="TxtDriveLabel"
+                         Style="{StaticResource InputBox}" Height="36"
+                         VerticalContentAlignment="Center"/>
+
+                <TextBlock Grid.Row="4" Text="This name will appear in Windows Explorer without affecting the underlying volume."
+                           FontSize="10" Foreground="{StaticResource BrTextMuted}"/>
+            </Grid>
+
+            <!-- Buttons -->
+            <Grid Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" x:Name="BtnClear" Content="Clear Label"
+                        Style="{StaticResource BtnGhost}" Foreground="{StaticResource BrDanger}"
+                        Padding="12,8" Click="BtnClear_Click"
+                        ToolTip="Remove registry override and revert to default Windows name"/>
+
+                <Button Grid.Column="2" Content="Cancel" Style="{StaticResource BtnGhost}"
+                        Padding="16,8" Click="BtnCancel_Click" IsCancel="True"/>
+
+                <Button Grid.Column="4" Content="Save Label" Style="{StaticResource BtnPrimary}"
+                        Padding="16,8" Click="BtnSave_Click" IsDefault="True"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

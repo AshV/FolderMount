@@ -39,5 +39,11 @@ namespace FolderMount
             var win = new SettingsWindow { Owner = this };
             win.ShowDialog();
         }
+
+        private void BtnActualDrives_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new ActualDrivesWindow { Owner = this };
+            win.ShowDialog();
+        }
     }
 }

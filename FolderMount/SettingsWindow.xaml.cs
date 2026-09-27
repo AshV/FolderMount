@@ -128,6 +128,12 @@ namespace FolderMount
             }
         }
 
+        private void BtnActualDrives_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new ActualDrivesWindow { Owner = this };
+            win.ShowDialog();
+        }
+
         private void BtnClose_Click(object sender, RoutedEventArgs e) => Close();
     }
 }
