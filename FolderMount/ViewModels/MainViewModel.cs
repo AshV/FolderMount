@@ -163,10 +163,7 @@ namespace FolderMount.ViewModels
                 "Confirm Remove", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (ans != MessageBoxResult.Yes) return;
 
-            if (mapping.IsActive)
-                SubstService.Unmount(mapping.DriveLetter);
-            else
-                DriveLabelService.ClearDriveLabel(mapping.DriveLetter);
+            SubstService.Unmount(mapping.DriveLetter);
 
             Mappings.Remove(mapping);
             SaveAll();

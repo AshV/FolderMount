@@ -42,7 +42,11 @@ namespace FolderMount.Services
             if (active.TryGetValue(letter, out string existingPath)
                 && string.Equals(existingPath, folderPath, StringComparison.OrdinalIgnoreCase))
             {
-                DriveLabelService.SetOrClearLabel(letter, label, notifyShell);
+                DriveLabelService.SetOrClearLabel(letter, label, notifyShell: false);
+                if (notifyShell)
+                {
+                    DriveLabelService.NotifyDriveAdded(letter);
+                }
                 return (true, null);
             }
 
@@ -66,23 +70,40 @@ namespace FolderMount.Services
                 return (false, $"Failed to mount. Error code: {error}");
             }
 
-            DriveLabelService.SetOrClearLabel(letter, label, notifyShell);
+            DriveLabelService.SetOrClearLabel(letter, label, notifyShell: false);
+            if (notifyShell)
+            {
+                DriveLabelService.NotifyDriveAdded(letter);
+            }
             return (true, null);
         }
 
         /// <summary>
-        /// Removes the mapping for the given drive letter and clears any custom Explorer label.
+        /// Removes the mapping for the given drive letter, pops all definitions,
+        /// and notifies Explorer that the drive was removed.
         /// </summary>
         public static (bool Success, string Error) Unmount(string driveLetter, bool notifyShell = true)
         {
-            string letter = driveLetter.TrimEnd(':').ToUpper();
-            
-            bool result = DefineDosDevice(DDD_REMOVE_DEFINITION, letter + ":", null);
-            
-            // Clear custom label in registry regardless of unmount result, ensuring no leftover label
-            DriveLabelService.ClearDriveLabel(letter, notifyShell);
+            string letter = driveLetter.TrimEnd(':', '\\').ToUpper();
 
-            if (!result)
+            // Clear custom label in registry first
+            DriveLabelService.ClearDriveLabel(letter, notifyShell: false);
+
+            // Pop definitions until device is fully unmapped
+            bool result = false;
+            char[] buf = new char[1024];
+            while (QueryDosDevice(letter + ":", buf, (uint)buf.Length) != 0)
+            {
+                result = DefineDosDevice(DDD_REMOVE_DEFINITION, letter + ":", null);
+                if (!result) break;
+            }
+
+            if (notifyShell)
+            {
+                DriveLabelService.NotifyDriveRemoved(letter);
+            }
+
+            if (!result && QueryDosDevice(letter + ":", buf, (uint)buf.Length) != 0)
             {
                 int error = Marshal.GetLastWin32Error();
                 return (false, $"Failed to unmount. Error code: {error}");
@@ -151,8 +172,15 @@ namespace FolderMount.Services
             foreach (var m in mappings)
             {
                 var (ok, err) = Mount(m.DriveLetter, m.FolderPath, m.Label, notifyShell: false);
-                if (ok) mounted++;
-                else    failures.Add((m.DisplayLetter, err));
+                if (ok)
+                {
+                    mounted++;
+                    DriveLabelService.NotifyDriveAdded(m.DriveLetter);
+                }
+                else
+                {
+                    failures.Add((m.DisplayLetter, err));
+                }
             }
             if (mounted > 0)
             {
@@ -167,16 +195,9 @@ namespace FolderMount.Services
             bool unmountedAny = false;
             foreach (var m in mappings)
             {
-                if (active.ContainsKey(m.DriveLetter))
-                {
-                    Unmount(m.DriveLetter, notifyShell: false);
-                    unmountedAny = true;
-                }
-                else
-                {
-                    // Ensure orphaned drive label is also cleared
-                    DriveLabelService.ClearDriveLabel(m.DriveLetter, notifyShell: false);
-                }
+                Unmount(m.DriveLetter, notifyShell: false);
+                DriveLabelService.NotifyDriveRemoved(m.DriveLetter);
+                unmountedAny = true;
             }
             if (unmountedAny)
             {
