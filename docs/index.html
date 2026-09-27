@@ -13,6 +13,18 @@
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <meta name="theme-color" content="#1e1e28">
 
+  <!-- Theme Initialization (Runs synchronously to prevent FOUT / theme flash) -->
+  <script>
+    (function() {
+      try {
+        var mode = localStorage.getItem('foldermount_theme') || 'system';
+        var isDark = mode === 'dark' || (mode === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme-mode', mode);
+      } catch (e) {}
+    })();
+  </script>
+
   <!-- Canonical URL (Works on GitHub Pages subpage or custom domain) -->
   <link rel="canonical" href="https://www.ashishvishwakarma.com/FolderMount/">
 
@@ -209,10 +221,52 @@
           <li><a href="#download" class="nav-link">Download</a></li>
           <li><a href="#faq" class="nav-link">FAQ</a></li>
           <li class="mobile-only-item"><a href="https://github.com/AshV/FolderMount" target="_blank" rel="noopener noreferrer" class="nav-link">GitHub Repository &nearr;</a></li>
+          <li class="mobile-only-item">
+            <div class="mobile-theme-wrapper">
+              <span class="mobile-theme-label">Theme Preference</span>
+              <div class="mobile-theme-options">
+                <button class="mobile-theme-btn" data-theme-val="system">💻 Auto</button>
+                <button class="mobile-theme-btn" data-theme-val="dark">🌙 Dark</button>
+                <button class="mobile-theme-btn" data-theme-val="light">☀️ Light</button>
+              </div>
+            </div>
+          </li>
         </ul>
       </nav>
 
       <div class="nav-actions">
+        <!-- Theme Switcher Dropdown (System / Dark / Light) -->
+        <div class="theme-switcher" id="theme-switcher">
+          <button class="theme-toggle-btn" id="theme-toggle-btn" aria-label="Switch Theme" aria-haspopup="true" aria-expanded="false" title="Theme (Follow System / Dark / Light)">
+            <span class="theme-icon-indicator" id="theme-indicator-icon">💻</span>
+            <span class="theme-btn-label" id="theme-indicator-label">System</span>
+            <svg class="theme-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="theme-dropdown-menu" id="theme-dropdown-menu" role="menu">
+            <button class="theme-menu-item" data-theme-val="system" role="menuitem">
+              <span class="theme-item-left">
+                <span class="theme-item-icon">💻</span>
+                <span class="theme-item-text">Follow System</span>
+              </span>
+              <span class="theme-check-icon">✓</span>
+            </button>
+            <button class="theme-menu-item" data-theme-val="dark" role="menuitem">
+              <span class="theme-item-left">
+                <span class="theme-item-icon">🌙</span>
+                <span class="theme-item-text">Dark Theme</span>
+              </span>
+              <span class="theme-check-icon">✓</span>
+            </button>
+            <button class="theme-menu-item" data-theme-val="light" role="menuitem">
+              <span class="theme-item-left">
+                <span class="theme-item-icon">☀️</span>
+                <span class="theme-item-text">Light Theme</span>
+              </span>
+              <span class="theme-check-icon">✓</span>
+            </button>
+          </div>
+        </div>
+
         <a href="https://github.com/AshV/FolderMount" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm" aria-label="FolderMount on GitHub">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
           <span>Star</span>
@@ -314,6 +368,10 @@
             </div>
 
             <div class="sim-tb-right">
+              <button id="sim-theme-toggle" class="sim-btn" title="Toggle Theme (System / Dark / Light)" aria-label="Toggle simulator theme">
+                <span id="sim-theme-icon">💻</span>
+                <span class="sim-theme-label">Theme</span>
+              </button>
               <button class="sim-btn" onclick="alert('FolderMount settings:\n- Run at startup: Enabled (HKCU)\n- Storage: %APPDATA%\\FolderMount\\mappings.xml')">
                 <span>⚙ Settings</span>
               </button>
@@ -391,7 +449,7 @@
     <!-- ==========================================================================
          Real-World Applications & Use Cases
          ========================================================================== -->
-    <section id="applications" class="section" style="background: rgba(22, 26, 41, 0.45); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
+    <section id="applications" class="section section-alt">
       <div class="container">
         <div class="section-header">
           <span class="section-tag">Real-World Workflows</span>
@@ -751,7 +809,7 @@
     <!-- ==========================================================================
          How It Works Flow
          ========================================================================== -->
-    <section class="section" style="background: rgba(22, 26, 41, 0.35);">
+    <section class="section section-alt-subtle">
       <div class="container">
         <div class="section-header">
           <span class="section-tag">Quick &amp; Simple</span>
@@ -936,7 +994,7 @@
         <div class="footer-brand">
           <div style="display: flex; align-items: center; gap: 10px;">
             <img src="./assets/icons/icon-44.png" alt="FolderMount" width="28" height="28" style="border-radius: 6px;">
-            <span style="font-weight: 800; font-size: 1.15rem; color: #ffffff;">FolderMount</span>
+            <span style="font-weight: 800; font-size: 1.15rem; color: var(--text-primary);">FolderMount</span>
           </div>
           <p>
             The fast, lightweight virtual drive manager for Windows. Map local folders to drive letters using native SUBST — no admin required, persists across reboots.

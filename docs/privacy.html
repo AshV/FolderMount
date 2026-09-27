@@ -4,17 +4,39 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Privacy Policy for FolderMount for Windows - 100% offline desktop utility with zero data collection, no telemetry, and local storage only.">
+  <meta name="theme-color" content="#1e1e28">
   <link rel="canonical" href="https://www.ashishvishwakarma.com/FolderMount/privacy.html">
   <link rel="icon" type="image/x-icon" href="./assets/icons/favicon.ico">
   <title>Privacy Policy - FolderMount</title>
+
+  <!-- Theme Initialization (Runs synchronously to prevent FOUT / theme flash) -->
+  <script>
+    (function() {
+      try {
+        var mode = localStorage.getItem('foldermount_theme') || 'system';
+        var isDark = mode === 'dark' || (mode === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme-mode', mode);
+      } catch (e) {}
+    })();
+  </script>
+
   <style>
-    :root {
+    :root, [data-theme="dark"] {
       --bg: #1E1E28;
       --card-bg: #252530;
       --border: #3F3F5A;
       --text: #F8FAFC;
       --text-sec: #CBD5E1;
       --accent: #7C73FF;
+    }
+    [data-theme="light"] {
+      --bg: #F1F5F9;
+      --card-bg: #FFFFFF;
+      --border: #CBD5E1;
+      --text: #0F172A;
+      --text-sec: #334155;
+      --accent: #6366F1;
     }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -23,6 +45,7 @@
       line-height: 1.6;
       margin: 0;
       padding: 40px 20px;
+      transition: background 0.2s ease, color 0.2s ease;
     }
     .container {
       max-width: 760px;
@@ -31,8 +54,12 @@
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 32px 40px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
     }
     .back-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       margin-bottom: 24px;
     }
     .back-nav a {
@@ -41,6 +68,23 @@
       gap: 6px;
       font-size: 0.9rem;
       font-weight: 500;
+    }
+    .theme-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.18s ease, border-color 0.18s ease;
+    }
+    .theme-toggle-btn:hover {
+      border-color: var(--accent);
     }
     h1 {
       color: var(--text);
@@ -58,6 +102,18 @@
     }
     ul {
       padding-left: 20px;
+    }
+    code {
+      font-family: Consolas, monospace;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(124, 115, 255, 0.12);
+      color: var(--accent);
+      font-size: 0.9em;
+    }
+    [data-theme="light"] code {
+      background: rgba(99, 102, 241, 0.1);
+      color: #4338ca;
     }
     .date {
       color: #94A3B8;
@@ -77,6 +133,10 @@
   <div class="container">
     <div class="back-nav">
       <a href="./">&larr; Back to FolderMount</a>
+      <button id="privacy-theme-toggle" class="theme-toggle-btn" title="Toggle Theme (Follow System / Dark / Light)" aria-label="Toggle theme">
+        <span id="privacy-theme-icon">💻</span>
+        <span id="privacy-theme-text">System</span>
+      </button>
     </div>
     <h1>Privacy Policy for FolderMount</h1>
     <div class="date">Last updated: September 15, 2026</div>
@@ -105,5 +165,51 @@
     <h2>6. Contact</h2>
     <p>If you have any questions or feedback regarding this Privacy Policy, please open an issue on our GitHub repository: <a href="https://github.com/AshV/FolderMount" target="_blank" rel="noopener">https://github.com/AshV/FolderMount</a>.</p>
   </div>
+
+  <script>
+    (function() {
+      var STORAGE_KEY = 'foldermount_theme';
+      function getMode() {
+        var m = localStorage.getItem(STORAGE_KEY);
+        return (m === 'dark' || m === 'light' || m === 'system') ? m : 'system';
+      }
+      function getResolved(m) {
+        if (m === 'dark') return 'dark';
+        if (m === 'light') return 'light';
+        return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+      }
+      function apply(m) {
+        var r = getResolved(m);
+        document.documentElement.setAttribute('data-theme', r);
+        document.documentElement.setAttribute('data-theme-mode', m);
+        var iconEl = document.getElementById('privacy-theme-icon');
+        var textEl = document.getElementById('privacy-theme-text');
+        var icons = { system: '💻', dark: '🌙', light: '☀️' };
+        var labels = { system: 'System', dark: 'Dark', light: 'Light' };
+        if (iconEl) iconEl.textContent = icons[m] || '💻';
+        if (textEl) textEl.textContent = labels[m] || 'System';
+      }
+      var current = getMode();
+      apply(current);
+      var btn = document.getElementById('privacy-theme-toggle');
+      if (btn) {
+        btn.addEventListener('click', function() {
+          var c = getMode();
+          var next = c === 'system' ? 'dark' : (c === 'dark' ? 'light' : 'system');
+          localStorage.setItem(STORAGE_KEY, next);
+          apply(next);
+        });
+      }
+      if (window.matchMedia) {
+        var mq = window.matchMedia('(prefers-color-scheme: dark)');
+        var onMq = function() {
+          if (getMode() === 'system') apply('system');
+        };
+        if (mq.addEventListener) mq.addEventListener('change', onMq);
+        else if (mq.addListener) mq.addListener(onMq);
+      }
+    })();
+  </script>
 </body>
 </html>
+
