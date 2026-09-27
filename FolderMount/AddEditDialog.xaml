@@ -33,7 +33,7 @@
                 <RowDefinition Height="Auto"/>  <!-- Folder path -->
                 <RowDefinition Height="16"/>
                 <RowDefinition Height="Auto"/>  <!-- Drive Letter and Label -->
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="24"/>    <!-- Gap between inputs and buttons -->
                 <RowDefinition Height="Auto"/>  <!-- Buttons -->
             </Grid.RowDefinitions>
 

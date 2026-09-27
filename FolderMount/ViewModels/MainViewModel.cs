@@ -107,9 +107,23 @@ namespace FolderMount.ViewModels
             }
 
             Mappings.Add(m);
+
+            var (ok, err) = SubstService.Mount(m.DriveLetter, m.FolderPath, m.Label);
+            m.IsActive = ok;
+            m.MountOnLoad = true;
+
             SaveAll();
             RefreshStatus();
-            StatusMessage = $"Added {m.DisplayLetter}";
+
+            if (ok)
+            {
+                StatusMessage = $"{m.DisplayLetter} added and mounted.";
+            }
+            else
+            {
+                StatusMessage = $"Added {m.DisplayLetter} (mount failed).";
+                ShowError($"Added {m.DisplayLetter}, but could not mount it immediately:\n{err}");
+            }
         }
 
         private void DoEdit(object param)
