@@ -39,9 +39,6 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,-24,0">
-                    <Button Content="—" Style="{StaticResource BtnWindowControl}" FontSize="12"
-                            Command="{x:Static SystemCommands.MinimizeWindowCommand}"
-                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
                     <Button Content="✕" Style="{StaticResource BtnWindowClose}" FontSize="12"
                             Command="{x:Static SystemCommands.CloseWindowCommand}"
                             CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />

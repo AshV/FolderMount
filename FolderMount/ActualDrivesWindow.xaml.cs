@@ -19,9 +19,6 @@ namespace FolderMount
             CommandBindings.Add(new System.Windows.Input.CommandBinding(
                 SystemCommands.CloseWindowCommand,
                 (s, e) => Close()));
-            CommandBindings.Add(new System.Windows.Input.CommandBinding(
-                SystemCommands.MinimizeWindowCommand,
-                (s, e) => SystemCommands.MinimizeWindow(this)));
         }
 
         public void LoadDrives()
