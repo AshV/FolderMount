@@ -55,7 +55,8 @@
                     </Grid.ColumnDefinitions>
                     <TextBox Grid.Column="0" x:Name="TxtFolderPath"
                              Style="{StaticResource InputBox}" Height="36"
-                             VerticalContentAlignment="Center"/>
+                             VerticalContentAlignment="Center"
+                             TextChanged="TxtFolderPath_TextChanged"/>
                     <Button  Grid.Column="2" Content="Browse…"
                              Style="{StaticResource BtnGhost}" Height="36" Padding="14,0"
                              Click="BrowseFolder_Click"/>
@@ -99,7 +100,8 @@
                 <TextBox Grid.Row="2" x:Name="TxtLabel"
                          Style="{StaticResource InputBox}" Height="36"
                          VerticalContentAlignment="Center"
-                         ToolTip="Custom name displayed for this drive in Windows Explorer"/>
+                         ToolTip="Custom name displayed for this drive in Windows Explorer"
+                         TextChanged="TxtLabel_TextChanged"/>
             </Grid>
         </Grid>
 

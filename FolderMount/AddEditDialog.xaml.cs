@@ -51,6 +51,53 @@ namespace FolderMount
             }
         }
 
+        private bool _userEditedLabel;
+
+        private void TxtFolderPath_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            if (!_isEdit && (!_userEditedLabel || string.IsNullOrWhiteSpace(TxtLabel.Text)))
+            {
+                string path = TxtFolderPath.Text.Trim();
+                if (!string.IsNullOrEmpty(path))
+                {
+                    string folderName = GetDefaultLabelFromPath(path);
+                    if (!string.IsNullOrEmpty(folderName))
+                    {
+                        TxtLabel.Text = folderName;
+                    }
+                }
+            }
+        }
+
+        private void TxtLabel_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            if (TxtLabel.IsKeyboardFocused)
+            {
+                _userEditedLabel = !string.IsNullOrWhiteSpace(TxtLabel.Text);
+            }
+        }
+
+        private static string GetDefaultLabelFromPath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path)) return string.Empty;
+            try
+            {
+                string trimmed = path.Trim().Trim('"', '\'').TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                string name = Path.GetFileName(trimmed);
+                if (!string.IsNullOrEmpty(name))
+                    return name;
+
+                if (trimmed.EndsWith(':'))
+                    return $"Drive {trimmed.TrimEnd(':')}";
+
+                return trimmed;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
         private void BrowseFolder_Click(object sender, RoutedEventArgs e)
         {
             using (var dlg = new FolderBrowserDialog())
