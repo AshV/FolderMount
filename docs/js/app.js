@@ -199,7 +199,7 @@ function initAppSimulator() {
     const activeCount = mappings.filter(m => m.active).length;
     const totalCount = mappings.length;
 
-    if (activeCountEl) activeCountEl.textContent = `${activeCount} Active`;
+    if (activeCountEl) activeCountEl.textContent = `${activeCount} Mounted`;
     if (totalCountEl) totalCountEl.textContent = `${totalCount} Total`;
     if (bottomTotalEl) bottomTotalEl.textContent = `Mappings: ${totalCount}`;
   }
@@ -334,7 +334,7 @@ function initAppSimulator() {
 
   // Initial render
   renderGrid();
-  setCommand('Ready. SUBST system table initialized.', 'Ready — 3 active virtual drives');
+  setCommand('Ready. SUBST system table initialized.', 'Ready — 3 mounted virtual drives');
 }
 
 /* ==========================================================================

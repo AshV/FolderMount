@@ -38,9 +38,17 @@
                 <!-- Logo + Title -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                     <!-- Application Logo -->
-                    <Image Source="pack://application:,,,/Assets/icon.ico" 
-                           Width="38" Height="38" Margin="0,0,14,0" 
-                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Grid Margin="0,0,14,0" Width="38" Height="38">
+                        <Grid.Effect>
+                            <DropShadowEffect Color="{StaticResource AccentPrimary}" BlurRadius="18" ShadowDepth="0" Opacity="0.85"/>
+                        </Grid.Effect>
+                        <Image Source="pack://application:,,,/Assets/icon.ico" 
+                               RenderOptions.BitmapScalingMode="HighQuality">
+                            <Image.Clip>
+                                <RectangleGeometry Rect="1,1,36,36" RadiusX="6" RadiusY="6"/>
+                            </Image.Clip>
+                        </Image>
+                    </Grid>
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock Text="FolderMount" FontSize="20" FontWeight="Bold"
                                    Foreground="{DynamicResource BrText}"/>
@@ -59,7 +67,7 @@
                                 <Ellipse Width="8" Height="8" Fill="{DynamicResource BrSuccess}"
                                          VerticalAlignment="Center" Margin="0,0,6,0"/>
                                 <TextBlock x:Name="TxtActiveCount"
-                                           Text="{Binding ActiveCount, StringFormat='{}{0} Active'}"
+                                           Text="{Binding ActiveCount, StringFormat='{}{0} Mounted'}"
                                            FontSize="12" Foreground="{DynamicResource BrTextSec}"
                                            VerticalAlignment="Center"/>
                             </StackPanel>
