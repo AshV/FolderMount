@@ -255,7 +255,7 @@ namespace FolderMount.ViewModels
             var (mounted, failures) = SubstService.MountAll(inactive);
 
             // Update model state for successfully mounted drives
-            foreach (var m in inactive.Where(m => !failures.Any(f => f.Letter == m.DisplayLetter)))
+            foreach (var m in inactive.Where(m => !failures.Any(f => f.Letter == m.DriveLetter)))
             {
                 m.IsActive = true;
                 m.MountOnLoad = true;

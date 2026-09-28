@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 
@@ -44,11 +45,18 @@ namespace FolderMount
             // Mount/unmount on a background thread for fast startup
             System.Threading.Tasks.Task.Run(() =>
             {
-                var loadedMappings = Services.MappingStore.Load();
-                Services.SubstService.MountAll(loadedMappings.Where(m => m.MountOnLoad));
-                Services.SubstService.UnmountAll(loadedMappings.Where(m => !m.MountOnLoad));
+                try
+                {
+                    var loadedMappings = Services.MappingStore.Load();
+                    Services.SubstService.MountAll(loadedMappings.Where(m => m.MountOnLoad));
+                    Services.SubstService.UnmountAll(loadedMappings.Where(m => !m.MountOnLoad));
 
-                Current.Dispatcher.Invoke(RefreshMainIfOpen);
+                    Current.Dispatcher.Invoke(RefreshMainIfOpen);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Startup task failed: {ex}");
+                }
             });
 
             if (!isStartupRun)
@@ -139,6 +147,7 @@ namespace FolderMount
         private void ExitApp()
         {
             _tray?.Dispose();
+            _tray = null;
             SingleInstance.Release();
             Shutdown();
         }
@@ -147,6 +156,7 @@ namespace FolderMount
         {
             SingleInstance.Release();
             _tray?.Dispose();
+            _tray = null;
             base.OnExit(e);
         }
     }

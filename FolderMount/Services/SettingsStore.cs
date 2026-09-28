@@ -36,10 +36,7 @@ namespace FolderMount.Services
     /// </summary>
     public static class SettingsStore
     {
-        private static readonly string AppDataDir =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FolderMount");
-
-        public static string SettingsFilePath => Path.Combine(AppDataDir, "settings.json");
+        public static string SettingsFilePath => Path.Combine(AppPaths.AppDataDir, "settings.json");
 
         private static AppSettings _current;
 
@@ -86,8 +83,8 @@ namespace FolderMount.Services
         {
             try
             {
-                if (!Directory.Exists(AppDataDir))
-                    Directory.CreateDirectory(AppDataDir);
+                if (!Directory.Exists(AppPaths.AppDataDir))
+                    Directory.CreateDirectory(AppPaths.AppDataDir);
 
                 _current = settings ?? _current ?? new AppSettings();
                 var options = new JsonSerializerOptions { WriteIndented = true };

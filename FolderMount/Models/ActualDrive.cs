@@ -147,18 +147,19 @@ namespace FolderMount.Models
             OnPropertyChanged(nameof(StatusBrush));
         }
 
+        private static readonly string[] Suffixes = { "B", "KB", "MB", "GB", "TB" };
+
         private static string FormatBytes(long bytes)
         {
             if (bytes <= 0) return "0 B";
-            string[] suffixes = { "B", "KB", "MB", "GB", "TB" };
             int i = 0;
             double d = bytes;
-            while (d >= 1024 && i < suffixes.Length - 1)
+            while (d >= 1024 && i < Suffixes.Length - 1)
             {
                 d /= 1024;
                 i++;
             }
-            return $"{d:0.#} {suffixes[i]}";
+            return $"{d:0.#} {Suffixes[i]}";
         }
 
         private static SolidColorBrush Freeze(SolidColorBrush brush)

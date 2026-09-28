@@ -71,6 +71,10 @@ namespace FolderMount
             _mutex?.Dispose();
             _showEvent?.Dispose();
             _cts?.Dispose();
+            
+            _mutex = null;
+            _showEvent = null;
+            _cts = null;
         }
 
         // ── Background listener ───────────────────────────────────────────────

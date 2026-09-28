@@ -22,6 +22,12 @@ namespace FolderMount.Services
         private const uint DDD_RAW_TARGET_PATH = 0x00000001;
         private const uint DDD_REMOVE_DEFINITION = 0x00000002;
 
+        public static string NormalizeLetter(string driveLetter)
+        {
+            if (string.IsNullOrWhiteSpace(driveLetter)) return string.Empty;
+            return driveLetter.TrimEnd(':', '\\').ToUpper();
+        }
+
         /// <summary>
         /// Mounts a folder as a virtual drive letter using DefineDosDevice.
         /// Optionally sets a custom drive label in Windows Explorer via HKCU DriveIcons.
@@ -29,17 +35,21 @@ namespace FolderMount.Services
         /// </summary>
         public static (bool Success, string Error) Mount(string driveLetter, string folderPath, string label = null, bool notifyShell = true)
         {
+            return MountInternal(driveLetter, folderPath, label, notifyShell, GetActiveMappings());
+        }
+
+        private static (bool Success, string Error) MountInternal(string driveLetter, string folderPath, string label, bool notifyShell, Dictionary<string, string> activeMappings)
+        {
             if (string.IsNullOrWhiteSpace(driveLetter) || string.IsNullOrWhiteSpace(folderPath))
                 return (false, "Drive letter and folder path are required.");
 
             if (!Directory.Exists(folderPath))
                 return (false, $"Folder not found: {folderPath}");
 
-            string letter = driveLetter.TrimEnd(':').ToUpper();
+            string letter = NormalizeLetter(driveLetter);
 
             // Check if it's already mounted correctly
-            var active = GetActiveMappings();
-            if (active.TryGetValue(letter, out string existingPath)
+            if (activeMappings.TryGetValue(letter, out string existingPath)
                 && string.Equals(existingPath, folderPath, StringComparison.OrdinalIgnoreCase))
             {
                 DriveLabelService.SetOrClearLabel(letter, label, notifyShell: false);
@@ -54,7 +64,7 @@ namespace FolderMount.Services
             bool letterInUse = DriveInfo.GetDrives()
                 .Any(d => d.Name.StartsWith(letter + ":", StringComparison.OrdinalIgnoreCase));
 
-            if (letterInUse && !active.ContainsKey(letter))
+            if (letterInUse && !activeMappings.ContainsKey(letter))
             {
                 return (false,
                     $"Drive {letter}: is already in use by another drive or mapping.\n" +
@@ -84,7 +94,7 @@ namespace FolderMount.Services
         /// </summary>
         public static (bool Success, string Error) Unmount(string driveLetter, bool notifyShell = true)
         {
-            string letter = driveLetter.TrimEnd(':', '\\').ToUpper();
+            string letter = NormalizeLetter(driveLetter);
 
             // Clear custom label in registry first
             DriveLabelService.ClearDriveLabel(letter, notifyShell: false);
@@ -168,10 +178,11 @@ namespace FolderMount.Services
             MountAll(IEnumerable<DriveMapping> mappings)
         {
             int mounted = 0;
+            var active = GetActiveMappings();
             var failures = new List<(string, string)>();
             foreach (var m in mappings)
             {
-                var (ok, err) = Mount(m.DriveLetter, m.FolderPath, m.Label, notifyShell: false);
+                var (ok, err) = MountInternal(m.DriveLetter, m.FolderPath, m.Label, false, active);
                 if (ok)
                 {
                     mounted++;
@@ -179,7 +190,7 @@ namespace FolderMount.Services
                 }
                 else
                 {
-                    failures.Add((m.DisplayLetter, err));
+                    failures.Add((m.DriveLetter, err));
                 }
             }
             if (mounted > 0)
@@ -191,13 +202,15 @@ namespace FolderMount.Services
 
         public static void UnmountAll(IEnumerable<DriveMapping> mappings)
         {
-            var active = GetActiveMappings();
             bool unmountedAny = false;
             foreach (var m in mappings)
             {
-                Unmount(m.DriveLetter, notifyShell: false);
-                DriveLabelService.NotifyDriveRemoved(m.DriveLetter);
-                unmountedAny = true;
+                var (ok, _) = Unmount(m.DriveLetter, notifyShell: false);
+                if (ok)
+                {
+                    DriveLabelService.NotifyDriveRemoved(m.DriveLetter);
+                    unmountedAny = true;
+                }
             }
             if (unmountedAny)
             {

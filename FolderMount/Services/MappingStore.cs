@@ -13,10 +13,7 @@ namespace FolderMount.Services
     /// </summary>
     public static class MappingStore
     {
-        private static readonly string AppDataDir =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FolderMount");
-
-        public static string MappingsFilePath => Path.Combine(AppDataDir, "mappings.xml");
+        public static string MappingsFilePath => Path.Combine(AppPaths.AppDataDir, "mappings.xml");
 
         // ── Load ───────────────────────────────────────────────────────────────
 
@@ -86,8 +83,8 @@ namespace FolderMount.Services
 
         private static void EnsureDir()
         {
-            if (!Directory.Exists(AppDataDir))
-                Directory.CreateDirectory(AppDataDir);
+            if (!Directory.Exists(AppPaths.AppDataDir))
+                Directory.CreateDirectory(AppPaths.AppDataDir);
         }
 
         private static List<DriveMapping> Parse(XDocument doc)
@@ -99,7 +96,7 @@ namespace FolderMount.Services
                     DriveLetter = (string)e.Attribute("letter"),
                     FolderPath  = (string)e.Attribute("path"),
                     Label       = (string)e.Attribute("label") ?? string.Empty,
-                    MountOnLoad = e.Attribute("mountOnLoad") != null ? (bool)e.Attribute("mountOnLoad") : true
+                    MountOnLoad = (bool?)e.Attribute("mountOnLoad") ?? true
                 })
                 .Where(m => !string.IsNullOrWhiteSpace(m.DriveLetter) && !string.IsNullOrWhiteSpace(m.FolderPath))
                 .ToList()

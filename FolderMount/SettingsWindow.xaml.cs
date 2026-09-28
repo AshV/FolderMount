@@ -165,12 +165,13 @@ namespace FolderMount
                     try
                     {
                         var imported = MappingStore.Import(dlg.FileName);
-                        var current = MappingStore.Load();
+                        var mw = Owner as MainWindow;
+                        var current = mw != null ? (System.Collections.Generic.IEnumerable<FolderMount.Models.DriveMapping>)mw.ViewModel.Mappings : MappingStore.Load();
                         SubstService.UnmountAll(current);
                         MappingStore.Save(imported);
 
                         // Tell the main window to reload
-                        if (Owner is MainWindow mw)
+                        if (mw != null)
                         {
                             mw.ViewModel.LoadMappings();
                         }
