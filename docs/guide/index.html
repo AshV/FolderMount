@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>User Guide — FolderMount for Windows</title>
+  
+  <meta name="description" content="Complete user guide and documentation for FolderMount for Windows.">
+  <meta name="author" content="AshV">
+  
+  <!-- Theme Initialization -->
+  <script>
+    (function() {
+      try {
+        var mode = localStorage.getItem('foldermount_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', mode);
+        document.documentElement.setAttribute('data-theme-mode', mode);
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Favicon & Icons -->
+  <link rel="icon" type="image/x-icon" href="../assets/icons/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../assets/icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="../css/style.css">
+
+  <style>
+    .guide-layout {
+        display: flex;
+        gap: 40px;
+        margin-top: 100px;
+        margin-bottom: 80px;
+    }
+    
+    .guide-sidebar {
+        width: 250px;
+        flex-shrink: 0;
+        position: sticky;
+        top: 110px;
+        height: fit-content;
+        padding: 24px;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+    }
+    
+    .guide-nav-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .guide-nav-item {
+        margin-bottom: 8px;
+    }
+    
+    .guide-nav-link {
+        display: block;
+        color: var(--text-muted);
+        text-decoration: none;
+        padding: 8px 12px;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        font-weight: 500;
+    }
+    
+    .guide-nav-link:hover, .guide-nav-link.active {
+        background: var(--bg-elevated);
+        color: var(--text-primary);
+    }
+    
+    .guide-content {
+        flex-grow: 1;
+        max-width: 800px;
+    }
+    
+    .guide-section {
+        margin-bottom: 60px;
+        scroll-margin-top: 110px;
+    }
+    
+    .guide-section h2 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .guide-section h3 {
+        font-size: 1.5rem;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .guide-section p {
+        margin-bottom: 1rem;
+        color: var(--text-secondary);
+        line-height: 1.7;
+    }
+    
+    .guide-section ul, .guide-section ol {
+        margin-left: 20px;
+        margin-bottom: 1.5rem;
+        color: var(--text-secondary);
+    }
+    
+    .guide-section li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .guide-callout {
+        padding: 16px 20px;
+        border-left: 4px solid var(--accent-blue);
+        background: var(--bg-surface);
+        margin: 24px 0;
+        border-radius: 0 8px 8px 0;
+    }
+    
+    .guide-callout.warning {
+        border-color: var(--accent-orange);
+    }
+    
+    @media (max-width: 900px) {
+        .guide-layout {
+            flex-direction: column;
+        }
+        .guide-sidebar {
+            width: 100%;
+            position: static;
+            margin-bottom: 30px;
+        }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html#hero" class="nav-brand" aria-label="FolderMount Home">
+        <img src="../assets/icons/icon-44.png" alt="FolderMount Logo" class="nav-logo" width="36" height="36">
+        <span class="brand-text">FolderMount</span>
+      </a>
+
+      <nav aria-label="Main Navigation">
+        <ul class="nav-menu">
+          <li><a href="../index.html#features" class="nav-link">Features</a></li>
+          <li><a href="../index.html#faq" class="nav-link">FAQ</a></li>
+          <li><a href="index.html" class="nav-link active">User Guide</a></li>
+          <li class="mobile-only-item"><a href="https://github.com/AshV/FolderMount" target="_blank" rel="noopener noreferrer" class="nav-link">GitHub</a></li>
+          <li class="mobile-only-item">
+            <div class="mobile-theme-wrapper">
+              <span class="mobile-theme-label">Theme Preference</span>
+              <div class="mobile-theme-options">
+                <button class="mobile-theme-btn" data-theme-val="dark">🌙 Dark</button>
+                <button class="mobile-theme-btn" data-theme-val="light">☀️ Light</button>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <!-- Theme Toggle Button -->
+        <button class="theme-toggle-btn" id="theme-toggle-btn" aria-label="Toggle Dark/Light Theme" title="Toggle Theme">
+          <span class="theme-icon-indicator" id="theme-indicator-icon">🌙</span>
+        </button>
+
+        <a href="https://github.com/AshV/FolderMount" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="guide-layout">
+        <!-- Sidebar -->
+        <aside class="guide-sidebar">
+          <ul class="guide-nav-list">
+            <li class="guide-nav-item"><a href="#introduction" class="guide-nav-link active">Introduction</a></li>
+            <li class="guide-nav-item"><a href="#getting-started" class="guide-nav-link">Getting Started</a></li>
+            <li class="guide-nav-item"><a href="#creating-mappings" class="guide-nav-link">Creating Mappings</a></li>
+            <li class="guide-nav-item"><a href="#system-tray" class="guide-nav-link">System Tray</a></li>
+            <li class="guide-nav-item"><a href="#settings" class="guide-nav-link">Settings & Export</a></li>
+            <li class="guide-nav-item"><a href="#troubleshooting" class="guide-nav-link">Troubleshooting</a></li>
+          </ul>
+        </aside>
+
+        <!-- Content -->
+        <div class="guide-content">
+          <section id="introduction" class="guide-section">
+            <h2>Introduction</h2>
+            <p>Welcome to the FolderMount for Windows User Guide. FolderMount is a lightweight utility that maps local folders to virtual drive letters (like <code>P:</code> or <code>Z:</code>) using the native Windows <code>SUBST</code> command.</p>
+            <div class="guide-callout">
+              <strong>Key Benefit:</strong> By mapping a deeply nested folder to a drive letter, you bypass the notorious 260-character <code>MAX_PATH</code> limit in Windows, fixing build errors in Node.js, Python, and Unity.
+            </div>
+          </section>
+
+          <section id="getting-started" class="guide-section">
+            <h2>Getting Started</h2>
+            <h3>Installation</h3>
+            <p>FolderMount is available exclusively on the Microsoft Store for Windows 10 and 11. It installs locally to your user profile and requires zero administrator privileges.</p>
+            <ol>
+              <li>Open the Microsoft Store app on Windows.</li>
+              <li>Search for "FolderMount" or click the <a href="https://apps.microsoft.com/detail/9NWMFW1MDRPQ" target="_blank">direct link</a>.</li>
+              <li>Click <strong>Install</strong>.</li>
+              <li>Launch FolderMount from your Start Menu.</li>
+            </ol>
+          </section>
+
+          <section id="creating-mappings" class="guide-section">
+            <h2>Creating Mappings</h2>
+            <p>Adding a new virtual drive is incredibly simple:</p>
+            <ol>
+              <li>Click the <strong>+ Add Mapping</strong> button on the main toolbar.</li>
+              <li>A new row will appear. Select your desired <strong>Drive Letter</strong> from the dropdown. Only available letters are shown.</li>
+              <li>Click the <strong>Browse</strong> button next to the folder path input, or manually paste the path (e.g., <code>C:\Projects\MyApp</code>).</li>
+              <li>Optionally, add a <strong>Friendly Label</strong> (e.g., "Web App Codebase").</li>
+              <li>Check the <strong>Mount automatically on Startup</strong> box if you want this drive to persist across reboots.</li>
+              <li>Click the <strong>Mount</strong> icon (Play button) or <strong>Mount All</strong> on the toolbar to activate the drive.</li>
+            </ol>
+            <p>Your new drive will instantly appear in Windows File Explorer!</p>
+          </section>
+
+          <section id="system-tray" class="guide-section">
+            <h2>System Tray Integration</h2>
+            <p>FolderMount is designed to stay out of your way. When you close the main window, the app continues running silently in the system tray.</p>
+            <ul>
+              <li><strong>Left-Click:</strong> Double-click the tray icon to restore the main window.</li>
+              <li><strong>Right-Click:</strong> Access quick actions like <em>Mount All</em>, <em>Unmount All</em>, or exit the application completely.</li>
+            </ul>
+          </section>
+
+          <section id="settings" class="guide-section">
+            <h2>Settings & XML Export</h2>
+            <p>Click the <strong>Settings</strong> button (Gear icon) to manage application behavior:</p>
+            <ul>
+              <li><strong>Run at Windows Startup:</strong> Ensures your drives are silently mounted the moment you log in.</li>
+              <li><strong>Theme Preferences:</strong> Switch between Light, Dark, or System themes.</li>
+              <li><strong>Import / Export:</strong> FolderMount saves mappings to an XML file. You can export this file to share your workspace setup with your team, and easily import it on another computer.</li>
+            </ul>
+          </section>
+
+          <section id="troubleshooting" class="guide-section">
+            <h2>Troubleshooting</h2>
+            <h3>Drive letter is not available</h3>
+            <p>If a drive letter is missing from the dropdown, it means Windows has already assigned it to a physical disk, optical drive, or network share.</p>
+
+            <h3>Drive unmounts when I restart</h3>
+            <div class="guide-callout warning">
+              <strong>Check Startup Settings:</strong> Ensure "Run FolderMount on Windows Startup" is enabled in the Settings window. FolderMount must run silently in the background at login to restore the mappings.
+            </div>
+
+            <h3>Administrator / UAC</h3>
+            <p>FolderMount does not need administrator rights. If you encounter permissions errors, ensure your Windows User Account has read/write access to the target folder you are trying to mount.</p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="../assets/icons/icon-44.png" alt="FolderMount" width="28" height="28" style="border-radius: 6px;">
+            <span style="font-weight: 800; font-size: 1.15rem; color: var(--text-primary);">FolderMount</span>
+          </div>
+          <p>The fast, lightweight virtual drive manager for Windows. Map local folders to drive letters using native SUBST — no admin required, persists across reboots.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="../index.html#hero">Overview</a></li>
+            <li><a href="../index.html#features">Features</a></li>
+            <li><a href="../index.html#faq">FAQ</a></li>
+            <li><a href="index.html">User Guide</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Downloads &amp; Links</h4>
+          <ul class="footer-links">
+            <li><a href="https://apps.microsoft.com/detail/9NWMFW1MDRPQ" target="_blank" rel="noopener noreferrer">Microsoft Store</a></li>
+            <li><a href="https://github.com/AshV/FolderMount" target="_blank" rel="noopener noreferrer">Source Code</a></li>
+            <li><a href="../privacy.html">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 FolderMount. Free Windows Virtual Drive &amp; Folder Manager.</div>
+        <div>Built with ❤️ by <a href="https://github.com/AshV" target="_blank" rel="noopener noreferrer">AshV</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Main Script -->
+  <script src="../js/app.js"></script>
+  
+  <!-- Active Sidebar Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sections = document.querySelectorAll('.guide-section');
+        const navLinks = document.querySelectorAll('.guide-nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            const scrollY = window.pageYOffset;
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= (sectionTop - 150)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    });
+  </script>
+</body>
+</html>

@@ -19,98 +19,55 @@ const ThemeManager = {
 
   init() {
     const currentMode = this.getThemeMode();
-    this.applyTheme(currentMode, false);
-
-    // Dynamic OS Theme Preference Listener
-    if (window.matchMedia) {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const handleSystemThemeChange = () => {
-        if (this.getThemeMode() === 'system') {
-          this.applyTheme('system', false);
-        }
-      };
-
-      if (mediaQuery.addEventListener) {
-        mediaQuery.addEventListener('change', handleSystemThemeChange);
-      } else if (mediaQuery.addListener) {
-        mediaQuery.addListener(handleSystemThemeChange);
-      }
-    }
-
+    this.applyTheme(currentMode);
     this.bindEvents();
   },
 
   getThemeMode() {
     try {
       const saved = localStorage.getItem(this.STORAGE_KEY);
-      if (saved === 'dark' || saved === 'light' || saved === 'system') {
+      if (saved === 'dark' || saved === 'light') {
         return saved;
       }
     } catch (e) {}
-    return 'system';
-  },
-
-  getResolvedTheme(mode) {
-    if (mode === 'dark') return 'dark';
-    if (mode === 'light') return 'light';
-    // 'system': follow OS preference
-    return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    // Default to dark since system is removed
+    return 'dark';
   },
 
   setTheme(mode) {
-    if (mode !== 'system' && mode !== 'dark' && mode !== 'light') {
-      mode = 'system';
+    if (mode !== 'dark' && mode !== 'light') {
+      mode = 'dark';
     }
     try {
       localStorage.setItem(this.STORAGE_KEY, mode);
     } catch (e) {}
-    this.applyTheme(mode, true);
+    this.applyTheme(mode);
   },
 
-  cycleTheme() {
+  toggleTheme() {
     const current = this.getThemeMode();
-    const next = current === 'system' ? 'dark' : (current === 'dark' ? 'light' : 'system');
+    const next = current === 'dark' ? 'light' : 'dark';
     this.setTheme(next);
   },
 
-  applyTheme(mode, notify) {
-    const resolved = this.getResolvedTheme(mode);
-    document.documentElement.setAttribute('data-theme', resolved);
+  applyTheme(mode) {
+    document.documentElement.setAttribute('data-theme', mode);
     document.documentElement.setAttribute('data-theme-mode', mode);
 
     const metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (metaThemeColor) {
-      metaThemeColor.setAttribute('content', resolved === 'dark' ? '#1e1e28' : '#f8fafc');
+      metaThemeColor.setAttribute('content', mode === 'dark' ? '#1e1e28' : '#f8fafc');
     }
 
-    this.updateUI(mode, resolved);
+    this.updateUI(mode);
   },
 
-  updateUI(mode, resolved) {
-    const icons = {
-      system: '💻',
-      dark: '🌙',
-      light: '☀️'
-    };
-    const labels = {
-      system: 'System',
-      dark: 'Dark',
-      light: 'Light'
-    };
+  updateUI(mode) {
+    const icon = mode === 'dark' ? '🌙' : '☀️';
 
-    // Navbar switcher button
+    // Navbar toggle button
     const indicatorIcon = document.getElementById('theme-indicator-icon');
-    const indicatorLabel = document.getElementById('theme-indicator-label');
-    if (indicatorIcon) indicatorIcon.textContent = icons[mode] || '💻';
-    if (indicatorLabel) indicatorLabel.textContent = labels[mode] || 'System';
-
-    // Dropdown items
-    document.querySelectorAll('.theme-menu-item').forEach(item => {
-      const itemVal = item.getAttribute('data-theme-val');
-      const isActive = itemVal === mode;
-      item.classList.toggle('active', isActive);
-      item.setAttribute('aria-selected', isActive ? 'true' : 'false');
-    });
+    if (indicatorIcon) indicatorIcon.textContent = icon;
 
     // Mobile buttons
     document.querySelectorAll('.mobile-theme-btn').forEach(btn => {
@@ -120,53 +77,17 @@ const ThemeManager = {
 
     // Desktop Simulator Toolbar button
     const simIcon = document.getElementById('sim-theme-icon');
-    const simBtn = document.getElementById('sim-theme-toggle');
-    if (simIcon) simIcon.textContent = icons[mode] || '💻';
-    if (simBtn) {
-      const nextMode = mode === 'system' ? 'Dark' : mode === 'dark' ? 'Light' : 'System';
-      simBtn.setAttribute('title', `Theme: ${labels[mode]} (Click to switch to ${nextMode})`);
-    }
+    if (simIcon) simIcon.textContent = icon;
   },
 
   bindEvents() {
     const toggleBtn = document.getElementById('theme-toggle-btn');
-    const dropdown = document.getElementById('theme-dropdown-menu');
-
-    if (toggleBtn && dropdown) {
+    if (toggleBtn) {
       toggleBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isOpen = dropdown.classList.toggle('show');
-        toggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-      });
-
-      document.addEventListener('click', (e) => {
-        if (!e.target.closest('#theme-switcher')) {
-          dropdown.classList.remove('show');
-          toggleBtn.setAttribute('aria-expanded', 'false');
-        }
-      });
-
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && dropdown.classList.contains('show')) {
-          dropdown.classList.remove('show');
-          toggleBtn.setAttribute('aria-expanded', 'false');
-          toggleBtn.focus();
-        }
+        e.preventDefault();
+        this.toggleTheme();
       });
     }
-
-    // Dropdown items
-    document.querySelectorAll('.theme-menu-item').forEach(item => {
-      item.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const val = item.getAttribute('data-theme-val');
-        if (val) {
-          this.setTheme(val);
-          if (dropdown) dropdown.classList.remove('show');
-          if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
-        }
-      });
-    });
 
     // Mobile buttons
     document.querySelectorAll('.mobile-theme-btn').forEach(btn => {
@@ -184,7 +105,7 @@ const ThemeManager = {
     if (simBtn) {
       simBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        this.cycleTheme();
+        this.toggleTheme();
       });
     }
   }

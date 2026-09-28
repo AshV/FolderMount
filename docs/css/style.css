@@ -93,10 +93,6 @@
 
 [data-theme="light"] body {
   background-color: var(--bg-deep);
-  background-image: 
-    radial-gradient(circle at 15% 10%, rgba(99, 102, 241, 0.08) 0%, transparent 45%),
-    radial-gradient(circle at 85% 25%, rgba(2, 132, 199, 0.07) 0%, transparent 40%),
-    radial-gradient(circle at 50% 65%, rgba(99, 102, 241, 0.05) 0%, transparent 50%);
 }
 
 /* Base & Reset */
@@ -120,12 +116,51 @@ html {
 body {
   min-height: 100vh;
   background-color: var(--bg-deep);
-  background-image: 
-    radial-gradient(circle at 15% 10%, rgba(124, 115, 255, 0.12) 0%, transparent 45%),
-    radial-gradient(circle at 85% 25%, rgba(56, 189, 248, 0.10) 0%, transparent 40%),
-    radial-gradient(circle at 50% 65%, rgba(124, 115, 255, 0.08) 0%, transparent 50%);
-  background-attachment: fixed;
+  position: relative;
   overflow-x: clip;
+}
+
+body::before, body::after {
+  content: '';
+  position: fixed;
+  width: 60vw;
+  height: 60vw;
+  max-width: 800px;
+  max-height: 800px;
+  border-radius: 50%;
+  filter: blur(120px);
+  z-index: -1;
+  pointer-events: none;
+  animation: float-blob 20s infinite ease-in-out alternate;
+}
+
+body::before {
+  top: -20%;
+  left: -10%;
+  background: rgba(124, 115, 255, 0.12);
+}
+
+body::after {
+  bottom: -20%;
+  right: -10%;
+  background: rgba(56, 189, 248, 0.10);
+  animation-delay: -10s;
+  animation-duration: 25s;
+}
+
+[data-theme="light"] body::before {
+  background: rgba(99, 102, 241, 0.20);
+}
+
+[data-theme="light"] body::after {
+  background: rgba(2, 132, 199, 0.16);
+}
+
+@keyframes float-blob {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(5%, 5%) scale(1.1); }
+  66% { transform: translate(-5%, 8%) scale(0.9); }
+  100% { transform: translate(0%, -5%) scale(1.05); }
 }
 
 a {
@@ -157,9 +192,16 @@ h1, h2, h3, h4, h5, h6 {
 
 .gradient-text {
   background: linear-gradient(135deg, #ffffff 10%, #d8d4ff 50%, #38bdf8 100%);
+  background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
+  animation: text-shine 6s ease-in-out infinite alternate;
+}
+
+@keyframes text-shine {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
 }
 
 .gradient-accent {
@@ -596,12 +638,12 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-lg);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
   text-decoration: none;
   line-height: 0;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4), 0 0 20px rgba(124, 115, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  background: #202020;
+  background: var(--accent-primary);
   overflow: hidden;
 }
 
@@ -721,11 +763,19 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid #3f3f5a;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.7), 0 0 45px rgba(124, 115, 255, 0.15);
   overflow: hidden;
-  transition: transform var(--transition-slow);
+  transition: transform var(--transition-slow), border-color var(--transition-slow), box-shadow var(--transition-slow);
+  animation: float-sim 6s ease-in-out infinite alternate;
+}
+
+@keyframes float-sim {
+  0% { transform: translateY(0px); }
+  100% { transform: translateY(-15px); }
 }
 
 .simulator-container:hover {
-  border-color: rgba(124, 115, 255, 0.5);
+  border-color: rgba(124, 115, 255, 0.6);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.8), 0 0 60px rgba(124, 115, 255, 0.25);
+  animation-play-state: paused;
 }
 
 /* Simulator Titlebar */
@@ -1257,9 +1307,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .app-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--border-accent);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4), 0 0 24px rgba(124, 115, 255, 0.12);
+  transform: translateY(-8px) scale(1.01);
+  border-color: var(--accent-primary);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(124, 115, 255, 0.2);
 }
 
 .app-card-header {
@@ -1427,9 +1477,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .bento-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--border-accent);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4), 0 0 24px rgba(124, 115, 255, 0.15);
+  transform: translateY(-8px) scale(1.01);
+  border-color: var(--accent-primary);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(124, 115, 255, 0.2);
 }
 
 .bento-card.col-span-2 {
