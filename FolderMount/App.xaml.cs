@@ -89,7 +89,7 @@ namespace FolderMount
             if (_mainWindow != null && _mainWindow.IsLoaded && _mainWindow.IsVisible)
             {
                 _mainWindow.Activate();
-                _mainWindow.ViewModel?.ShowAddDialog(initialPath, showSuccessMessage: true);
+                _mainWindow.ViewModel?.ShowAddDialog(initialPath, showSuccessMessage: true, title: "Mount as Drive (FolderMount)");
                 return;
             }
 
@@ -99,7 +99,7 @@ namespace FolderMount
                 : Services.MappingStore.Load();
 
             var usedLetters = mappings.Select(m => m.DriveLetter);
-            var dlg = new AddEditDialog(null, usedLetters, initialPath)
+            var dlg = new AddEditDialog(null, usedLetters, initialPath, "Mount as Drive (FolderMount)")
             {
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 Topmost = true

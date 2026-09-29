@@ -17,7 +17,7 @@ namespace FolderMount
         /// Pass null for Add mode, or an existing mapping clone for Edit mode.
         /// Pass <paramref name="usedLetters"/> to exclude letters already in the saved list.
         /// </summary>
-        public AddEditDialog(DriveMapping existing, System.Collections.Generic.IEnumerable<string> usedLetters = null, string initialPath = null)
+        public AddEditDialog(DriveMapping existing, System.Collections.Generic.IEnumerable<string> usedLetters = null, string initialPath = null, string customTitle = null)
         {
             InitializeComponent();
             WindowHelper.ApplyModernWindowStyling(this, isDialog: true);
@@ -28,6 +28,10 @@ namespace FolderMount
             {
                 Title = "Edit Mapping";
                 BtnOk.Content       = "Save Changes";
+            }
+            else if (!string.IsNullOrEmpty(customTitle))
+            {
+                Title = customTitle;
             }
 
             // Get letters that are free on the system AND not already in our saved list

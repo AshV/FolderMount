@@ -93,14 +93,14 @@ namespace FolderMount.ViewModels
 
         private void DoAdd() => ShowAddDialog(null);
 
-        public void ShowAddDialog(string initialPath, bool showSuccessMessage = true)
+        public void ShowAddDialog(string initialPath, bool showSuccessMessage = true, string title = null)
         {
             var mainWin = Application.Current.MainWindow as MainWindow;
             mainWin?.ShowDimmer();
             try
             {
                 var usedLetters = Mappings.Select(m => m.DriveLetter);
-                var dlg = new AddEditDialog(null, usedLetters, initialPath) { Owner = Application.Current.MainWindow };
+                var dlg = new AddEditDialog(null, usedLetters, initialPath, title) { Owner = Application.Current.MainWindow };
 
                 if (dlg.ShowDialog() != true) return;
 
