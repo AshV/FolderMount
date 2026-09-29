@@ -124,14 +124,26 @@ namespace FolderMount.ViewModels
                 if (ok)
                 {
                     StatusMessage = $"{m.DisplayLetter} added and mounted.";
-                    (Application.Current as App)?.Tray?.ShowNotification("Drive Mounted", $"Drive {m.DisplayLetter} mounted to {m.FolderPath}");
+                    (Application.Current as App)?.Tray?.ShowNotification("Drive Mounted", $"Drive {m.DisplayLetter} mounted to {m.FolderPath}", m.DisplayLetter);
                     if (showSuccessMessage)
                     {
-                        MessageBox.Show(
-                            $"Drive {m.DisplayLetter} has been successfully mounted for:\n\n{m.FolderPath}",
+                        var result = MessageBox.Show(
+                            $"Drive {m.DisplayLetter} has been successfully mounted for:\n\n{m.FolderPath}\n\nWould you like to open Drive {m.DisplayLetter} in File Explorer now?",
                             "Drive Mounted",
-                            MessageBoxButton.OK,
+                            MessageBoxButton.YesNo,
                             MessageBoxImage.Information);
+
+                        if (result == MessageBoxResult.Yes)
+                        {
+                            try
+                            {
+                                Process.Start("explorer.exe", $"{m.DisplayLetter}\\");
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine($"Failed to open Explorer: {ex}");
+                            }
+                        }
                     }
                 }
                 else

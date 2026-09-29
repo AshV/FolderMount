@@ -18,6 +18,8 @@ namespace FolderMount
         private readonly ToolStripMenuItem _itemDark;
         private readonly ToolStripMenuItem _itemLight;
 
+        private string _lastMountedDrive;
+
         public TrayManager(
             Action onOpen,
             Action onMountAll,
@@ -31,6 +33,18 @@ namespace FolderMount
                 Text    = "FolderMount — Virtual Drive Manager",
                 Visible = true,
                 Icon    = LoadAppIcon()
+            };
+
+            _icon.BalloonTipClicked += (_, __) =>
+            {
+                if (!string.IsNullOrEmpty(_lastMountedDrive))
+                {
+                    try
+                    {
+                        System.Diagnostics.Process.Start("explorer.exe", $"{_lastMountedDrive}\\");
+                    }
+                    catch { }
+                }
             };
 
             _menu       = new ContextMenuStrip();
@@ -129,10 +143,11 @@ namespace FolderMount
             return SystemIcons.Application;
         }
 
-        public void ShowNotification(string title, string message, ToolTipIcon icon = ToolTipIcon.Info)
+        public void ShowNotification(string title, string message, string driveLetter = null, ToolTipIcon icon = ToolTipIcon.Info)
         {
             try
             {
+                _lastMountedDrive = driveLetter;
                 _icon?.ShowBalloonTip(3000, title, message, icon);
             }
             catch { }

@@ -139,12 +139,24 @@ namespace FolderMount
 
             if (ok)
             {
-                _tray?.ShowNotification("Drive Mounted", $"Drive {m.DisplayLetter} mounted to {m.FolderPath}");
-                MessageBox.Show(
-                    $"Drive {m.DisplayLetter} has been successfully mounted for:\n\n{m.FolderPath}",
+                _tray?.ShowNotification("Drive Mounted", $"Drive {m.DisplayLetter} mounted to {m.FolderPath}", m.DisplayLetter);
+                var result = MessageBox.Show(
+                    $"Drive {m.DisplayLetter} has been successfully mounted for:\n\n{m.FolderPath}\n\nWould you like to open Drive {m.DisplayLetter} in File Explorer now?",
                     "Drive Mounted",
-                    MessageBoxButton.OK,
+                    MessageBoxButton.YesNo,
                     MessageBoxImage.Information);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        Process.Start("explorer.exe", $"{m.DisplayLetter}\\");
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Failed to open Explorer: {ex}");
+                    }
+                }
             }
             else
             {
