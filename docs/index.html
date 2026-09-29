@@ -84,6 +84,7 @@
         },
         "featureList": [
           "Map any local directory to a virtual drive letter via Windows SUBST",
+          "Windows Explorer folder right-click context menu ('Mount as Drive')",
           "No administrator or UAC privileges required",
           "Silent auto-mount at Windows login via HKCU registry",
           "XML persistence with import and export capability",
@@ -647,7 +648,23 @@
             </div>
           </div>
 
-          <!-- Feature 3: XML Portability -->
+          <!-- Feature 3: Explorer Context Menu -->
+          <div class="bento-card col-span-2">
+            <div>
+              <div class="bento-icon cyan">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+              </div>
+              <h3>Mount from Windows Explorer Context Menu</h3>
+              <p>
+                Right-click any folder in Windows Explorer and choose <strong>"Mount as Drive (FolderMount)"</strong> to map it in seconds. A compact, focused dialog automatically pre-fills the path, detects the next available drive letter, and suggests a friendly label. Once mounted, open your new virtual drive with a single click.
+              </p>
+            </div>
+            <div class="bento-visual">
+              Right-Click Folder &rarr; "Mount as Drive" &bull; Auto-detects free letter &bull; One-click Explorer launch
+            </div>
+          </div>
+
+          <!-- Feature 4: XML Portability -->
           <div class="bento-card">
             <div>
               <div class="bento-icon green">
@@ -663,7 +680,7 @@
             </div>
           </div>
 
-          <!-- Feature 4: System Tray Integration -->
+          <!-- Feature 5: System Tray Integration -->
           <div class="bento-card">
             <div>
               <div class="bento-icon">
@@ -679,10 +696,10 @@
             </div>
           </div>
 
-          <!-- Feature 5: Native WPF Lightweight -->
-          <div class="bento-card">
+          <!-- Feature 6: Native WPF Lightweight -->
+          <div class="bento-card col-span-2">
             <div>
-              <div class="bento-icon cyan">
+              <div class="bento-icon green">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
               </div>
               <h3>Featherweight Native WPF</h3>
@@ -691,7 +708,7 @@
               </p>
             </div>
             <div class="bento-visual">
-              Microsoft Store &bull; Auto-updates &bull; &lt; 15 MB RAM
+              Microsoft Store &bull; Auto-updates &bull; &lt; 15 MB RAM &bull; Zero background CPU
             </div>
           </div>
         </div>
@@ -793,13 +810,13 @@
           <div class="step-card">
             <div class="step-number">1</div>
             <h3>Select Any Local Folder</h3>
-            <p>Click "＋ Add Mapping" in FolderMount and choose your local directory—whether it's a repository, audio library, or project archive.</p>
+            <p>Click "＋ Add Mapping" in FolderMount, or simply <strong>right-click any folder</strong> in File Explorer and choose "Mount as Drive (FolderMount)".</p>
           </div>
 
           <div class="step-card">
             <div class="step-number">2</div>
             <h3>Pick a Drive Letter</h3>
-            <p>Select any available letter from A: to Z: and give it a helpful label like "Projects" or "Datasets".</p>
+            <p>Select any available letter from A: to Z: (automatically detected when using the right-click menu) and assign a friendly label.</p>
           </div>
 
           <div class="step-card">
@@ -882,6 +899,16 @@
             </summary>
             <div class="faq-answer">
               No administrator privileges or UAC elevation prompts are ever required. FolderMount utilizes Microsoft's native <code>SUBST</code> command, which has been standard in Windows since Windows XP and operates entirely in user space. The app installs from the Microsoft Store to your user profile and writes startup entries only to <code>HKCU</code>.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question">
+              <span>Can I mount a folder directly from the Windows Explorer right-click menu?</span>
+              <span class="faq-icon">+</span>
+            </summary>
+            <div class="faq-answer">
+              Yes! FolderMount includes seamless Windows Explorer right-click integration. Simply right-click any folder (on Windows 11, press <kbd style="background: var(--bg-card); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border-card); font-size: 0.85em; font-family: var(--font-mono);">Shift + Right Click</kbd> or choose <em>Show more options</em>) and select <strong>"Mount as Drive (FolderMount)"</strong>. A focused popup pre-fills the folder path, selects the next free drive letter, and creates the virtual drive instantly. You even get a prompt to open the new drive in File Explorer right away. You can toggle this feature on or off anytime in FolderMount Settings without needing administrator rights.
             </div>
           </details>
 

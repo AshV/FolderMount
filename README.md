@@ -13,6 +13,7 @@ Published and distributed via the **Microsoft Store** with automatic background 
 | Feature | Details |
 |---|---|
 | 🗂 **Virtual Drives** | Map any folder → drive letter via native Windows `SUBST` |
+| 🖱️ **Explorer Context Menu** | Right-click any folder in Windows Explorer → **"Mount as Drive (FolderMount)"** for instant mapping |
 | 🔄 **Auto-Mount on Login** | Silent startup via Windows Registry (`HKCU`) — no elevation needed |
 | 📋 **XML Persistence** | Mappings safely saved to `%APPDATA%\FolderMount\mappings.xml` |
 | 📤 **Export / Import** | Back up or share your mappings across PCs via XML |
@@ -157,6 +158,23 @@ FolderMount has **Run at Windows startup** enabled by default (toggleable in Set
 HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
   FolderMount = "<ExecutablePath>" /startup
 ```
+
+### Windows Explorer Context Menu Integration
+
+FolderMount can register a right-click shell verb for directories in the current user's registry:
+```
+HKCU\Software\Classes\Directory\shell\FolderMount
+HKCU\Software\Classes\Folder\shell\FolderMount
+  (Default) = "Mount as Drive (FolderMount)"
+  Icon      = "<ExecutablePath>"
+  command   = "<ExecutablePath>" "%1"
+```
+
+When selected:
+- If FolderMount is already running, the folder path is passed to the active instance via named pipes (`SingleInstance`), opening a lightweight, focused **Mount as Drive (FolderMount)** dialog.
+- The dialog pre-selects the first available drive letter and automatically derives a friendly label from the folder name.
+- Upon clicking **Add Mapping**, the drive mounts instantly via Windows `SUBST`, and a theme-matched prompt offers to immediately open the newly created drive in File Explorer.
+- The context menu operates entirely in user space (no administrator elevation required) and can be toggled on or off at any time in **Settings**.
 
 ### Virtual Drive Labels & Host Drive Optimization
 

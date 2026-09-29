@@ -187,6 +187,7 @@
             <li class="guide-nav-item"><a href="#introduction" class="guide-nav-link active">Introduction</a></li>
             <li class="guide-nav-item"><a href="#getting-started" class="guide-nav-link">Getting Started</a></li>
             <li class="guide-nav-item"><a href="#creating-mappings" class="guide-nav-link">Creating Mappings</a></li>
+            <li class="guide-nav-item"><a href="#context-menu" class="guide-nav-link">Mount from Context Menu</a></li>
             <li class="guide-nav-item"><a href="#system-tray" class="guide-nav-link">System Tray</a></li>
             <li class="guide-nav-item"><a href="#settings" class="guide-nav-link">Settings & Export</a></li>
             <li class="guide-nav-item"><a href="#troubleshooting" class="guide-nav-link">Troubleshooting</a></li>
@@ -217,16 +218,55 @@
 
           <section id="creating-mappings" class="guide-section">
             <h2>Creating Mappings</h2>
-            <p>Adding a new virtual drive is incredibly simple:</p>
+            <p>Adding a new virtual drive from within the application is simple:</p>
             <ol>
               <li>Click the <strong>+ Add Mapping</strong> button on the main toolbar.</li>
-              <li>A new row will appear. Select your desired <strong>Drive Letter</strong> from the dropdown. Only available letters are shown.</li>
+              <li>A new row or dialog will appear. Select your desired <strong>Drive Letter</strong> from the dropdown. Only available letters are shown.</li>
               <li>Click the <strong>Browse</strong> button next to the folder path input, or manually paste the path (e.g., <code>C:\Projects\MyApp</code>).</li>
               <li>Optionally, add a <strong>Friendly Label</strong> (e.g., "Web App Codebase").</li>
               <li>Check the <strong>Mount automatically on Startup</strong> box if you want this drive to persist across reboots.</li>
               <li>Click the <strong>Mount</strong> icon (Play button) or <strong>Mount All</strong> on the toolbar to activate the drive.</li>
             </ol>
             <p>Your new drive will instantly appear in Windows File Explorer!</p>
+            <div class="guide-callout">
+              <strong>Faster Alternative:</strong> You can also mount any folder in seconds without opening the main window first by right-clicking it directly in Windows Explorer. See <a href="#context-menu" style="color: var(--accent-primary); text-decoration: underline;">Mount from Context Menu</a> below.
+            </div>
+          </section>
+
+          <section id="context-menu" class="guide-section">
+            <h2>Mounting from Windows Explorer Context Menu</h2>
+            <p>For the quickest possible workflow, FolderMount integrates with the Windows File Explorer right-click context menu. You can turn any directory into a dedicated virtual drive in just two clicks.</p>
+
+            <div class="guide-callout">
+              <strong>Instant Mount Workflow:</strong> Right-click folder &rarr; click <strong>"Mount as Drive (FolderMount)"</strong> &rarr; click <strong>"Add Mapping"</strong>.
+            </div>
+
+            <h3>How to Use</h3>
+            <ol>
+              <li>Open <strong>File Explorer</strong> and find the folder you want to mount as a drive.</li>
+              <li>Right-click the folder:
+                <ul>
+                  <li><strong>Windows 10:</strong> Click <strong>Mount as Drive (FolderMount)</strong> directly from the context menu.</li>
+                  <li><strong>Windows 11:</strong> Press <kbd style="background: var(--bg-card); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border-card); font-size: 0.85em; font-family: var(--font-mono);">Shift + Right Click</kbd> on the folder, or right-click and select <strong>Show more options</strong> (<kbd style="background: var(--bg-card); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border-card); font-size: 0.85em; font-family: var(--font-mono);">Shift + F10</kbd>), then click <strong>Mount as Drive (FolderMount)</strong>.</li>
+                </ul>
+              </li>
+              <li>The dedicated <strong>Mount as Drive (FolderMount)</strong> dialog appears immediately:
+                <ul>
+                  <li><strong>Folder Path:</strong> Automatically pre-filled with the directory you clicked.</li>
+                  <li><strong>Friendly Label:</strong> Automatically generated from the folder name (e.g. <code>MyProject</code>).</li>
+                  <li><strong>Drive Letter:</strong> Automatically selects the first available drive letter on your system, avoiding any conflicts with existing physical disks or network drives.</li>
+                  <li><strong>Mount automatically on Startup:</strong> Enabled by default to ensure the drive persists across logins.</li>
+                </ul>
+              </li>
+              <li>Click <strong>Add Mapping</strong> to mount the drive instantly via native Windows <code>SUBST</code>.</li>
+              <li>A theme-matched confirmation dialog will prompt:
+                <br><em>"Drive [X:] has been mounted successfully. Would you like to open it in File Explorer?"</em>
+                <br>Click <strong>Open Drive</strong> to open your new virtual drive immediately in File Explorer, or <strong>OK</strong> to close.
+              </li>
+            </ol>
+
+            <h3>Focused, Distraction-Free Experience</h3>
+            <p>Triggering FolderMount from the context menu brings up only the lightweight <strong>Mount as Drive</strong> popup rather than the full application window. If FolderMount is already running in your system tray, it communicates silently in the background so no duplicate processes or windows clutter your workspace.</p>
           </section>
 
           <section id="system-tray" class="guide-section">
@@ -240,10 +280,11 @@
 
           <section id="settings" class="guide-section">
             <h2>Settings & XML Export</h2>
-            <p>Click the <strong>Settings</strong> button (Gear icon) to manage application behavior:</p>
+            <p>Click the <strong>Settings</strong> button (Gear icon) on the main toolbar to manage system integration and preferences:</p>
             <ul>
-              <li><strong>Run at Windows Startup:</strong> Ensures your drives are silently mounted the moment you log in.</li>
-              <li><strong>Theme Preferences:</strong> Switch between Light, Dark, or System themes.</li>
+              <li><strong>Folder Context Menu (Mount as Drive):</strong> Toggle the right-click Windows Explorer context menu on or off. Requires zero administrator privileges.</li>
+              <li><strong>Run at Windows Startup:</strong> Ensures your drives are silently re-mounted the moment you log in to Windows.</li>
+              <li><strong>Theme Preferences:</strong> Switch between Light, Dark, or System themes. All dialogs, confirmation prompts, and buttons automatically adapt to your theme.</li>
               <li><strong>Import / Export:</strong> FolderMount saves mappings to an XML file. You can export this file to share your workspace setup with your team, and easily import it on another computer.</li>
             </ul>
           </section>
@@ -257,6 +298,14 @@
             <div class="guide-callout warning">
               <strong>Check Startup Settings:</strong> Ensure "Run FolderMount on Windows Startup" is enabled in the Settings window. FolderMount must run silently in the background at login to restore the mappings.
             </div>
+
+            <h3>I don't see "Mount as Drive" in Windows 11 right-click menu</h3>
+            <p>Windows 11 defaults to a compact context menu. To access FolderMount:</p>
+            <ul>
+              <li>Hold <kbd style="background: var(--bg-card); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border-card); font-size: 0.85em; font-family: var(--font-mono);">Shift</kbd> while right-clicking any folder to jump directly to the full classic menu.</li>
+              <li>Or click <strong>Show more options</strong> at the bottom of the right-click menu.</li>
+              <li>Verify that <strong>Folder Context Menu</strong> is enabled in FolderMount <strong>Settings</strong> (Gear icon &rarr; System Integration).</li>
+            </ul>
 
             <h3>Administrator / UAC</h3>
             <p>FolderMount does not need administrator rights. If you encounter permissions errors, ensure your Windows User Account has read/write access to the target folder you are trying to mount.</p>
