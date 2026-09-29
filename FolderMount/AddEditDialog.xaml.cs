@@ -17,7 +17,7 @@ namespace FolderMount
         /// Pass null for Add mode, or an existing mapping clone for Edit mode.
         /// Pass <paramref name="usedLetters"/> to exclude letters already in the saved list.
         /// </summary>
-        public AddEditDialog(DriveMapping existing, System.Collections.Generic.IEnumerable<string> usedLetters = null)
+        public AddEditDialog(DriveMapping existing, System.Collections.Generic.IEnumerable<string> usedLetters = null, string initialPath = null)
         {
             InitializeComponent();
             WindowHelper.ApplyModernWindowStyling(this, isDialog: true);
@@ -46,9 +46,17 @@ namespace FolderMount
                 TxtFolderPath.Text          = existing.FolderPath;
                 TxtLabel.Text               = existing.Label;
             }
-            else if (CmbDriveLetter.Items.Count > 0)
+            else
             {
-                CmbDriveLetter.SelectedIndex = 0;
+                if (CmbDriveLetter.Items.Count > 0)
+                {
+                    CmbDriveLetter.SelectedIndex = 0;
+                }
+                
+                if (!string.IsNullOrEmpty(initialPath))
+                {
+                    TxtFolderPath.Text = initialPath;
+                }
             }
 
             UpdateOptimizationWarning();

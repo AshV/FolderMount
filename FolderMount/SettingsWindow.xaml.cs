@@ -33,6 +33,9 @@ namespace FolderMount
                 // Reflect current startup state (enabled by default)
                 ChkStartup.IsChecked = StartupService.IsEnabled;
 
+                // Reflect context menu state
+                ChkContextMenu.IsChecked = IsContextMenuEnabled();
+
                 // Show mappings file path
                 TxtMappingPath.Text = MappingStore.MappingsFilePath;
             }
@@ -111,6 +114,65 @@ namespace FolderMount
             StartupService.Disable();
             SettingsStore.Current.RunAtWindowsStartup = false;
             SettingsStore.Save();
+        }
+
+        private static readonly string[] ContextMenuRegPaths = new[]
+        {
+            @"Software\Classes\Directory\shell\FolderMount",
+            @"Software\Classes\Folder\shell\FolderMount"
+        };
+
+        private bool IsContextMenuEnabled()
+        {
+            try
+            {
+                using (var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(ContextMenuRegPaths[0]))
+                {
+                    return key != null;
+                }
+            }
+            catch { return false; }
+        }
+
+        private void ChkContextMenu_Checked(object sender, RoutedEventArgs e)
+        {
+            if (_isInitializing) return;
+            try
+            {
+                string exePath = StartupService.GetExecutablePath();
+                foreach (var regPath in ContextMenuRegPaths)
+                {
+                    using (var key = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(regPath))
+                    {
+                        key.SetValue("", "Mount as Drive (FolderMount)");
+                        key.SetValue("Icon", $"\"{exePath}\",0");
+                        using (var cmdKey = key.CreateSubKey("command"))
+                        {
+                            cmdKey.SetValue("", $"\"{exePath}\" /add \"%1\"");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Could not add context menu:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ChkContextMenu_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (_isInitializing) return;
+            try
+            {
+                foreach (var regPath in ContextMenuRegPaths)
+                {
+                    Microsoft.Win32.Registry.CurrentUser.DeleteSubKeyTree(regPath, false);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Could not remove context menu:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void OpenDataFolder_Click(object sender, RoutedEventArgs e)

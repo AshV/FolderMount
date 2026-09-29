@@ -91,14 +91,16 @@ namespace FolderMount.ViewModels
 
         // ── Command implementations ────────────────────────────────────────────
 
-        private void DoAdd()
+        private void DoAdd() => ShowAddDialog(null);
+
+        public void ShowAddDialog(string initialPath, bool showSuccessMessage = true)
         {
             var mainWin = Application.Current.MainWindow as MainWindow;
             mainWin?.ShowDimmer();
             try
             {
                 var usedLetters = Mappings.Select(m => m.DriveLetter);
-                var dlg = new AddEditDialog(null, usedLetters) { Owner = Application.Current.MainWindow };
+                var dlg = new AddEditDialog(null, usedLetters, initialPath) { Owner = Application.Current.MainWindow };
 
                 if (dlg.ShowDialog() != true) return;
 
@@ -122,6 +124,15 @@ namespace FolderMount.ViewModels
                 if (ok)
                 {
                     StatusMessage = $"{m.DisplayLetter} added and mounted.";
+                    (Application.Current as App)?.Tray?.ShowNotification("Drive Mounted", $"Drive {m.DisplayLetter} mounted to {m.FolderPath}");
+                    if (showSuccessMessage)
+                    {
+                        MessageBox.Show(
+                            $"Drive {m.DisplayLetter} has been successfully mounted for:\n\n{m.FolderPath}",
+                            "Drive Mounted",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information);
+                    }
                 }
                 else
                 {
@@ -342,7 +353,7 @@ namespace FolderMount.ViewModels
 
         // ── Helpers ────────────────────────────────────────────────────────────
 
-        private void SaveAll() => MappingStore.Save(Mappings);
+        internal void SaveAll() => MappingStore.Save(Mappings);
 
         /// <summary>
         /// Resolves the target mapping from a command parameter, falling back to SelectedMapping.

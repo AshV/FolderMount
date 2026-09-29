@@ -49,15 +49,19 @@
                     <RowDefinition Height="12"/>
                     <RowDefinition Height="Auto"/>  <!-- 6 -->
                     <RowDefinition Height="20"/>
-                    <RowDefinition Height="Auto"/>  <!-- 8: Section: Storage -->
+                    <RowDefinition Height="Auto"/>  <!-- 8: Section: System Integration -->
                     <RowDefinition Height="12"/>
                     <RowDefinition Height="Auto"/>  <!-- 10 -->
                     <RowDefinition Height="20"/>
-                    <RowDefinition Height="Auto"/>  <!-- 12: Section: Actual Drives -->
+                    <RowDefinition Height="Auto"/>  <!-- 12: Section: Storage -->
                     <RowDefinition Height="12"/>
                     <RowDefinition Height="Auto"/>  <!-- 14 -->
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="Auto"/>  <!-- 16: Section: Actual Drives -->
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="Auto"/>  <!-- 18 -->
                     <RowDefinition Height="24"/>
-                    <RowDefinition Height="Auto"/>  <!-- 16: Close -->
+                    <RowDefinition Height="Auto"/>  <!-- 20: Close -->
                 </Grid.RowDefinitions>
 
                 <!-- SECTION: Appearance -->
@@ -121,12 +125,40 @@
                     </Grid>
                 </Border>
 
-                <!-- SECTION: Storage -->
-                <TextBlock Grid.Row="8" Text="STORAGE"
+                <!-- SECTION: System Integration -->
+                <TextBlock Grid.Row="8" Text="SYSTEM INTEGRATION"
                            FontSize="10" FontWeight="SemiBold"
                            Foreground="{DynamicResource BrTextMuted}"/>
 
                 <Border Grid.Row="10" Background="{DynamicResource BrBgCard}"
+                        BorderBrush="{DynamicResource BrBorder}" BorderThickness="1"
+                        CornerRadius="8" Padding="16,14">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Folder Context Menu"
+                                       FontWeight="SemiBold" Foreground="{DynamicResource BrText}"/>
+                            <TextBlock Text="Add 'Mount as Drive' to the right-click menu for folders in Windows Explorer."
+                                       FontSize="11" Foreground="{DynamicResource BrTextSec}"
+                                       Margin="0,3,0,0" TextWrapping="Wrap"/>
+                        </StackPanel>
+                        <CheckBox Grid.Column="1" x:Name="ChkContextMenu"
+                                  Style="{StaticResource ModernCheck}"
+                                  VerticalAlignment="Center" Margin="16,0,0,0"
+                                  Checked="ChkContextMenu_Checked"
+                                  Unchecked="ChkContextMenu_Unchecked"/>
+                    </Grid>
+                </Border>
+
+                <!-- SECTION: Storage -->
+                <TextBlock Grid.Row="12" Text="STORAGE"
+                           FontSize="10" FontWeight="SemiBold"
+                           Foreground="{DynamicResource BrTextMuted}"/>
+
+                <Border Grid.Row="14" Background="{DynamicResource BrBgCard}"
                         BorderBrush="{DynamicResource BrBorder}" BorderThickness="1"
                         CornerRadius="8" Padding="16,14">
                     <Grid>
@@ -180,11 +212,11 @@
                 </Border>
 
                 <!-- SECTION: Actual Drives & Labels -->
-                <TextBlock Grid.Row="12" Text="ACTUAL DRIVES &amp; EXPLORER LABELS"
+                <TextBlock Grid.Row="16" Text="ACTUAL DRIVES &amp; EXPLORER LABELS"
                            FontSize="10" FontWeight="SemiBold"
                            Foreground="{DynamicResource BrTextMuted}"/>
 
-                <Border Grid.Row="14" Background="{DynamicResource BrBgCard}"
+                <Border Grid.Row="18" Background="{DynamicResource BrBgCard}"
                         BorderBrush="{DynamicResource BrBorder}" BorderThickness="1"
                         CornerRadius="8" Padding="16,14">
                     <Grid>
@@ -207,7 +239,7 @@
                 </Border>
 
                 <!-- Close -->
-                <Button Grid.Row="16" Content="Close" Style="{StaticResource BtnPrimary}"
+                <Button Grid.Row="20" Content="Close" Style="{StaticResource BtnPrimary}"
                         Padding="16,10" HorizontalAlignment="Right" Click="BtnClose_Click"/>
             </Grid>
         </ScrollViewer>

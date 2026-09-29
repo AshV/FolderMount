@@ -14,12 +14,15 @@ namespace FolderMount
         private TrayManager _tray;
         private MainWindow  _mainWindow;
 
+        internal TrayManager Tray => _tray;
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
             // ── Single-instance guard ─────────────────────────────────────────
-            if (!SingleInstance.TryClaimInstance())
+            SingleInstance.ArgsReceived += HandleArgs;
+            if (!SingleInstance.TryClaimInstance(e.Args))
             {
                 Shutdown();
                 return;
@@ -60,7 +63,97 @@ namespace FolderMount
             });
 
             if (!isStartupRun)
-                ShowMainWindow();
+            {
+                HandleArgs(e.Args);
+            }
+        }
+
+        private void HandleArgs(string[] args)
+        {
+            if (args == null) return;
+
+            int addIdx = Array.FindIndex(args, a => a.Equals("/add", StringComparison.OrdinalIgnoreCase));
+            if (addIdx >= 0 && addIdx + 1 < args.Length)
+            {
+                string path = args[addIdx + 1];
+                ShowAddMappingDialog(path);
+                return;
+            }
+
+            ShowMainWindow();
+        }
+
+        internal void ShowAddMappingDialog(string initialPath)
+        {
+            // If the main window is already open and visible, use it directly with its ViewModel
+            if (_mainWindow != null && _mainWindow.IsLoaded && _mainWindow.IsVisible)
+            {
+                _mainWindow.Activate();
+                _mainWindow.ViewModel?.ShowAddDialog(initialPath, showSuccessMessage: true);
+                return;
+            }
+
+            // Otherwise, show ONLY the Add Mapping dialog without opening the main window
+            var mappings = _mainWindow?.ViewModel != null
+                ? _mainWindow.ViewModel.Mappings.ToList()
+                : Services.MappingStore.Load();
+
+            var usedLetters = mappings.Select(m => m.DriveLetter);
+            var dlg = new AddEditDialog(null, usedLetters, initialPath)
+            {
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                Topmost = true
+            };
+
+            dlg.Loaded += (s, e) =>
+            {
+                dlg.Activate();
+                dlg.Topmost = false;
+            };
+
+            if (dlg.ShowDialog() != true) return;
+
+            var m = dlg.Result;
+            if (mappings.Any(x => x.DriveLetter.Equals(m.DriveLetter, StringComparison.OrdinalIgnoreCase)))
+            {
+                MessageBox.Show($"Drive {m.DisplayLetter} is already in the list.", "Duplicate Letter",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var (ok, err) = Services.SubstService.Mount(m.DriveLetter, m.FolderPath, m.Label);
+            m.IsActive = ok;
+            m.MountOnLoad = true;
+
+            if (_mainWindow?.ViewModel != null)
+            {
+                _mainWindow.ViewModel.Mappings.Add(m);
+                _mainWindow.ViewModel.SaveAll();
+                _mainWindow.ViewModel.RefreshStatus();
+            }
+            else
+            {
+                mappings.Add(m);
+                Services.MappingStore.Save(mappings);
+            }
+
+            if (ok)
+            {
+                _tray?.ShowNotification("Drive Mounted", $"Drive {m.DisplayLetter} mounted to {m.FolderPath}");
+                MessageBox.Show(
+                    $"Drive {m.DisplayLetter} has been successfully mounted for:\n\n{m.FolderPath}",
+                    "Drive Mounted",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageBox.Show(
+                    $"Added {m.DisplayLetter}, but could not mount it immediately:\n{err}",
+                    "Mount Failed",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
         }
 
         // ── Tray handlers ─────────────────────────────────────────────────────

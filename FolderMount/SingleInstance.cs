@@ -1,6 +1,9 @@
 using System;
+using System.IO;
+using System.IO.Pipes;
 using System.Threading;
 using System.Windows;
+using System.Linq;
 
 namespace FolderMount
 {
@@ -9,48 +12,57 @@ namespace FolderMount
     ///
     /// Strategy:
     ///   - A named Mutex guards the "first instance" slot.
-    ///   - A named EventWaitHandle lets the second instance signal the first
-    ///     to show its main window, then the second exits immediately.
-    ///
-    /// No admin rights required — both objects are created in the current
-    /// user session namespace.
+    ///   - A NamedPipeServerStream listens for arguments from subsequent instances.
+    ///   - Subsequent instances send their arguments via NamedPipeClientStream and exit.
     /// </summary>
     internal static class SingleInstance
     {
         private const string MutexName = "FolderMount_SingleInstance_Mutex_{8F2A3B4C}";
-        private const string EventName = "FolderMount_ShowWindow_Event_{8F2A3B4C}";
+        private const string PipeName  = "FolderMount_SingleInstance_Pipe_{8F2A3B4C}";
 
         private static Mutex _mutex;
-        private static EventWaitHandle _showEvent;
         private static CancellationTokenSource _cts;
+
+        /// <summary>
+        /// Fired when a second instance tries to launch and sends its arguments.
+        /// </summary>
+        public static event Action<string[]> ArgsReceived;
 
         /// <summary>
         /// Call this at application startup (before any windows are created).
         /// Returns true  → this is the first instance; proceed normally.
         /// Returns false → another instance is already running; caller should exit.
         /// </summary>
-        public static bool TryClaimInstance()
+        public static bool TryClaimInstance(string[] args)
         {
-            _showEvent = new EventWaitHandle(
-                initialState: false,
-                mode:         EventResetMode.AutoReset,
-                name:         EventName);
-
             _mutex = new Mutex(initiallyOwned: true, name: MutexName, createdNew: out bool createdNew);
 
             if (!createdNew)
             {
                 // Another instance already owns the mutex.
-                // Signal it to show its window, then exit.
-                _showEvent.Set();
-                _showEvent.Dispose();
+                // Send our arguments to it via Named Pipe, then exit.
+                try
+                {
+                    using (var client = new NamedPipeClientStream(".", PipeName, PipeDirection.Out))
+                    {
+                        client.Connect(1000); // 1-second timeout
+                        using (var writer = new StreamWriter(client))
+                        {
+                            writer.WriteLine(string.Join("|||", args));
+                            writer.Flush();
+                        }
+                    }
+                }
+                catch
+                {
+                    // Ignore connection errors, just exit
+                }
                 return false;
             }
 
             // We are the first instance — start a background listener thread
-            // that watches for show-window signals from future instances.
             _cts = new CancellationTokenSource();
-            var listenerThread = new Thread(() => ListenForShowSignal(_cts.Token))
+            var listenerThread = new Thread(() => ListenForPipeConnections(_cts.Token))
             {
                 IsBackground = true,
                 Name         = "SingleInstanceListener"
@@ -66,36 +78,59 @@ namespace FolderMount
         public static void Release()
         {
             _cts?.Cancel();         // signal the background thread to stop
-            _showEvent?.Set();      // unblock the wait so the thread can exit cleanly
             try { _mutex?.ReleaseMutex(); } catch { /* already released */ }
             _mutex?.Dispose();
-            _showEvent?.Dispose();
             _cts?.Dispose();
             
             _mutex = null;
-            _showEvent = null;
             _cts = null;
         }
 
         // ── Background listener ───────────────────────────────────────────────
 
-        private static void ListenForShowSignal(CancellationToken token)
+        private static void ListenForPipeConnections(CancellationToken token)
         {
             while (!token.IsCancellationRequested)
             {
-                // Block until a second instance signals us (or app exits)
-                bool signalled = _showEvent.WaitOne(Timeout.Infinite);
-
-                if (!signalled || token.IsCancellationRequested)
-                    break;
-
-                // Dispatch ShowMainWindow back to the UI thread
-                Application.Current?.Dispatcher.BeginInvoke(
-                    new Action(() =>
+                try
+                {
+                    using (var server = new NamedPipeServerStream(PipeName, PipeDirection.In, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous))
                     {
-                        if (Application.Current is App app)
-                            app.ShowMainWindow();
-                    }));
+                        // Wait for a connection asynchronously but check cancellation periodically
+                        var result = server.BeginWaitForConnection(null, null);
+                        while (!result.IsCompleted)
+                        {
+                            if (token.IsCancellationRequested) return;
+                            Thread.Sleep(50);
+                        }
+
+                        server.EndWaitForConnection(result);
+
+                        if (token.IsCancellationRequested) return;
+
+                        using (var reader = new StreamReader(server))
+                        {
+                            string message = reader.ReadLine();
+                            if (message != null)
+                            {
+                                string[] args = string.IsNullOrEmpty(message)
+                                    ? Array.Empty<string>()
+                                    : message.Split(new[] { "|||" }, StringSplitOptions.None);
+                                
+                                // Dispatch back to the UI thread
+                                Application.Current?.Dispatcher.BeginInvoke(new Action(() =>
+                                {
+                                    ArgsReceived?.Invoke(args);
+                                }));
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                    // If an error occurs, wait a bit before restarting the server
+                    Thread.Sleep(100);
+                }
             }
         }
     }

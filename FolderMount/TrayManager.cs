@@ -129,6 +129,15 @@ namespace FolderMount
             return SystemIcons.Application;
         }
 
+        public void ShowNotification(string title, string message, ToolTipIcon icon = ToolTipIcon.Info)
+        {
+            try
+            {
+                _icon?.ShowBalloonTip(3000, title, message, icon);
+            }
+            catch { }
+        }
+
         public void Dispose()
         {
             ThemeService.ThemeChanged -= OnThemeChanged;
