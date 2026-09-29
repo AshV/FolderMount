@@ -49,7 +49,8 @@ namespace FolderMount
         {
             if ((sender as FrameworkElement)?.DataContext is not ActualDrive drive) return;
 
-            var result = MessageBox.Show(
+            var result = ModernMessageBox.Show(
+                this,
                 $"Convert {drive.DisplayLetter} to use an Explorer Drive Label?\n\n" +
                 $"• The filesystem Volume Label ('{drive.VolumeLabel}') will be removed from the disk.\n" +
                 $"• An Explorer Drive Label ('{drive.VolumeLabel}') will be set in the registry.\n\n" +
@@ -68,7 +69,8 @@ namespace FolderMount
             {
                 LoadDrives();
                 TxtStatus.Text = $"Successfully converted {drive.DisplayLetter} to Drive Label.";
-                MessageBox.Show(
+                ModernMessageBox.Show(
+                    this,
                     $"Drive {drive.DisplayLetter} now uses an Explorer Drive Label!\n\n" +
                     "Virtual drives mounted from this drive can now show their own custom labels in Windows Explorer.",
                     "Migration Complete",
@@ -80,7 +82,7 @@ namespace FolderMount
                 TxtStatus.Text = "Migration cancelled or failed.";
                 if (!string.IsNullOrEmpty(err))
                 {
-                    MessageBox.Show(err, "Migration Failed", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    ModernMessageBox.Show(this, err, "Migration Failed", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
         }
@@ -89,7 +91,8 @@ namespace FolderMount
         {
             if ((sender as FrameworkElement)?.DataContext is not ActualDrive drive) return;
 
-            var result = MessageBox.Show(
+            var result = ModernMessageBox.Show(
+                this,
                 $"Restore filesystem Volume Label for {drive.DisplayLetter}?\n\n" +
                 $"• The disk's Volume Label will be set to '{drive.DriveLabel}'.\n" +
                 $"• The registry Drive Label override will be removed.\n\n" +
@@ -113,7 +116,7 @@ namespace FolderMount
                 TxtStatus.Text = "Restore cancelled or failed.";
                 if (!string.IsNullOrEmpty(err))
                 {
-                    MessageBox.Show(err, "Restore Failed", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    ModernMessageBox.Show(this, err, "Restore Failed", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
         }

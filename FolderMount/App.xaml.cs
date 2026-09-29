@@ -116,7 +116,7 @@ namespace FolderMount
             var m = dlg.Result;
             if (mappings.Any(x => x.DriveLetter.Equals(m.DriveLetter, StringComparison.OrdinalIgnoreCase)))
             {
-                MessageBox.Show($"Drive {m.DisplayLetter} is already in the list.", "Duplicate Letter",
+                ModernMessageBox.Show($"Drive {m.DisplayLetter} is already in the list.", "Duplicate Letter",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
@@ -140,7 +140,7 @@ namespace FolderMount
             if (ok)
             {
                 _tray?.ShowNotification("Drive Mounted", $"Drive {m.DisplayLetter} mounted to {m.FolderPath}", m.DisplayLetter);
-                var result = MessageBox.Show(
+                var result = ModernMessageBox.Show(
                     $"Drive {m.DisplayLetter} has been successfully mounted for:\n\n{m.FolderPath}\n\nWould you like to open Drive {m.DisplayLetter} in File Explorer now?",
                     "Drive Mounted",
                     MessageBoxButton.YesNo,
@@ -160,7 +160,7 @@ namespace FolderMount
             }
             else
             {
-                MessageBox.Show(
+                ModernMessageBox.Show(
                     $"Added {m.DisplayLetter}, but could not mount it immediately:\n{err}",
                     "Mount Failed",
                     MessageBoxButton.OK,

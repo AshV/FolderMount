@@ -148,7 +148,7 @@ namespace FolderMount
                 $"• Virtual drives mapped from {_hostLetter}: can then display their own custom labels in Explorer.\n\n" +
                 $"Click 'Yes' to optimize now, or 'No' to ignore and continue.";
 
-            var result = System.Windows.MessageBox.Show(
+            var result = ModernMessageBox.Show(
                 this,
                 msg,
                 $"Drive {_hostLetter}: Not Optimized",
@@ -160,7 +160,7 @@ namespace FolderMount
                 bool success = DriveLabelService.MigrateVolumeLabelToDriveLabel(_hostLetter, out string err);
                 if (success)
                 {
-                    System.Windows.MessageBox.Show(
+                    ModernMessageBox.Show(
                         this,
                         $"Drive {_hostLetter}: has been optimized successfully!\n\nWindows Explorer will now display custom labels for virtual drives mounted from this drive.",
                         "Optimization Complete",
@@ -171,7 +171,7 @@ namespace FolderMount
                 }
                 else if (!string.IsNullOrEmpty(err))
                 {
-                    System.Windows.MessageBox.Show(
+                    ModernMessageBox.Show(
                         this,
                         err,
                         "Optimization Failed",

@@ -107,7 +107,7 @@ namespace FolderMount.ViewModels
                 var m = dlg.Result;
                 if (Mappings.Any(x => x.DriveLetter.Equals(m.DriveLetter, StringComparison.OrdinalIgnoreCase)))
                 {
-                    MessageBox.Show($"Drive {m.DisplayLetter} is already in the list.", "Duplicate Letter",
+                    ModernMessageBox.Show($"Drive {m.DisplayLetter} is already in the list.", "Duplicate Letter",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
@@ -127,7 +127,7 @@ namespace FolderMount.ViewModels
                     (Application.Current as App)?.Tray?.ShowNotification("Drive Mounted", $"Drive {m.DisplayLetter} mounted to {m.FolderPath}", m.DisplayLetter);
                     if (showSuccessMessage)
                     {
-                        var result = MessageBox.Show(
+                        var result = ModernMessageBox.Show(
                             $"Drive {m.DisplayLetter} has been successfully mounted for:\n\n{m.FolderPath}\n\nWould you like to open Drive {m.DisplayLetter} in File Explorer now?",
                             "Drive Mounted",
                             MessageBoxButton.YesNo,
@@ -213,7 +213,7 @@ namespace FolderMount.ViewModels
             var mapping = ResolveMapping(param);
             if (mapping == null) return;
 
-            var ans = MessageBox.Show(
+            var ans = ModernMessageBox.Show(
                 $"Remove mapping for {mapping.DisplayLetter}?\n\nThe virtual drive will be ejected if currently active.",
                 "Confirm Remove", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (ans != MessageBoxResult.Yes) return;
@@ -380,7 +380,7 @@ namespace FolderMount.ViewModels
         }
 
         private static void ShowError(string msg)
-            => MessageBox.Show(msg, "FolderMount Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            => ModernMessageBox.Show(msg, "FolderMount Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
         // ── INotifyPropertyChanged ─────────────────────────────────────────────
 

@@ -155,7 +155,7 @@ namespace FolderMount
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Could not add context menu:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ModernMessageBox.Show($"Could not add context menu:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -171,7 +171,7 @@ namespace FolderMount
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Could not remove context menu:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ModernMessageBox.Show($"Could not remove context menu:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -197,12 +197,12 @@ namespace FolderMount
                 {
                     var mappings = MappingStore.Load();
                     MappingStore.Export(dlg.FileName, mappings);
-                    MessageBox.Show($"Mappings exported successfully.", "Export Complete",
+                    ModernMessageBox.Show($"Mappings exported successfully.", "Export Complete",
                         MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Export failed:\n{ex.Message}", "Export Error",
+                    ModernMessageBox.Show($"Export failed:\n{ex.Message}", "Export Error",
                         MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
@@ -218,7 +218,7 @@ namespace FolderMount
 
             if (dlg.ShowDialog() == true)
             {
-                var ans = MessageBox.Show(
+                var ans = ModernMessageBox.Show(
                     "Importing will replace your current mappings. Existing mapped drives will be ejected.\n\nAre you sure you want to proceed?",
                     "Confirm Import", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
@@ -238,12 +238,12 @@ namespace FolderMount
                             mw.ViewModel.LoadMappings();
                         }
                         
-                        MessageBox.Show($"Imported {imported.Count} mapping(s).", "Import Complete",
+                        ModernMessageBox.Show($"Imported {imported.Count} mapping(s).", "Import Complete",
                             MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Import failed:\n{ex.Message}", "Import Error",
+                        ModernMessageBox.Show($"Import failed:\n{ex.Message}", "Import Error",
                             MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }

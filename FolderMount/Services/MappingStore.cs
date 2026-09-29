@@ -30,7 +30,7 @@ namespace FolderMount.Services
             }
             catch (System.Exception ex)
             {
-                System.Windows.MessageBox.Show(
+                ModernMessageBox.Show(
                     $"Failed to load mappings from:\n{MappingsFilePath}\n\n{ex.GetType().Name}: {ex.Message}\n\n" +
                     "Your mapping file may be corrupt. You can try restoring from a backup via Settings → Import.",
                     "FolderMount — Config Error",
